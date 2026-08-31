@@ -185,7 +185,7 @@ def main():
         sys.exit(f"build-tributes: {TOML.relative_to(ROOT)} is missing")
     data = tomllib.loads(TOML.read_text())
     tributes = sorted(data.get("tribute", []),
-                      key=lambda t: t.get("order", 0))
+                      key=lambda t: t.get("order", 0), reverse=True)
 
     missing = [t for t in tributes
                if not all(t.get(k, "").strip() for k in ("title", "from", "body"))]

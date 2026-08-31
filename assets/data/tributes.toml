@@ -1,7 +1,7 @@
 title = "Funeral Tributes"
 
 [[tribute]]
-order = 1000
+order = 500
 title = "OUR TRIBUTE TO GRANDPA"
 from = "Talia & Tyshawn"
 body = """
@@ -19,7 +19,7 @@ May his soul, and the souls of all the faithful departed,
 through the mercy of God, rest in peace. Amen."""
 
 [[tribute]]
-order = 1000
+order = 1001
 title = "TRIBUTE TO MY FATHER-IN-LAW, FRANCIS ATSEKHAMEH"
 from = "Katie"
 body = """
