@@ -1,0 +1,43 @@
+{
+  // ---- Root file -------------------------------------------------------
+  // main.tex is the only root; never treat a section file as its own project.
+  "latex-workshop.latex.search.rootFiles.include": ["main.tex"],
+  "latex-workshop.latex.search.rootFiles.exclude": ["sections/**", "styles/**"],
+  "latex-workshop.latex.rootFile.doNotPrompt": true,
+
+  // ---- Rebuild main.tex whenever a dependency (a section) changes ------
+  "latex-workshop.latex.autoBuild.run": "onFileChange",
+  "latex-workshop.latex.autoBuild.cleanAndRetry.enabled": true,
+
+  // ---- Output ----------------------------------------------------------
+  // Must match $out_dir/$aux_dir in .latexmkrc, otherwise the extension
+  // cannot find build/main.fls and stops watching the section files.
+  "latex-workshop.latex.outDir": "%DIR%/build",
+  "latex-workshop.latex.auxDir": "%OUTDIR%",
+
+  // ---- Build recipe ----------------------------------------------------
+  "latex-workshop.latex.tools": [
+    {
+      "name": "latexmk",
+      "command": "latexmk",
+      "args": [
+        "-synctex=1",
+        "-interaction=nonstopmode",
+        "-file-line-error",
+        "-pdf",
+        "-outdir=%OUTDIR%",
+        "%DOC%"
+      ],
+      "env": {}
+    }
+  ],
+  "latex-workshop.latex.recipes": [
+    { "name": "latexmk", "tools": ["latexmk"] }
+  ],
+  "latex-workshop.latex.recipe.default": "first",
+
+  // ---- Viewer / cleanup -------------------------------------------------
+  "latex-workshop.view.pdf.viewer": "tab",
+  "latex-workshop.latex.clean.subfolder.enabled": true,
+  "latex-workshop.latex.autoClean.run": "never"
+}

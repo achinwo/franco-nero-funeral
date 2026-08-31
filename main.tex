@@ -1,0 +1,87 @@
+%! TeX root = main.tex
+%! TeX program = pdflatex
+
+\documentclass[11pt,a5paper]{article}
+
+% Scalable serif: the cover name is set at 20pt, which OT1/cmr does not
+% have as a real design size (it was being substituted).
+\usepackage{lmodern}
+\usepackage[T1]{fontenc}
+
+% Load custom styling and packages
+\input{styles/preamble}
+
+% A5 with article's default margins leaves a 97x123mm text block, which is
+% too small for the content (every section spilled onto a second page).
+\usepackage[a5paper,top=15mm,bottom=15mm,left=14mm,right=14mm]{geometry}
+
+\usepackage{graphicx}
+\usepackage{xcolor}
+\usepackage{eso-pic}   % full-page background layer
+\usepackage{tikz}      % the scrim gradient
+\usetikzlibrary{fadings}
+\usepackage{soul}      % letterspaced caps
+
+\definecolor{primary}{HTML}{2C3E50}   % Deep charcoal / slate
+\definecolor{accent}{HTML}{7F8C8D}    % Soft muted gray
+\definecolor{rulecolor}{HTML}{BDC3C7}  % Thin divider line
+
+\pagestyle{empty} % No header/footer page numbers
+
+% Custom section command for service items
+\newcommand{\serviceitem}[2]{%
+  \noindent\textbf{\color{primary}#1} \hfill \textit{#2}\par\vspace{3pt}
+}
+
+\newcommand{\servicedesc}[1]{%
+  \noindent{\small\color{accent}#1}\par\vspace{8pt}
+}
+
+\newcommand{\thinseparator}{%
+  \begin{center}
+    {\color{rulecolor}\rule{0.6\linewidth}{0.4pt}}
+  \end{center}\vspace{4pt}
+}
+
+% Full-bleed cover backdrop. The photograph is scaled to the full paper
+% width and top-aligned, so the surplus height falls off the foot of the
+% page and is clipped there. Over it: a solid white field at the foot for
+% the type, and above that a fade that dissolves the field into the
+% photograph so there is no visible edge. Applies to the current page only.
+\newlength{\scrimsolid}\setlength{\scrimsolid}{0.41\paperheight}
+\newlength{\scrimtop}\setlength{\scrimtop}{0.70\paperheight}
+
+\newcommand{\coverbackdrop}[1]{%
+  \AddToShipoutPictureBG*{%
+    \put(0,0){%
+      \parbox[b][\paperheight][t]{\paperwidth}{%
+        \centering\includegraphics[width=\paperwidth]{#1}%
+      }%
+    }%
+    \put(0,0){%
+      \begin{tikzpicture}[overlay]
+        \fill[white] (0pt,0pt) rectangle (\paperwidth,\scrimsolid);
+        \fill[white, path fading=north]
+          (0pt,\scrimsolid) rectangle (\paperwidth,\scrimtop);
+      \end{tikzpicture}%
+    }%
+  }%
+}
+
+% Letterspaced caps, for the small display lines on the cover.
+\newcommand{\displaycaps}[1]{{\scshape\so{#1}}}
+
+% Define graphic search paths so you can write \includegraphics{photo} directly
+\graphicspath{{assets/images/}}
+
+\begin{document}
+
+\input{sections/01-cover}
+\newpage
+\input{sections/02-order}
+\newpage
+\input{sections/03-readings}
+\newpage
+\input{sections/04-backcover}
+
+\end{document}
