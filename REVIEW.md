@@ -27,15 +27,18 @@ funeral and six to a 28 September vigil.
 
 ---
 
-## 2. The funeral-mass scan is a different person's booklet
+## 2. The funeral and graveside scans are a different person's booklet
 
-**This is the biggest problem in the file and needs a decision before print.**
+**This is the biggest problem in the booklet and needs a decision before
+print.**
 
-The pages pasted into `sections/05-funeral-mass.tex` are a scan of the order of
-service for **Lady Veronica Omebere Morgan, KSJI (nee Omeke), 1953--2026** — a
-woman, buried under a different family name, with a different date range. Her
-name appears fourteen times in the source, and the page furniture reads
-"FOREVER IN OUR HEARTS" and "Scanned with CamScanner".
+The pages pasted into `sections/05-funeral-mass.tex` and, later,
+`sections/06-at-the-graveside.tex` are scans of the order of service for
+**Lady Veronica Omebere Morgan, KSJI (nee Omeke), 1953--2026** — a woman,
+buried under a different family name, with a different date range. Her name
+appears fourteen times in the funeral-mass source and nine more times in the
+graveside one, and the page furniture reads "FOREVER IN OUR HEARTS" and
+"Scanned with CamScanner".
 
 Following the precedent already set for the vigil (item 3 below), I transcribed
 it **as Francis Atsekhameh throughout**, with masculine pronouns, so that the
@@ -43,9 +46,10 @@ booklet is internally coherent:
 
 | Source | Now |
 |---|---|
-| Lady Veronica Omebere Morgan (x14) | Francis Atsekhameh |
+| Lady Veronica Omebere Morgan (x23) | Francis Atsekhameh |
 | the Morgan family | the Atsekhameh family |
 | our sister / our departed brother (mixed) | our brother |
+| your daughter | your son |
 | her / she / his (mixed, see below) | he / him / his |
 
 If this scan was handed over as a *template* — "use this order of service" —
@@ -275,6 +279,70 @@ same heading hierarchy as the vigil.
 
 ---
 
+## 10. "At the Graveside" and "Hymn & Committal" now overlap
+
+The new graveside rite is the committal: the blessing of the grave, the
+lowering of the body, the intercessions and the last prayers. But
+`sections/09-tribute.tex` is still the old placeholder outline titled **Hymn &
+Committal**, whose three lines are:
+
+- Prayers of Thanksgiving & Lord's Prayer — Congregation
+- Commendation & Farewell — Rev. Thomas Davies
+- Recessional Music — "Going Home", Dvorak
+
+The Lord's Prayer and the commendation are now printed twice over: once in the
+Funeral Mass (Final Commendation and Farewell) and again at the graveside. The
+contents page therefore promises a section vi that repeats section iv.
+
+**This needs a decision, not a fix.** Either fold whatever is genuinely
+distinct about section vi — probably only the Dvorak recessional and the
+Psalm 23 setting — into the graveside section and drop it, or give it a
+different title and scope. I have not touched it, because which parts the
+family actually intend to use at the grave is not something I can infer.
+
+---
+
+## 11. Graveside — text the scan lost, and one line I dropped
+
+**The concluding prayer runs off the end of the page.** The source stops
+mid-sentence: "...let her be united with your angels and saints. Through
+Christ our" — and there it ends. I closed it as "Through Christ our Lord." with
+the Amen, which is the fixed ending, but check there was nothing further on the
+next scanned page.
+
+**A stray response after the Our Father.** The source reads:
+
+> All: Our Father.... / Priest: Let us pray / All: Lord, hear our prayer /
+> Priest: Show your mercy to your departed servant...
+
+"Lord, hear our prayer" cannot be the answer to "Let us pray" — the
+intercessions have ended by that point and what follows is the concluding
+prayer. I read it as the scanner catching a line from the block above and
+dropped it. If the parish's own order really does have a response there, it
+needs putting back.
+
+**The blessing of the grave had no Amen.** The source goes straight from "We
+ask this through Christ our Lord." to the sprinkling rubric. I added the
+congregation's Amen, since every other such ending in the booklet has one.
+
+**No time is given for the graveside.** The section header reads "Friday
+4\textsuperscript{th} September, 2026 --- following the Funeral Mass", which is
+true but vague. Replace it with the actual time if there is one, and note that
+this inherits whatever is decided about item 1.
+
+---
+
+## 12. Section filenames no longer sort into document order
+
+`sections/08-backcover.tex` ships last, after `sections/09-tribute.tex`. The
+`\input` list in `main.tex` is the authority on order and is correct, but the
+numbering now misleads anyone reading the directory. Renaming
+`08-backcover.tex` to `10-backcover.tex` (and updating the one `\input` line)
+would settle it. I left the filenames as they were found rather than renaming
+files mid-edit.
+
+---
+
 ## Already corrected (recorded here only so you can spot-check)
 
 Scan errors fixed in `04-vigil-mass.tex`: `1 shall want` → *I*; `Martha aid` →
@@ -297,3 +365,13 @@ you to Holy City` → *to the Holy City*; `Lady Veronica Mobere Morgan` (twice)
 -> the Omebere spelling used elsewhere, before the rename; `fulfillment` /
 `labor` / `fulfill` / `Savior` → British spellings, to match the vigil; running
 heads, folios, `FOREVER IN OUR HEARTS` and the CamScanner watermark stripped.
+
+Scan errors fixed in `06-at-the-graveside.tex`: `LESSING OFTHE GRAVE` → *Blessing
+of the Grave* (the initial B was lost off the edge of the scan);
+`he who believe in me` → *believes*; `the first fruit of the dead` → *first
+fruits*; `We pray Olord` → *We pray to the Lord*; `our lord Jesus Christ` →
+*our Lord*; `Lord have mercy` → *Lord, have mercy.*; `fulfillment` →
+*fulfilment*, to match the rest. The petitions closed variously "We pray to the
+Lord" and "We pray O Lord" in the source and are normalised to the first
+throughout. Parenthetical stage directions — the sprinkling, the lowering of
+the body, the silence before the Our Father — are set as rubrics.
