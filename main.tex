@@ -173,6 +173,14 @@
 % response, which is printed in full only once, at the head of the psalm.
 \newcommand{\psalmcue}{\hspace{0.4em}{\normalfont\footnotesize\itshape\color{accent}R.}}
 
+% A Latin/English pair, as the Kyrie and Agnus Dei are printed side by side.
+\newcommand{\kyrieline}[2]{%
+  \par\noindent
+  \makebox[0.46\linewidth][l]{\itshape\color{accent}#1}%
+  {\color{primary}#2}\par
+  \vspace{0.7mm}%
+}
+
 % The people's fixed response in a litany.
 \newcommand{\respond}[1]{\liturgyline{R.}{\bfseries\color{primary}#1}}
 

@@ -27,18 +27,49 @@ funeral and six to a 28 September vigil.
 
 ---
 
-## 2. Reader names still say "Miller"
+## 2. The funeral-mass scan is a different person's booklet
 
-`sections/05-funeral-mass.tex` lists three readers:
+**This is the biggest problem in the file and needs a decision before print.**
 
-- line 24 — `Marcus Miller (Son)`
-- line 27 — `David Miller (Brother)`
-- line 30 — `Sarah Miller (Granddaughter)`
+The pages pasted into `sections/05-funeral-mass.tex` are a scan of the order of
+service for **Lady Veronica Omebere Morgan, KSJI (nee Omeke), 1953--2026** — a
+woman, buried under a different family name, with a different date range. Her
+name appears fourteen times in the source, and the page furniture reads
+"FOREVER IN OUR HEARTS" and "Scanned with CamScanner".
 
-These are living family, not the deceased, so they fell outside the
-"Francis Atsekhameh" rename and I left them untouched. If the family surname is
-Atsekhameh, all three need correcting — and the given names are probably
-placeholders too.
+Following the precedent already set for the vigil (item 3 below), I transcribed
+it **as Francis Atsekhameh throughout**, with masculine pronouns, so that the
+booklet is internally coherent:
+
+| Source | Now |
+|---|---|
+| Lady Veronica Omebere Morgan (x14) | Francis Atsekhameh |
+| the Morgan family | the Atsekhameh family |
+| our sister / our departed brother (mixed) | our brother |
+| her / she / his (mixed, see below) | he / him / his |
+
+If this scan was handed over as a *template* — "use this order of service" —
+that is the right outcome and only needs a read-through. If it was handed over
+because these are genuinely the prayers chosen for Francis, the same applies.
+**But if it was pasted in by mistake**, the whole section needs replacing, not
+correcting.
+
+The source's own gendering was incoherent regardless of which name is used —
+within a single paragraph of the Final Commendation it reads "the body of our
+sister... May God unite **his** soul... May **she** be given a merciful
+judgment", and the Song of Farewell alternates "Receive **her** soul and present
+**him** to God". So a pronoun sweep was unavoidable in any case.
+
+---
+
+## 2a. Content the scan replaced
+
+The previous `05-funeral-mass.tex` held a placeholder outline — Elgar's
+"Nimrod", a Psalm 121 reading by Marcus Miller, a Tennyson poem by Sarah Miller.
+None of it survived, which resolves the old "reader names still say Miller"
+item: those names are gone. But so are the **reader and tribute assignments** —
+the scanned booklet names no readers at all. If the family want individuals
+named against the readings, that has to be added back by hand.
 
 ---
 
@@ -140,14 +171,65 @@ would choose.
 
 ---
 
-## 8. Content moved during editing — confirm it landed right
+## 8. Funeral mass — text the scan lost or garbled
 
-The order-of-service list that originally lived in `02-toc.tex` was moved
-verbatim into `sections/05-funeral-mass.tex` under a "The Funeral Mass"
-heading, so it would not be lost when that file became the contents page. It
-has not otherwise been restyled — unlike the vigil, it still uses the older
-`\serviceitem` / `\servicedesc` macros rather than the liturgy macro set in
-`main.tex`. Converting it would make the two masses match.
+These are places where the OCR ran out of source, not places I could repair.
+
+**Second reading (1 Cor 15:53) was missing a clause.** The scan read "we shall
+be changed as well, because our present nature must put on immortality", which
+drops half the verse and makes the sentence that follows it a non sequitur. I
+restored the standard reading: "because this perishable nature of ours must put
+on imperishability, and this mortal nature must put on immortality". Verify
+against the lectionary the parish uses.
+
+**Two prayers are truncated in the source and remain so:**
+
+- Rite of Peace — the scan reads only `Priest: Lord Jesus Christ, who said
+  to...` before jumping to the Amen. I supplied the full Missal text, which is
+  fixed and not a matter of choice.
+- The embolism after the Our Father reads `Deliver us, Lord, we pray, from every
+  evil,...` and is left with an ellipsis, as the vigil does.
+
+**"Take Our Bread" has only two verses** in the scan (the hymn has three in most
+settings). Refrain-verse-refrain-verse-refrain in the source was collapsed to a
+single printed refrain at the head, matching how the vigil sets its choruses.
+
+**The Latin ordinary was badly scanned** and has been corrected against the
+Missal: `Requiem aetenam` to *aeternam*; `lux perpetual` to *perpetua*;
+`orationem mean` to *meam*; `Christ eleison` to *Christe eleison*; `Pleni sunt
+coeli et terra Gloria tua` to *gloria tua*. The English gloss for *Te decet
+hymnus Deus in Sion* was printed as "The hymns of the Lord are sung in Sion",
+which is not a translation of it; I used the usual "To you our praise is due in
+Sion, O God".
+
+---
+
+## 9. Funeral mass — editorial calls worth a second opinion
+
+**The date in the section header was wrong.** The pasted block carried the
+vigil's header verbatim — Thursday 28 September, 4:00 pm. I set it to the
+cover's funeral date, Friday 4 September 2026, 11:30 am. This does not resolve
+item 1 above; it only stops the funeral from claiming the vigil's slot.
+
+**The Opening Prayer was split mid-sentence between speakers.** The scan gives
+"Priest: Let us pray, O God, Almighty Father, our faith professes that your Son
+died and rose again." then "All: Mercifully grant, that through this mystery
+your servant..." — the congregation cannot be saying the second half of a
+presidential prayer. I gave the whole prayer to the Priest, with the Amen to
+all. Same fix applied to the reception prayer at the church door.
+
+**Abide with Me now appears twice in the booklet** — as the vigil's closing
+hymn (verses 1--2) and as the funeral's recessional (verses 1--4). That may well
+be deliberate, but it is worth a deliberate decision.
+
+**Petition 3 addressed the congregation in the second person** ("that God will
+bless you all and grant you journey mercies") in the middle of a prayer spoken
+about them in the third. Normalised to "them".
+
+**Numbering in the source was broken** — the scan runs "4. Homily, 5. Prayers
+of the Faithful, 5. Offertory, 6. Offertory Hymn, 7. Take Our Bread, 7. Liturgy
+of the Eucharist, 8. Communion". I dropped the numbers entirely and used the
+same heading hierarchy as the vigil.
 
 ---
 
@@ -161,3 +243,15 @@ worthy` → *I am*; `Praim 23` → *Psalm 23*; `Lord, have many` → *mercy*;
 God*; `whose nature in always` → *is always*; `it will he said` → *be said*;
 `He surety wins` → *surely*; psalm response cues `RL` / `RI` / `RV.` normalised
 to `R.`; `3. heaven is the prize` → *Yes, heaven is the prize*.
+
+Scan errors fixed in `05-funeral-mass.tex`: `YES, ISHALLARISE` → *Yes, I Shall
+Arise*; `GOSPELACCLAMATION` → *Gospel Acclamation*; `ROCK OFAGES` → *Rock of
+Ages*; `Olet your ears` → *O let*; `Out Of The Depth` → *depths*; `pray for me
+to the Lord our Lord` → *our God*; `pattern with the host` → *paten*; `come
+from marriage feast` → *from the marriage feast*; `find them so` → *finds*;
+`would have not left` → *would not have*; `the son of man` → *the Son of Man*;
+`Israel indeed He will free from all its iniquity` → *will redeem from*; `Take
+you to Holy City` → *to the Holy City*; `Lady Veronica Mobere Morgan` (twice)
+-> the Omebere spelling used elsewhere, before the rename; `fulfillment` /
+`labor` / `fulfill` / `Savior` → British spellings, to match the vigil; running
+heads, folios, `FOREVER IN OUR HEARTS` and the CamScanner watermark stripped.
