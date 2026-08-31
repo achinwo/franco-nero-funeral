@@ -1,6 +1,7 @@
 #!/bin/sh
-# Regenerates every derived image the booklet uses, from the four original
-# scans, into assets/images/plates/. Run from anywhere; requires ImageMagick 7.
+# Regenerates every derived file the booklet inputs -- the images, from the
+# four original scans, into assets/images/plates/, and the tributes from the
+# copy the family sent. Run from anywhere; requires ImageMagick 7.
 #
 # Two families of output:
 #
@@ -119,8 +120,112 @@ magick "plates/plate-studio.png" \
     -compose over -composite -strip "plates/front-studio.png"
 rm -f plates/_scrim.png
 
+# --- the cover -------------------------------------------------------------
+# The cover is a montage, not a photograph. sky_backdrop.png is A5 stationery:
+# a dawn cloudscape over the top half of the sheet, a hard seam, then textured
+# paper. The studio cut-out is stood up in it, so that the man they called De
+# Sky Man rises out of the cloud bank instead of out of the blank white field
+# the cover used before.
+#
+# Two decisions drive every number below. The seam is moved down to 60% of the
+# page -- below where the backdrop puts it, so the weather fills the sheet and
+# the type sits in the quiet under it. And the cloud is composited twice, once
+# as the ground and again in front of him, so that real wisps pass over his
+# chest; a plain white ramp would have dissolved him into fog, which reads as
+# a fault in the printing rather than as weather.
+CW=1748; CH=2480                 # A5 at 300dpi, as the frontispiece
+CSEAM=$((CH * 60 / 100))         # cloud bank meets paper field
+CPH=$((CH - CSEAM))
+CFW=$((CW * 84 / 100))           # his width on the page
+CFH=$((1784 * CFW / 1221))       # ... and the height that follows from it
+COX=$(((CW - CFW) / 2))
+CTOP=$((CH * 6 / 100))           # the top of his cap
+CIN=$((CH * 42 / 100))           # cloud starts to pass in front of him
+COUT=$((CH * 555 / 1000))        # cloud entirely in front
+
+# Landmarks in the backdrop, which is 950x1338 with its seam on row 699.
+SKYW=950; SKYSEAM=699
+
+# The sky, enlarged until the seam falls where we want it and cropped to the
+# page. It is a low-resolution asset being asked to cover an A5 sheet at 300
+# dpi, which only works because it is cloud: there is no edge in it for the
+# upscale to soften.
+magick sky_backdrop.png -crop "${SKYW}x${SKYSEAM}+0+0" +repage -filter Lanczos \
+    -resize "${CW}x${CSEAM}^" -gravity center -extent "${CW}x${CSEAM}" \
+    "plates/_c-sky.png"
+
+# The paper field is mirror-tiled from a band of the backdrop's own stock,
+# taken from below the dove that the crop left stranded at the left edge. The
+# green and blue multipliers take the neutral grey stock to ivory without
+# flattening its grain, the way a flat tint would; the same ivory is used for
+# the mist below, so the two meet invisibly.
+magick sky_backdrop.png -crop "${SKYW}x290+0+1045" +repage -filter Lanczos \
+    -resize "${CW}x" -channel G -evaluate multiply 0.985 \
+    -channel B -evaluate multiply 0.955 +channel "plates/_c-band.png"
+magick "plates/_c-band.png" \( "plates/_c-band.png" -flip \) \
+       "plates/_c-band.png" \( "plates/_c-band.png" -flip \) \
+    -append -crop "${CW}x${CPH}+0+0" +repage "plates/_c-field.png"
+
+# The page, with the zenith deepened: the backdrop's own sky runs pale all the
+# way up, and a cover wants somewhere for the eye to come to rest above his
+# head.
+magick "plates/_c-sky.png" "plates/_c-field.png" -append \
+    \( -size "${CW}x$((CH * 30 / 100))" gradient:'#1F3B57'-'#1F3B5700' \
+       -channel A -evaluate multiply 0.14 +channel \) \
+    -geometry +0+0 -compose over -composite "plates/_c-base.png"
+
+# Light behind him. It is doing two jobs: the halo the day asks for, and the
+# separation the photograph needs, because his cap is a dark teal that would
+# otherwise sit flat against a mid-blue sky.
+magick -size 1200x1200 radial-gradient:'#FFF6E4FF'-'#FFF6E400' -resize '1500x1100!' \
+    -channel A -evaluate multiply 0.65 +channel "plates/_c-glow.png"
+magick "plates/_c-base.png" "plates/_c-glow.png" \
+    -geometry "+$((COX + 545 * CFW / 1221 - 750))+$((CTOP + 309 * CFW / 1221 - 550))" \
+    -composite "plates/_c-lit.png"
+
+magick franco_sitting_green-print.png -trim +repage \
+    -filter Lanczos -resize "${CFW}x${CFH}!" "plates/_c-man.png"
+magick "plates/_c-lit.png" "plates/_c-man.png" \
+    -geometry "+${COX}+${CTOP}" -composite "plates/_c-stood.png"
+
+# The cloud again, in front. The layer is the finished ground carrying a ramp
+# in its alpha, so above the ramp nothing changes and below it the page simply
+# closes over him -- cloud first, then the paper field, which is why his cut
+# lower half never has to be dealt with: it is behind the page.
+magick -size "${CW}x${CIN}" xc:black \
+       -size "${CW}x$((COUT - CIN))" gradient:black-white \
+       -size "${CW}x$((CH - COUT))" xc:white -append -blur 0x18 "plates/_c-m1.png"
+magick "plates/_c-base.png" "plates/_c-m1.png" \
+    -alpha off -compose copy_opacity -composite "plates/_c-front.png"
+magick "plates/_c-stood.png" "plates/_c-front.png" -compose over -composite \
+    "plates/_c-inclouds.png"
+
+# The mist that dissolves the seam. Without it the cloud bank ends on a ruled
+# line across the page, which is how the backdrop itself is drawn and is the
+# one thing about it that looks like stationery.
+MA=$((CH * 42 / 100)); MB=$((CH * 588 / 1000))     # mist fades in over MA..MB,
+MC=$((CH * 636 / 1000)); MD=$((CH * 773 / 1000))   # holds to MC, gone by MD
+magick -size "${CW}x${MA}" xc:black \
+       -size "${CW}x$((MB - MA))" gradient:black-white \
+       -size "${CW}x$((MC - MB))" xc:white \
+       -size "${CW}x$((MD - MC))" gradient:white-black \
+       -size "${CW}x$((CH - MD))" xc:black -append -blur 0x24 "plates/_c-m2.png"
+magick -size "${CW}x${CH}" xc:'#F3EFE8' "plates/_c-m2.png" \
+    -alpha off -compose copy_opacity -composite "plates/_c-mist.png"
+magick "plates/_c-inclouds.png" "plates/_c-mist.png" -compose over -composite \
+    -strip "plates/cover-sky.png"
+
+rm -f plates/_c-*.png
+
 # --- family album ----------------------------------------------------------
 # The modern colour photographs are a separate problem from the four old
 # prints: they need no toning, only orientation, downsizing and a layout.
 # build-album.py does all three and writes plates/family-album.tex.
 python3 "$HERE/build-album.py"
+
+# --- tributes --------------------------------------------------------------
+# Prose rather than pictures, but derived artwork all the same: the family
+# send assets/data/tributes.toml and build-tributes.py sets it. Run from here
+# so that one command still brings everything the booklet inputs up to date;
+# it is quick to run on its own while a tribute is being edited.
+python3 "$HERE/build-tributes.py"

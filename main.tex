@@ -17,8 +17,7 @@
 \usepackage{graphicx}
 \usepackage{xcolor}
 \usepackage{eso-pic}   % full-page background layer
-\usepackage{tikz}      % the scrim gradient
-\usetikzlibrary{fadings}
+\usepackage{tikz}      % photo corners on the mounted prints
 \usepackage{soul}      % letterspaced caps
 
 \definecolor{primary}{HTML}{2C3E50}   % Deep charcoal / slate
@@ -218,31 +217,6 @@
   \end{center}\vspace{4pt}
 }
 
-% Full-bleed cover backdrop. The photograph is scaled to the full paper
-% width and top-aligned, so the surplus height falls off the foot of the
-% page and is clipped there. Over it: a solid white field at the foot for
-% the type, and above that a fade that dissolves the field into the
-% photograph so there is no visible edge. Applies to the current page only.
-\newlength{\scrimsolid}\setlength{\scrimsolid}{0.41\paperheight}
-\newlength{\scrimtop}\setlength{\scrimtop}{0.70\paperheight}
-
-\newcommand{\coverbackdrop}[1]{%
-  \AddToShipoutPictureBG*{%
-    \put(0,0){%
-      \parbox[b][\paperheight][t]{\paperwidth}{%
-        \centering\includegraphics[width=\paperwidth]{#1}%
-      }%
-    }%
-    \put(0,0){%
-      \begin{tikzpicture}[overlay]
-        \fill[white] (0pt,0pt) rectangle (\paperwidth,\scrimsolid);
-        \fill[white, path fading=north]
-          (0pt,\scrimsolid) rectangle (\paperwidth,\scrimtop);
-      \end{tikzpicture}%
-    }%
-  }%
-}
-
 % --- Photographs -----------------------------------------------------------
 % The four surviving prints are old, damaged and unevenly toned; they are
 % cropped and toned to one warm sepia by assets/make-plates.sh, which also
@@ -331,12 +305,120 @@
 % Only the *opening* page of a section is ghosted; interior pages stay clean,
 % so the device reads as a section marker rather than as wallpaper.
 %
-% The same macro places the full-bleed frontispiece that opens the
-% Photographs section, which is a page-sized plate like any other.
+% The same macro places the two full-bleed plates -- the cover and the
+% frontispiece that opens the Photographs section -- which are page-sized
+% artwork like any other, and are likewise baked rather than layered here.
 \newcommand{\pageghost}[1]{%
   \AddToShipoutPictureBG*{%
     \put(0,0){\includegraphics[width=\paperwidth,height=\paperheight]{plates/#1}}%
   }%
+}
+
+% --- Tributes --------------------------------------------------------------
+% assets/build-tributes.py reads assets/data/tributes.toml -- the words as the
+% family sent them -- and writes assets/data/tributes.tex as a run of the
+% macros below, which 08-tribute.tex inputs. Edit the TOML and re-run
+% assets/make-plates.sh; nothing here needs editing.
+%
+% A tribute is a letter, so it is set like one: one measure rather than the
+% two columns the liturgy uses, no indents, and air between the paragraphs
+% instead -- no. These run to four hundred words each, and set across the
+% full measure at a size anyone can read they would take a page apiece. So
+% the letter itself goes into two columns, like the liturgy, while its title
+% and its closing prayer keep the full width: the head stays on one line
+% where a 57mm column would have broken it over three, the prayer stays
+% centred on the page, and the words in between are set as continuous prose,
+% indented the way a book sets a chapter. Air between paragraphs is the one
+% thing a letter this long cannot afford -- eight paragraph gaps would cost
+% a dozen millimetres of page and buy nothing an indent does not.
+\newenvironment{tribute}{%
+  \par\begingroup
+  \fontsize{9}{10.6}\selectfont
+  \setlength{\parskip}{0pt}%
+  \setlength{\multicolsep}{0pt}%
+  \color{primary}%
+  %\begin{multicols}{2}
+  % \raggedright zeroes \parindent, so the indent is set after it, not before:
+  % it is the only thing separating one paragraph from the next here.
+  \raggedright\setlength{\parindent}{1.2em}%
+  % The letter opens flush, as a first paragraph under a head always does;
+  % \ignorespaces then eats the newline that follows \begin{tribute} in the
+  % generated file, which would otherwise print as a space before "Dear".
+  \noindent\ignorespaces
+}{%
+  %\end{multicols}%
+  \endgroup
+}
+
+% soul letterspaces by taking the text apart character by character, and gives
+% up on anything that is not a character. The escapes that build-tributes.py
+% emits for a name like "Talia & Tyshawn" are exactly that, so they are
+% declared here rather than left to break the build on the day someone adds a
+% tribute with an ampersand in the title.
+\soulregister{\&}{0}
+\soulregister{\%}{0}
+\soulregister{\$}{0}
+\soulregister{\#}{0}
+\soulregister{\_}{0}
+\soulregister{\textbackslash}{0}
+\soulregister{\dots}{0}
+
+% What separates one tribute from the next: a hairline broken by a small
+% diamond. It replaces the page break the tributes used to take, and it is
+% drawn rather than set from a dingbat so that it uses the booklet's own rule
+% colour and hairline weight, and so no font has to be loaded for one glyph.
+%
+% The title is set on a measure narrower than the page so that a long one --
+% "Tribute to My Father-in-Law, Francis Atsekhameh" -- breaks where it reads,
+% after the relationship, rather than wherever the full measure happens to
+% run out. \@afterheading welds the head to the paragraph beneath it, so a
+% column never breaks between a tribute's title and its first line.
+\makeatletter
+\newcommand{\tributedivider}{%
+  \par\addvspace{5mm}%
+  {\centering
+    \begin{tikzpicture}[inner sep=0pt,outer sep=0pt]
+      \draw[rulecolor,line width=0.3pt] (-18mm,0) -- (-2.6mm,0);
+      \draw[rulecolor,line width=0.3pt] (2.6mm,0) -- (18mm,0);
+      \fill[accent] (0,1mm) -- (1mm,0) -- (0,-1mm) -- (-1mm,0) -- cycle;
+    \end{tikzpicture}\par}%
+  \nobreak\vspace{3.5mm}%
+}
+
+\newcommand{\tributehead}[2]{%
+  \par\addvspace{0.5mm}%
+  {\centering
+    \begin{minipage}{0.66\linewidth}
+      \centering{\footnotesize\scshape\color{primary}\so{#1}}
+    \end{minipage}\par
+    \vspace{0.8mm}
+    {\scriptsize\itshape\color{accent}#2}\par}%
+  \nobreak\vspace{1.8mm}%
+  \@afterheading
+}
+\makeatother
+
+% The sign-off, set to the right as it is on paper. \\ separates its lines,
+% and they are kept tight to each other -- the space the environment puts
+% between paragraphs would read as two afterthoughts rather than a signature.
+\newcommand{\tributesignoff}[1]{%
+  \par\addvspace{1.4mm}%
+  \noindent\begin{minipage}{\linewidth}
+    \raggedleft\itshape\color{accent}#1
+  \end{minipage}\par
+  \addvspace{1.4mm}%
+}
+
+% The prayer a tribute closes on, set the way the booklet sets prayers
+% everywhere else: centred and italic. It takes no rule of its own -- the
+% divider under it is rule enough, and two hairlines within a centimetre of
+% each other read as an accident.
+\newcommand{\tributeprayer}[1]{%
+  \par\addvspace{2.6mm}%
+  \noindent\begin{minipage}{\linewidth}
+    \centering\footnotesize\itshape\color{accent}#1
+  \end{minipage}\par
+  \addvspace{0.6mm}%
 }
 
 % Letterspaced caps, for the small display lines on the cover.
