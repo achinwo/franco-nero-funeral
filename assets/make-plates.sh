@@ -16,7 +16,9 @@
 #                 -hi for the sparse pages that can take more.
 set -eu
 
-cd "$(dirname "$0")/images"
+# Resolved before the cd, so the later call to build-album.py still works.
+HERE=$(cd "$(dirname "$0")" && pwd)
+cd "$HERE/images"
 mkdir -p plates
 SRC="WhatsApp Image 2026-08-19 at 14.24.16"
 
@@ -116,3 +118,9 @@ magick "plates/plate-studio.png" \
        -alpha off -compose copy_opacity -composite \) \
     -compose over -composite -strip "plates/front-studio.png"
 rm -f plates/_scrim.png
+
+# --- family album ----------------------------------------------------------
+# The modern colour photographs are a separate problem from the four old
+# prints: they need no toning, only orientation, downsizing and a layout.
+# build-album.py does all three and writes plates/family-album.tex.
+python3 "$HERE/build-album.py"

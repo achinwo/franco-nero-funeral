@@ -201,6 +201,56 @@ is that the set stops matching.
 
 ---
 
+## 6c. The family album is generated — five photographs were dropped
+
+`assets/images/family_pics/` now feeds a third Photographs page, built by
+`assets/build-album.py` and refreshed by `assets/make-plates.sh`. Of the
+fourteen files there, nine are printed and **five were skipped**. Check this
+list — a photograph the family expects to see and cannot find will be here:
+
+| File | Why it was skipped |
+|---|---|
+| `DSC05206.png` | byte-identical to the cover photograph |
+| `franco_nero.png` | byte-identical to an image already in `assets/images/` |
+| `WhatsApp ... 17.03.28.jpeg` | byte-identical to `16.58.30.jpeg` |
+| `WhatsApp ... 17.04.56.jpeg` | 225x225 pixels — about 19mm on the page |
+| `WhatsApp ... 17.05.20.jpeg` | **editorial:** near-duplicate of `17.03.51` |
+
+The first four are automatic and safe. **The fifth is a judgement I made.**
+`17.03.51` and `17.05.20` are the same moment — the couple by the car — shot
+full-length and again as a closer crop; printed side by side at 58mm they read
+as a printing error, so I kept the full-length one. To put it back, delete its
+line from the `SKIP` dictionary at the top of `build-album.py` and re-run
+`assets/make-plates.sh`.
+
+The 225x225 one is a good photograph of Francis with a young woman, lost to
+WhatsApp compression. **If anyone still has the original, it is worth adding**
+— drop it into `family_pics/` and re-run the script; nothing else needs
+editing.
+
+I did not attempt automatic near-duplicate detection. A perceptual hash was
+tried and does not separate these: the redundant pair scores 19 bits apart
+while two plainly different photographs score 17, so any threshold that caught
+the pair would also silently delete something wanted. That reasoning is
+recorded in the script.
+
+---
+
+## 6d. Nobody in the family album is named
+
+The nine photographs are printed without captions, because I do not know who
+is in them beyond Francis himself. Several show him with a woman who appears
+throughout — presumably his wife — and one is a large family group at a gate.
+If the family want names or occasions against them, the mapping from each
+printed photograph back to its source file is written as a comment at the top
+of `assets/images/plates/family-album.tex`.
+
+One of the nine is a black-and-white studio portrait (`16.59.18`), a different
+sitting from the one used as the frontispiece. It is worth confirming it is
+Francis and not a relative.
+
+---
+
 ## 7. Unwritten sections
 
 One section is still a heading and a `% TODO` only. It is paginated and
@@ -332,17 +382,6 @@ this inherits whatever is decided about item 1.
 
 ---
 
-## 12. Section filenames no longer sort into document order
-
-`sections/08-backcover.tex` ships last, after `sections/09-tribute.tex`. The
-`\input` list in `main.tex` is the authority on order and is correct, but the
-numbering now misleads anyone reading the directory. Renaming
-`08-backcover.tex` to `10-backcover.tex` (and updating the one `\input` line)
-would settle it. I left the filenames as they were found rather than renaming
-files mid-edit.
-
----
-
 ## Already corrected (recorded here only so you can spot-check)
 
 Scan errors fixed in `04-vigil-mass.tex`: `1 shall want` → *I*; `Martha aid` →
@@ -353,6 +392,10 @@ worthy` → *I am*; `Praim 23` → *Psalm 23*; `Lord, have many` → *mercy*;
 God*; `whose nature in always` → *is always*; `it will he said` → *be said*;
 `He surety wins` → *surely*; psalm response cues `RL` / `RI` / `RV.` normalised
 to `R.`; `3. heaven is the prize` → *Yes, heaven is the prize*.
+
+Section filenames sorted back into document order (`08-tribute`,
+`09-backcover`) and the `\input` list in `main.tex` follows them, so the
+earlier note about the two disagreeing is settled.
 
 Scan errors fixed in `05-funeral-mass.tex`: `YES, ISHALLARISE` → *Yes, I Shall
 Arise*; `GOSPELACCLAMATION` → *Gospel Acclamation*; `ROCK OFAGES` → *Rock of

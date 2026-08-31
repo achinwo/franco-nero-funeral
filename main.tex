@@ -280,6 +280,48 @@
   \end{minipage}%
 }
 
+% --- The family album ------------------------------------------------------
+% assets/build-album.py reads assets/images/family_pics/, solves a
+% justified-rows layout across as many pages as it needs, and writes
+% plates/family-album.tex as a list of \albumrow calls. Drop a photograph
+% into that directory, re-run assets/make-plates.sh, and the album re-flows
+% on its own -- nothing here needs editing.
+%
+% Both dimensions of every photograph are given because the script has
+% already solved the row: each row shares one height, and its widths plus
+% gutters span \linewidth exactly. The frame is drawn with \fbox rather than
+% tikz so that the 0.3pt rule sits outside the image and the arithmetic the
+% script did stays true; it allows for that rule when it computes widths.
+\newlength{\albumgutter}\setlength{\albumgutter}{3mm}
+\newcommand{\albumgap}{\hspace{\albumgutter}}
+
+\newcommand{\albumphoto}[3]{%
+  \begingroup
+  \setlength{\fboxsep}{0pt}\setlength{\fboxrule}{0.3pt}%
+  \fcolorbox{rulecolor}{white}{\includegraphics[width=#2,height=#3]{#1}}%
+  \endgroup
+}
+
+% Centred, so that a short final row -- one the script capped rather than
+% stretched to the full measure -- sits in the middle of the page instead of
+% hanging off the left edge. A full row already spans \linewidth, where
+% centring does nothing.
+\newcommand{\albumrow}[1]{%
+  \par{\centering\leavevmode#1\par}%
+  \vspace{\albumgutter}%
+}
+
+% The head over the first album page. Quieter than a section title: these
+% pages are a continuation of Photographs, not a new section.
+\newcommand{\albumhead}[1]{%
+  \begin{center}
+    {\footnotesize\scshape\color{primary}\so{#1}}\par
+    \vspace{2mm}
+    {\color{rulecolor}\rule{0.35\linewidth}{0.4pt}}
+  \end{center}
+  \vspace{3mm}%
+}
+
 % A ghosted photograph behind the current page only. The fade is baked into
 % the pixels rather than applied as PDF transparency, so the printer's RIP
 % receives ordinary opaque artwork -- no flattening, no overprint surprises,
