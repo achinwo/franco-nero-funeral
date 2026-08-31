@@ -1,0 +1,97 @@
+%! TeX root = ../main.tex
+
+% ---------------------------------------------------------------------------
+% Contents. A hairline-ruled list: a roman numeral in the margin, the section
+% title, and a one-line gloss beneath it. Kept quiet on purpose -- this page
+% is a signpost, not a statement.
+% ---------------------------------------------------------------------------
+
+\newlength{\tocnumwidth}\setlength{\tocnumwidth}{9mm}
+\newlength{\tocpagewidth}\setlength{\tocpagewidth}{8mm}
+
+\newcommand{\tocrule}{%
+  \noindent{\color{rulecolor}\rule{\linewidth}{0.2pt}}\par
+}
+
+% #1 numeral, #2 title, #3 gloss, #4 label to take the folio from
+\newcommand{\tocentry}[4]{%
+  \noindent
+  \begin{minipage}[t]{\tocnumwidth}\raggedright
+    \strut{\footnotesize\scshape\color{rulecolor}#1}
+  \end{minipage}%
+  \begin{minipage}[t]{\dimexpr\linewidth-\tocnumwidth-\tocpagewidth\relax}\raggedright
+    \strut{\color{primary}#2}\par
+    \vspace{1.2mm}
+    {\footnotesize\itshape\color{accent}#3}
+  \end{minipage}%
+  \begin{minipage}[t]{\tocpagewidth}\raggedleft
+    \strut{\color{accent}\pageref{#4}}
+  \end{minipage}\par
+}
+
+\vspace*{1mm}
+
+\begin{center}
+  {\footnotesize\color{accent}\displaycaps{Francis Atsekhameh}}
+
+  \vspace{4mm}
+  {\Large\scshape\color{primary} Contents}
+  \thinseparator
+\end{center}
+
+\vspace{3mm}
+
+\tocrule
+\vspace{3.2mm}
+
+\tocentry{i}{A Life Remembered}{Born 14\textsuperscript{th} August 1946 -- his story, in brief}{toc:biography}
+
+\vspace{3.2mm}
+\tocrule
+\vspace{3.2mm}
+
+\tocentry{ii}{The Vigil Mass}{Scripture, the rosary, and prayers for the faithful departed}{toc:vigil}
+
+\vspace{3.2mm}
+\tocrule
+\vspace{3.2mm}
+
+\tocentry{iii}{The Funeral Mass}{The order of the celebration}{toc:funeral}
+
+\vspace{3.2mm}
+\tocrule
+\vspace{3.2mm}
+
+\tocentry{iv}{Photographs}{A life in pictures}{toc:photographs}
+
+\vspace{3.2mm}
+\tocrule
+\vspace{3.2mm}
+
+\tocentry{v}{Hymn \& Committal}{The final commendation and farewell}{toc:committal}
+
+\vspace{3.2mm}
+\tocrule
+\vspace{3.2mm}
+
+\tocentry{vi}{Words of Appreciation}{Thanksgiving, reception, and memorial donations}{toc:appreciation}
+
+\vspace{3.2mm}
+\tocrule
+
+\vfill
+
+\begin{center}
+  {\color{rulecolor}\rule{10mm}{0.4pt}}
+
+  \vspace{4mm}
+  \begin{minipage}{0.86\linewidth}
+    \centering\small\itshape\color{accent}
+    ``Blessed are those who mourn, for they shall be comforted.''
+  \end{minipage}
+
+  \vspace{2mm}
+  {\footnotesize\color{rulecolor}\displaycaps{Matthew 5:4}}
+\end{center}
+
+\vspace*{2mm}

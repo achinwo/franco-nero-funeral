@@ -26,7 +26,36 @@
 \definecolor{accent}{HTML}{7F8C8D}    % Soft muted gray
 \definecolor{rulecolor}{HTML}{BDC3C7}  % Thin divider line
 
-\pagestyle{empty} % No header/footer page numbers
+% Page numbering. The cover, contents and back cover carry no folio; the
+% numbered sequence starts at 1 on the first content page.
+% \ps@plain is redefined so the folio matches the booklet's muted palette
+% rather than arriving in 11pt black.
+% Each content section declares its own running title with
+% \setsectiontitle; the footer picks it up through LaTeX's mark mechanism,
+% which is shipped with the page and so stays correct across a section that
+% runs to several pages.
+\newcommand{\setsectiontitle}[1]{\markboth{#1}{#1}}
+
+\makeatletter
+% The running title, letterspaced, or nothing at all before the first
+% section has declared one.
+\newcommand{\@runningtitle}{%
+  \edef\@tempa{\leftmark}%
+  \ifx\@tempa\@empty\else
+    {\scshape\expandafter\so\expandafter{\@tempa}}%
+    \hskip 0.7em\textperiodcentered\hskip 0.7em
+  \fi
+}
+\renewcommand{\ps@plain}{%
+  \renewcommand{\@oddhead}{}%
+  \renewcommand{\@evenhead}{}%
+  \renewcommand{\@oddfoot}{%
+    \hfil{\footnotesize\color{rulecolor}\@runningtitle\color{accent}\thepage}\hfil
+  }%
+  \renewcommand{\@evenfoot}{\@oddfoot}%
+}
+\makeatother
+\pagestyle{empty}
 
 % Custom section command for service items
 \newcommand{\serviceitem}[2]{%
@@ -35,6 +64,145 @@
 
 \newcommand{\servicedesc}[1]{%
   \noindent{\small\color{accent}#1}\par\vspace{8pt}
+}
+
+% --- Liturgy typesetting ---------------------------------------------------
+% Shared by the vigil and the funeral mass. Two rules govern the look: the
+% congregation's own words are the only bold text on the page, so anyone can
+% find their part at a glance, and rubrics (stage directions) are italic and
+% grey so they read as instructions rather than as something to say aloud.
+
+% A major division of the rite (Liturgy of the Word, Liturgy of the
+% Eucharist): centred, letterspaced, fenced above and below.
+\makeatletter
+\newcommand{\liturgypart}[1]{%
+  \par\addvspace{5mm}%
+  \penalty-300 % a column may break here in preference to below the head
+  \noindent\begin{minipage}{\linewidth}
+    {\color{rulecolor}\rule{\linewidth}{0.3pt}}\par
+    \vspace{1.6mm}
+    \centering{\footnotesize\scshape\color{primary}\so{#1}}\par
+    \vspace{1.6mm}
+    {\color{rulecolor}\rule{\linewidth}{0.3pt}}
+  \end{minipage}%
+  \par\nobreak\vspace{2.5mm}%
+  \@afterheading
+}
+
+% A movement of the liturgy: letterspaced caps over a hairline. \@afterheading
+% keeps the head welded to the text beneath it, so a column never breaks
+% between the two and strands a title at the foot.
+\newcommand{\liturgyhead}[1]{%
+  \par\addvspace{4mm}%
+  \penalty-300
+  \noindent\begin{minipage}{\linewidth}
+    \raggedright
+    {\footnotesize\scshape\color{primary}\so{#1}}\par
+    \vspace{1mm}
+    {\color{rulecolor}\rule{\linewidth}{0.3pt}}
+  \end{minipage}%
+  \par\nobreak\vspace{2mm}%
+  \@afterheading
+}
+\makeatother
+
+% A spoken line. The speaker sits in the hanging indent so that wrapped text
+% aligns under itself rather than under the label.
+% The body is grouped: #2 sets \bfseries for the congregation's parts, and
+% without the group that weight leaks past \par into whatever follows.
+\newcommand{\liturgyline}[2]{%
+  \par
+  {%
+    \noindent\hangindent=1.1em\hangafter=1
+    {\scshape\color{accent}#1}\hskip 0.5em\relax #2\par
+  }%
+  \vspace{1.3mm}%
+}
+\newcommand{\priest}[1]{\liturgyline{Priest}{\color{primary}#1}}
+\newcommand{\allsay}[1]{\liturgyline{All}{\bfseries\color{primary}#1}}
+\newcommand{\reader}[2]{\liturgyline{#1}{\color{primary}#2}}
+% A versicle with no speaker label -- set flush with the other spoken text.
+\newcommand{\versicle}[1]{%
+  \par
+  {\noindent\hangindent=1.1em\hangafter=1 \color{primary}#1\par}%
+  \vspace{1.3mm}%
+}
+
+% A rubric: an instruction to the assembly, never spoken.
+\newcommand{\rubric}[1]{%
+  \par\vspace{0.6mm}%
+  \noindent{\footnotesize\itshape\color{accent}#1}\par
+  \vspace{1.6mm}%
+}
+
+% Hymn title, then verses. \hymnverse takes a marker (a number, or empty for
+% the chorus) and the lines, separated by \\.
+\newcommand{\hymntitle}[1]{%
+  \par\addvspace{1mm}%
+  \noindent{\itshape\color{primary}#1}\par
+  \vspace{2mm}%
+}
+% Inside a verse each \\ starts a fresh paragraph, so that \hangindent
+% applies to every line: a line too long for the column then wraps into a
+% hanging indent, the way a hymnal sets it, instead of orphaning a word
+% hard against the left margin.
+\newcommand{\versebody}{%
+  \raggedright
+  \setlength{\parindent}{0pt}\setlength{\parskip}{0pt}%
+  \everypar{\hangindent=1em\hangafter=1}%
+  \let\\\par
+}
+\newcommand{\hymnverse}[2]{%
+  \par\addvspace{1.8mm}%
+  \noindent
+  \makebox[1.2em][l]{\footnotesize\color{accent}#1}%
+  \begin{minipage}[t]{\dimexpr\linewidth-1.2em\relax}
+    \versebody\color{primary}#2\par
+  \end{minipage}\par
+}
+\newcommand{\hymnchorus}[1]{%
+  \par\addvspace{1.8mm}%
+  \noindent
+  \makebox[1.2em][l]{}%
+  \begin{minipage}[t]{\dimexpr\linewidth-1.2em\relax}
+    \versebody\itshape\color{accent}#1\par
+  \end{minipage}\par
+}
+
+% The cue at the end of a psalm stanza telling the assembly to repeat the
+% response, which is printed in full only once, at the head of the psalm.
+\newcommand{\psalmcue}{\hspace{0.4em}{\normalfont\footnotesize\itshape\color{accent}R.}}
+
+% The people's fixed response in a litany.
+\newcommand{\respond}[1]{\liturgyline{R.}{\bfseries\color{primary}#1}}
+
+% A sung or recited congregational text set in lines rather than as prose
+% (Sanctus, Agnus Dei, acclamations).
+\newcommand{\allverse}[1]{%
+  \par\addvspace{1.8mm}%
+  \noindent\makebox[1.2em][l]{}%
+  \begin{minipage}[t]{\dimexpr\linewidth-1.2em\relax}
+    \versebody\bfseries\color{primary}#1\par
+  \end{minipage}\par
+  \vspace{1.3mm}%
+}
+
+% One petition of the Prayer of the Faithful: a hanging number, an italic
+% intention, then the petition itself. Set as a hanging-indent paragraph
+% rather than a box so a long petition can break across columns.
+\newcommand{\intercession}[3]{%
+  \par
+  {\noindent\hangindent=1.2em\hangafter=1
+    \makebox[1.2em][l]{\footnotesize\color{accent}#1}%
+    {\itshape\color{primary}#2}\hskip 0.4em\relax{\color{primary}#3}\par}%
+  \vspace{1.5mm}%
+}
+
+% A short centred divider, sized to sit inside a column.
+\newcommand{\columndivider}{%
+  \par\addvspace{3.5mm}%
+  \noindent\hfil{\color{rulecolor}\rule{0.35\linewidth}{0.4pt}}\hfil\par
+  \addvspace{3.5mm}%
 }
 
 \newcommand{\thinseparator}{%
@@ -78,10 +246,23 @@
 
 \input{sections/01-cover}
 \newpage
-\input{sections/02-order}
+\input{sections/02-toc}
 \newpage
-\input{sections/03-readings}
+
+% Folios begin here, at 1, on the first page of content.
+\pagestyle{plain}
+\pagenumbering{arabic}
+
+\input{sections/03-biography}
 \newpage
-\input{sections/04-backcover}
+\input{sections/04-vigil-mass}
+\newpage
+\input{sections/05-funeral-mass}
+\newpage
+\input{sections/06-photobook}
+\newpage
+\input{sections/07-tribute}
+\newpage
+\input{sections/08-backcover}
 
 \end{document}
