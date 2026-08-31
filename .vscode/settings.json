@@ -35,6 +35,10 @@
     { "name": "latexmk", "tools": ["latexmk"] }
   ],
   "latex-workshop.latex.recipe.default": "first",
+  // A "%! TeX program = ..." magic comment in main.tex would otherwise
+  // override the recipe with a bare `pdflatex %DOC%` (no -outdir), dumping
+  // main.pdf/.aux/.log into the project root. Force the recipe above instead.
+  "latex-workshop.latex.build.forceRecipeUsage": true,
 
   // ---- Viewer / cleanup -------------------------------------------------
   "latex-workshop.view.pdf.viewer": "tab",
