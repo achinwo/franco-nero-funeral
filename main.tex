@@ -244,6 +244,60 @@
   }%
 }
 
+% --- Photographs -----------------------------------------------------------
+% The four surviving prints are old, damaged and unevenly toned; they are
+% cropped and toned to one warm sepia by assets/make-plates.sh, which also
+% builds everything below. Re-run that script if the originals change.
+
+\definecolor{cornerink}{HTML}{6B5B4B}  % the dark card of an album's photo corners
+
+% A print mounted on the page: a hairline frame, four photo corners, and an
+% italic caption beneath. The corners are what make it read as an album page
+% rather than as a figure in a report; the frame alone is not enough, because
+% these scans have pale edges that dissolve into the paper without it.
+\newlength{\mountwidth}
+\newlength{\cornerlen}
+\newcommand{\mountedphoto}[3][\linewidth]{%
+  \setlength{\mountwidth}{#1}%
+  \setlength{\cornerlen}{0.055\mountwidth}%
+  \begin{minipage}{\mountwidth}
+    \centering
+    \begin{tikzpicture}[inner sep=0pt,outer sep=0pt]
+      \node (P) {\includegraphics[width=\mountwidth]{#2}};
+      \draw[rulecolor,line width=0.3pt]
+        (P.south west) rectangle (P.north east);
+      \fill[cornerink]
+        (P.south west) -- ++(\cornerlen,0) -- ++(-\cornerlen,\cornerlen) -- cycle;
+      \fill[cornerink]
+        (P.south east) -- ++(-\cornerlen,0) -- ++(\cornerlen,\cornerlen) -- cycle;
+      \fill[cornerink]
+        (P.north east) -- ++(-\cornerlen,0) -- ++(\cornerlen,-\cornerlen) -- cycle;
+      \fill[cornerink]
+        (P.north west) -- ++(\cornerlen,0) -- ++(-\cornerlen,-\cornerlen) -- cycle;
+    \end{tikzpicture}\par
+    \vspace{2.2mm}
+    {\footnotesize\itshape\color{accent}#3\par}
+  \end{minipage}%
+}
+
+% A ghosted photograph behind the current page only. The fade is baked into
+% the pixels rather than applied as PDF transparency, so the printer's RIP
+% receives ordinary opaque artwork -- no flattening, no overprint surprises,
+% and what is on screen is what comes off the press.
+%
+% Two strengths are generated: -lo (7% ink) for the pages that carry dense
+% two-column liturgy, and -hi (17%) for the sparse pages that can take more.
+% Only the *opening* page of a section is ghosted; interior pages stay clean,
+% so the device reads as a section marker rather than as wallpaper.
+%
+% The same macro places the full-bleed frontispiece that opens the
+% Photographs section, which is a page-sized plate like any other.
+\newcommand{\pageghost}[1]{%
+  \AddToShipoutPictureBG*{%
+    \put(0,0){\includegraphics[width=\paperwidth,height=\paperheight]{plates/#1}}%
+  }%
+}
+
 % Letterspaced caps, for the small display lines on the cover.
 \newcommand{\displaycaps}[1]{{\scshape\so{#1}}}
 

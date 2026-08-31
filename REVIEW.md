@@ -157,13 +157,55 @@ belongs there.
 
 ---
 
+## 6a. Photographs — captions are descriptions, not facts
+
+The four scans now fill the Photographs section and back the section
+openings. I can describe what is visible in them; I cannot date them or name
+what is happening, so the captions say only what the picture shows:
+
+| Print | Caption as set |
+|---|---|
+| Landscape, hand-tinted, at a desk with a telephone | *At the desk — the shop books, and the telephone* |
+| Standing in patterned agbada against a cloth backdrop | *Dressed for the occasion* |
+| Standing with a ledger before stacked cartons | *Taking stock* |
+| Seated studio portrait, suit and bow tie | (no caption — it is the full-page frontispiece) |
+
+Two of them are plainly taken in a shop or warehouse — Kellogg's cartons on
+the shelves behind the desk, Johnson's baby powder cases stacked behind the
+ledger. If that was his business, the captions should say so by name, and
+the family will know roughly what years these are. **Replace all three.**
+
+Note also that the frontispiece and the back cover both carry the studio
+portrait. That is deliberate — the booklet closes on the face it opened
+with — but if the family would rather see a fourth photograph on the back,
+it is a one-word change.
+
+---
+
+## 6b. Photographs — the hand-tinting is mostly gone
+
+Two of the four prints were hand-coloured: a blue headwrap in the desk
+photograph, a blue-tinted face in the warehouse one. The four scans are
+otherwise so unlike each other in age and cast that setting them beside one
+another untreated looked like four photographs from four different books, so
+`assets/make-plates.sh` tones them all to one warm sepia, laid down at 78%
+with the original colour left showing through at 22%.
+
+That unifies the set, but the blue is now barely there. If the family would
+rather keep the tinting, lower the `78` in the `tone()` function; the tradeoff
+is that the set stops matching.
+
+---
+
 ## 7. Unwritten sections
 
-Three sections are headings and a `% TODO` only. They are paginated and appear
-in the contents, so the page numbers will shift once they are filled:
+One section is still a heading and a `% TODO` only. It is paginated and
+appears in the contents, so the page numbers will shift once it is filled:
 
 - `sections/03-biography.tex` — biography copy
-- `sections/06-photobook.tex` — photograph grid
+
+(`sections/06-photobook.tex` is now built out from the four scans, so this
+list is down from two.)
 
 The contents page gloss for the biography ("Born 14th August 1946 — his story,
 in brief") is placeholder wording I wrote; replace it with something the family

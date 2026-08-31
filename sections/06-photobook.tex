@@ -1,14 +1,66 @@
 %! TeX root = ../main.tex
+
 \label{toc:photographs}
 \setsectiontitle{Photographs}
 
+% ---------------------------------------------------------------------------
+% Two pages. The first is a full-bleed frontispiece -- the studio portrait
+% under a white scrim, the same device as the cover, with the type in the
+% clear field at the foot. The second is an album page: three prints mounted
+% with photo corners.
+% ---------------------------------------------------------------------------
+
+\pageghost{front-studio}
+
+\vspace*{\fill}
+
 \begin{center}
   {\Large\scshape\color{primary} Photographs}
-  \thinseparator
+
+  \vspace{3mm}
+  {\color{rulecolor}\rule{18mm}{0.4pt}}
+
+  \vspace{4mm}
+  \begin{minipage}{0.82\linewidth}
+    \centering\small\itshape\color{accent}
+    ``What we have once enjoyed we can never lose; all that we love deeply
+    becomes a part of us.''
+  \end{minipage}
 \end{center}
 
-\vspace{4mm}
+\vspace*{6mm}
 
-% TODO: photograph grid.
+\newpage
+
+% Sizing is worked back from the 512pt text block: the two prints plus
+% their captions and the gap come to roughly 471pt, leaving the page
+% breathing rather than filled edge to edge -- which is what stops an album
+% page looking like a contact sheet.
+%
+% No `center` environments here. Each one adds \topsep above and below, and
+% two of them were enough (40pt) to push the lower pair onto a page of
+% their own; \centering inside a group does the same job for nothing.
+\vspace*{2mm}
+
+{\centering
+  \mountedphoto[0.82\linewidth]{plates/plate-desk}%
+    {At the desk --- the shop books, and the telephone}\par}
+
+\vspace{6mm}
+
+% The two prints have different aspect ratios (1.378 and 1.411), so equal
+% widths give unequal heights and the captions sit at different levels.
+% Widths are set in that ratio instead -- 0.43 to 0.42 -- which brings both
+% prints to the same 71mm height, so tops, bottoms and captions all line up.
+{\centering
+  \begin{minipage}[t]{0.43\linewidth}
+    \centering
+    \mountedphoto[\linewidth]{plates/plate-agbada}{Dressed for the occasion}
+  \end{minipage}%
+  \hspace{0.04\linewidth}%
+  \begin{minipage}[t]{0.42\linewidth}
+    \centering
+    \mountedphoto[\linewidth]{plates/plate-ledger}{Taking stock}
+  \end{minipage}\par}
 
 \vfill
