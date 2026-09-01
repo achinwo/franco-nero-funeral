@@ -19,6 +19,7 @@
 \usepackage{eso-pic}   % full-page background layer
 \usepackage{tikz}      % photo corners on the mounted prints
 \usepackage{soul}      % letterspaced caps
+\usepackage{wrapfig}   % a tribute's photograph, with the letter set around it
 % microtype's letterspacing module on its own: \textls tracks display type
 % through the font's own kerning, where soul's \so simply wedges a fixed
 % space between glyphs. Loading letterspace rather than microtype entire
@@ -57,21 +58,55 @@
 \newcommand{\sec@anchor@titled}[2]{\sec@anchor{#1}{#2}\setsectiontitle{#2}}
 \makeatother
 
+% A small diamond, the third size of the ornament that opens the cover and
+% divides the tributes. Set on the text baseline so it sits between words.
+% A small filled diamond, the third size of the ornament that opens the cover
+% and divides the tributes.
+\newcommand{\diamondmark}{%
+  \tikz[baseline=-0.05em]{%
+    \fill[rulecolor] (0,0.5mm) -- (0.5mm,0) -- (0,-0.5mm) -- (-0.5mm,0)
+      -- cycle;}%
+}
+
 \makeatletter
-% The running title, letterspaced, or nothing at all before the first
-% section has declared one.
+% The footer carries three things, and splits them the way a spread does:
+% whose book this is on the left, where you are and which page on the right.
+% They are told apart by weight rather than by punctuation -- the booklet's
+% name palest, the section a shade darker, the folio darkest and a size
+% larger -- so the line reads as one quiet rule of type rather than as three
+% competing labels, and the measure between them is what balances the page.
+%
+% Set in EB Garamond, the cover's face: page furniture is where a book is
+% allowed to speak in its display voice, and the old-style folio sits in the
+% line instead of standing over it.
+%
+% The booklet's name is a link back to the contents, which is the one page a
+% reader wants from anywhere in the book.
+%
+% The section title arrives through LaTeX's mark mechanism, which is shipped
+% with the page, so it stays correct across a section that runs to several
+% pages. Before the first section has declared one it is empty, and the right
+% half of the line closes up to the folio alone.
 \newcommand{\@runningtitle}{%
   \edef\@tempa{\leftmark}%
   \ifx\@tempa\@empty\else
-    {\scshape\expandafter\so\expandafter{\@tempa}}%
-    \hskip 0.7em\textperiodcentered\hskip 0.7em
+    {\color{accent}\expandafter\textls\expandafter[130]%
+      \expandafter{\expandafter\scshape\@tempa}}%
+    \hskip 0.75em\diamondmark\hskip 0.75em
   \fi
 }
+% LaTeX sets the foot in a box of \textwidth, so \hfil between the two halves
+% is all the alignment either of them needs.
 \renewcommand{\ps@plain}{%
   \renewcommand{\@oddhead}{}%
   \renewcommand{\@evenhead}{}%
   \renewcommand{\@oddfoot}{%
-    \hfil{\footnotesize\color{rulecolor}\@runningtitle\color{accent}\thepage}\hfil
+    \coverface\fontsize{7}{9}\selectfont
+    \hyperref[toc:contents]{%
+      \color{rulecolor}\textls[130]{\scshape Franco Nero International}}%
+    \hfil
+    \@runningtitle
+    {\fontsize{8.5}{9}\selectfont\color{primary!70}\thepage}%
   }%
   \renewcommand{\@evenfoot}{\@oddfoot}%
 }
@@ -360,10 +395,10 @@
   \setlength{\parskip}{0.5pt}%
   \setlength{\multicolsep}{0pt}%
   \color{primary}%
-  %\begin{multicols}{2}
-  % \raggedright zeroes \parindent, so the indent is set after it, not before:
-  % it is the only thing separating one paragraph from the next here.
-  \raggedright\setlength{\parindent}{1.2em}%
+  % Justified, now that a tribute is set on the full measure rather than in
+  % two columns: a photograph wrapped into the text leaves a column of about
+  % 70mm beside it, and ragged right at that width breaks into stubs.
+  \setlength{\parindent}{1.2em}%
   % The letter opens flush, as a first paragraph under a head always does;
   % \ignorespaces then eats the newline that follows \begin{tribute} in the
   % generated file, which would otherwise print as a space before "Dear".
@@ -415,6 +450,48 @@
   \@afterheading
 }
 \makeatother
+
+% A photograph belonging to a tribute, with the letter running around it.
+% Its size is settled in assets/build-tributes.py, which fits every image --
+% a portrait selfie, a landscape group on a front step -- inside one box in
+% millimetres, so that whichever way round they are they take about the same
+% bite out of the page and no tribute is pushed onto another page by one.
+%
+% The mount is the album's: a hairline and four photo corners, the same
+% device the Photographs section uses, because that is what makes a snapshot
+% read as kept rather than as illustration. It is set a degree and a half off
+% square -- the one unstudied gesture in the booklet, and the difference
+% between a photograph placed on a page and one stuck into an album.
+%
+% The wrapping column is the picture plus 8mm: enough for the corner the tilt
+% throws out, and for the gutter between the mount and the text.
+\newlength{\tributecorner}
+\newcommand{\tributephoto}[3]{% #1 plate, #2 width, #3 height
+  \setlength{\tributecorner}{0.06\dimexpr#2\relax}%
+  \begin{wrapfigure}{r}{\dimexpr#2+8mm\relax}
+    \vspace{-3.2mm}
+    \centering
+    \rotatebox{-1.5}{%
+      \begin{tikzpicture}[inner sep=0pt,outer sep=0pt]
+        \node (P) {\includegraphics[width=#2,height=#3]{#1}};
+        \draw[rulecolor,line width=0.3pt]
+          (P.south west) rectangle (P.north east);
+        \fill[cornerink]
+          (P.south west) -- ++(\tributecorner,0)
+                         -- ++(-\tributecorner,\tributecorner) -- cycle;
+        \fill[cornerink]
+          (P.south east) -- ++(-\tributecorner,0)
+                         -- ++(\tributecorner,\tributecorner) -- cycle;
+        \fill[cornerink]
+          (P.north east) -- ++(-\tributecorner,0)
+                         -- ++(\tributecorner,-\tributecorner) -- cycle;
+        \fill[cornerink]
+          (P.north west) -- ++(\tributecorner,0)
+                         -- ++(-\tributecorner,-\tributecorner) -- cycle;
+      \end{tikzpicture}}%
+    \vspace{-2mm}
+  \end{wrapfigure}%
+}
 
 % The sign-off, set to the right as it is on paper. \\ separates its lines,
 % and they are kept tight to each other -- the space the environment puts

@@ -17,7 +17,7 @@ ImageMagick and no Python.
 | What | Why | Known good |
 |---|---|---|
 | TeX Live (full) | `pdflatex`, `latexmk` | TeX Live 2026, pdfTeX 1.40.29, latexmk 4.88 |
-| ImageMagick 7 | regenerating the plates in `assets/images/plates/` | 7.1.1-28 |
+| ImageMagick 7 | regenerating the plates in `assets/images/plates/`, and preparing any photograph a tribute carries | 7.1.1-28 |
 | Python 3.11+ | `assets/build-tributes.py` needs `tomllib` | 3.13.1 |
 
 A full TeX Live install carries every package the booklet loads —
@@ -56,7 +56,8 @@ One command rebuilds everything the booklet inputs but nobody edits:
 - `assets/images/plates/cover-sky.png` — the cover montage
 - `assets/images/plates/family/*.jpg` and `plates/family-album.tex` — the
   family album, laid out by `assets/build-album.py`
-- `assets/data/tributes.tex` — the tributes, set by `assets/build-tributes.py`
+- `assets/data/tributes.tex` and `assets/images/plates/tributes/*.jpg` — the
+  tributes and their photographs, set by `assets/build-tributes.py`
 
 Run it after changing anything under `assets/images/` or `assets/data/`, then
 `latexmk`. `build-tributes.py` is quick enough to run on its own while a
@@ -70,7 +71,7 @@ Edit these:
 |---|---|
 | `main.tex` | preamble, every shared macro, the section order |
 | `sections/*.tex` | the pages themselves |
-| `assets/data/tributes.toml` | the tributes — plain text, no LaTeX |
+| `assets/data/tributes.toml` | the tributes — plain text, no LaTeX; `imagePath` points at a photograph to set the letter around |
 | `assets/images/family_pics/` | drop a photograph in; the album re-flows |
 | `assets/images/sky_backdrop.png` | the cover backdrop |
 | `assets/images/franco_sitting_green-print.png` | the cover cut-out |
