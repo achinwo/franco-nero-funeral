@@ -458,6 +458,28 @@
 \newcommand{\coverlight}{\coverdisplay\fontseries{l}\selectfont}
 \newcommand{\coverface}{\fontfamily{EBGaramond-TOsF}\selectfont}
 
+% The age, as the cover's centrepiece: a hairline running the width of the
+% text block, broken by a ring with the years in it. It is the same idea as
+% \diamondrule -- a rule interrupted -- so it belongs to the same family as
+% the ornament on the tribute pages, and it is drawn rather than assembled
+% from a box and a rule so the hairline can meet the ring exactly.
+% #1 the number of years.
+\newcommand{\agemedallion}[1]{%
+  \begin{tikzpicture}[inner sep=0pt,outer sep=0pt]
+    \draw[rulecolor,line width=0.3pt] (-31mm,0) -- (-9.5mm,0);
+    \draw[rulecolor,line width=0.3pt] (9.5mm,0) -- (31mm,0);
+    \draw[rulecolor,line width=0.4pt] (0,0) circle (7.5mm);
+    % Lining figures here, not the old-style ones the dates take: inside a
+    % ring the two digits want to be the same height and sit on one line,
+    % where old-style would set "80" as an ascender beside an x-height o.
+    \node at (0,1.1mm) {%
+      \fontfamily{CormorantGaramond-TLF}\fontseries{l}\selectfont
+      \fontsize{17}{17}\selectfont\color{primary}#1};
+    \node at (0,-4.1mm) {%
+      \coverface\fontsize{6}{6}\selectfont\color{accent}\coverline[260]{years}};
+  \end{tikzpicture}%
+}
+
 % A small line in letterspaced small capitals. The tracking is what makes it
 % read as quiet rather than as shouting: at this size and this colour the
 % words are barely there, which is the intention.

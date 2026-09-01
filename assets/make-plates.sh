@@ -122,29 +122,30 @@ rm -f plates/_scrim.png
 
 # --- the cover -------------------------------------------------------------
 # The cover is a montage, not a photograph. sky_backdrop.png is A5 stationery:
-# a dawn cloudscape over the top half of the sheet, a hard seam, then textured
-# paper. The studio cut-out is stood up in it, so that the man they called De
-# Sky Man rises out of the cloud bank instead of out of the blank white field
-# the cover used before.
+# a dawn cloudscape over the top three-fifths of the sheet, a hard seam, then
+# textured paper. The studio cut-out is stood up in it, so that the man they
+# called De Sky Man rises out of the cloud bank instead of out of the blank
+# white field the cover used before.
 #
-# Two decisions drive every number below. The seam is moved down to 60% of the
-# page -- below where the backdrop puts it, so the weather fills the sheet and
-# the type sits in the quiet under it. And the cloud is composited twice, once
+# Two decisions drive every number below. The seam sits at 62% of the page,
+# a shade above where the backdrop puts it, so that the weather keeps the
+# proportion the backdrop was cut to while the type still has a field of its
+# own to sit in. And the cloud is composited twice, once
 # as the ground and again in front of him, so that real wisps pass over his
 # chest; a plain white ramp would have dissolved him into fog, which reads as
 # a fault in the printing rather than as weather.
 CW=1748; CH=2480                 # A5 at 300dpi, as the frontispiece
-CSEAM=$((CH * 60 / 100))         # cloud bank meets paper field
+CSEAM=$((CH * 62 / 100))         # cloud bank meets paper field
 CPH=$((CH - CSEAM))
-CFW=$((CW * 84 / 100))           # his width on the page
+CFW=$((CW * 90 / 100))           # his width on the page
 CFH=$((1784 * CFW / 1221))       # ... and the height that follows from it
 COX=$(((CW - CFW) / 2))
-CTOP=$((CH * 6 / 100))           # the top of his cap
-CIN=$((CH * 42 / 100))           # cloud starts to pass in front of him
-COUT=$((CH * 555 / 1000))        # cloud entirely in front
+CTOP=$((CH * 5 / 100))           # the top of his cap
+CIN=$((CH * 44 / 100))           # cloud starts to pass in front of him
+COUT=$((CH * 575 / 1000))        # cloud entirely in front
 
-# Landmarks in the backdrop, which is 950x1338 with its seam on row 699.
-SKYW=950; SKYSEAM=699
+# Landmarks in the backdrop, which is 1240x1748 with its seam on row 1114.
+SKYW=1240; SKYSEAM=1114
 
 # The sky, enlarged until the seam falls where we want it and cropped to the
 # page. It is a low-resolution asset being asked to cover an A5 sheet at 300
@@ -155,11 +156,11 @@ magick sky_backdrop.png -crop "${SKYW}x${SKYSEAM}+0+0" +repage -filter Lanczos \
     "plates/_c-sky.png"
 
 # The paper field is mirror-tiled from a band of the backdrop's own stock,
-# taken from below the dove that the crop left stranded at the left edge. The
+# well clear of the seam. The
 # green and blue multipliers take the neutral grey stock to ivory without
 # flattening its grain, the way a flat tint would; the same ivory is used for
 # the mist below, so the two meet invisibly.
-magick sky_backdrop.png -crop "${SKYW}x290+0+1045" +repage -filter Lanczos \
+magick sky_backdrop.png -crop "${SKYW}x400+0+1250" +repage -filter Lanczos \
     -resize "${CW}x" -channel G -evaluate multiply 0.985 \
     -channel B -evaluate multiply 0.955 +channel "plates/_c-band.png"
 magick "plates/_c-band.png" \( "plates/_c-band.png" -flip \) \
@@ -203,8 +204,8 @@ magick "plates/_c-stood.png" "plates/_c-front.png" -compose over -composite \
 # The mist that dissolves the seam. Without it the cloud bank ends on a ruled
 # line across the page, which is how the backdrop itself is drawn and is the
 # one thing about it that looks like stationery.
-MA=$((CH * 42 / 100)); MB=$((CH * 588 / 1000))     # mist fades in over MA..MB,
-MC=$((CH * 636 / 1000)); MD=$((CH * 773 / 1000))   # holds to MC, gone by MD
+MA=$((CH * 44 / 100)); MB=$((CH * 608 / 1000))     # mist fades in over MA..MB,
+MC=$((CH * 656 / 1000)); MD=$((CH * 793 / 1000))   # holds to MC, gone by MD
 magick -size "${CW}x${MA}" xc:black \
        -size "${CW}x$((MB - MA))" gradient:black-white \
        -size "${CW}x$((MC - MB))" xc:white \
