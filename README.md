@@ -22,7 +22,7 @@ ImageMagick and no Python.
 
 A full TeX Live install carries every package the booklet loads —
 `geometry`, `graphicx`, `xcolor`, `eso-pic`, `tikz`, `soul`, `letterspace`,
-`multicol`, `lettrine`, `tcolorbox`, `enumitem`, `lmodern` — and both cover
+`multicol`, `lettrine`, `tcolorbox`, `enumitem`, `hyperref`, `lmodern` — and both cover
 faces, `ebgaramond` and `cormorantgaramond`. On a smaller scheme
 (`scheme-basic`, `scheme-small`) install those two font packages explicitly:
 

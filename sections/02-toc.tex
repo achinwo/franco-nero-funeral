@@ -13,9 +13,19 @@
   \noindent{\color{rulecolor}\rule{\linewidth}{0.2pt}}\par
 }
 
-% #1 numeral, #2 title, #3 gloss, #4 label to take the folio from
+% #1 numeral, #2 title, #3 gloss, #4 label to take the folio from -- and to
+% link to: the whole entry, numeral to folio, is one target, so anywhere in
+% the row can be clicked.
+%
+% The row is boxed first and the box is what gets linked. \hyperref will not
+% take three minipages as its argument -- it processes the argument in a way
+% that loses track of which environment is open, and the \end{minipage} comes
+% back as "\begin{document} ended by \end{minipage}". \pageref* rather than
+% \pageref, too, because hyperref makes a plain \pageref a link of its own,
+% and a link inside a link is undefined.
+\newsavebox{\tocrow}
 \newcommand{\tocentry}[4]{%
-  \noindent
+  \sbox{\tocrow}{%
   \begin{minipage}[t]{\tocnumwidth}\raggedright
     \strut{\footnotesize\scshape\color{rulecolor}#1}
   \end{minipage}%
@@ -25,8 +35,10 @@
     {\footnotesize\itshape\color{accent}#3}
   \end{minipage}%
   \begin{minipage}[t]{\tocpagewidth}\raggedleft
-    \strut{\color{accent}\pageref{#4}}
-  \end{minipage}\par
+    \strut{\color{accent}\pageref*{#4}}
+  \end{minipage}%
+  }%
+  \noindent\hyperref[#4]{\usebox{\tocrow}}\par
 }
 
 \pageghost{ghost-agbada-hi}

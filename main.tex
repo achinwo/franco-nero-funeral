@@ -39,6 +39,24 @@
 % runs to several pages.
 \newcommand{\setsectiontitle}[1]{\markboth{#1}{#1}}
 
+% Where a section begins. Three things happen in the same place because they
+% are the same fact stated three ways: the anchor the contents page links to,
+% the section's entry in the PDF's own outline, and the running title in the
+% footer.
+%
+% \phantomsection is what makes the link land here. A bare \label records
+% whatever position the last stepped counter left behind -- and this booklet
+% has no sectioning commands at all, so that position is the top of the
+% document. Every contents entry would scroll to page one.
+%
+% The starred form sets no running title, for the back cover, which carries
+% no folio to put one in.
+\makeatletter
+\newcommand{\sectionanchor}{\@ifstar\sec@anchor\sec@anchor@titled}
+\newcommand{\sec@anchor}[2]{\phantomsection\label{#1}\pdfbookmark[1]{#2}{#1}}
+\newcommand{\sec@anchor@titled}[2]{\sec@anchor{#1}{#2}\setsectiontitle{#2}}
+\makeatother
+
 \makeatletter
 % The running title, letterspaced, or nothing at all before the first
 % section has declared one.
@@ -491,7 +509,25 @@
 % Define graphic search paths so you can write \includegraphics{photo} directly
 \graphicspath{{assets/images/}}
 
+% Loaded last, as hyperref asks to be. hidelinks is the whole point of the
+% options: on screen the contents page becomes clickable, and on paper nothing
+% changes -- no boxes, no coloured type, nothing for the printer to explain.
+% plainpages=false because the folios restart: the cover and the contents are
+% unnumbered and the first content page is 1 again, so the default page
+% anchors collide and pdfTeX warns about duplicate destinations.
+\usepackage[hidelinks,plainpages=false,pdfpagelabels,
+            pdftitle={Franco Nero International -- Order of Service},
+            pdfsubject={Funeral service booklet}]{hyperref}
+
 \begin{document}
+
+% The cover and the contents carry no folio, but they are still pages, and
+% hyperref names its page anchors after the folio: leave these two as arabic
+% and they are page 1 and page 2, which the content pages then become again
+% when the numbering restarts below. Numbering the front matter in roman --
+% invisibly, since neither page prints a folio -- keeps the two sequences
+% from colliding.
+\pagenumbering{roman}
 
 \input{sections/01-cover}
 \newpage
