@@ -19,6 +19,11 @@
 \usepackage{eso-pic}   % full-page background layer
 \usepackage{tikz}      % photo corners on the mounted prints
 \usepackage{soul}      % letterspaced caps
+% microtype's letterspacing module on its own: \textls tracks display type
+% through the font's own kerning, where soul's \so simply wedges a fixed
+% space between glyphs. Loading letterspace rather than microtype entire
+% leaves protrusion and expansion off, so no page in the booklet reflows.
+\usepackage{letterspace}
 
 \definecolor{primary}{HTML}{2C3E50}   % Deep charcoal / slate
 \definecolor{accent}{HTML}{7F8C8D}    % Soft muted gray
@@ -376,12 +381,7 @@
 \makeatletter
 \newcommand{\tributedivider}{%
   \par\addvspace{5mm}%
-  {\centering
-    \begin{tikzpicture}[inner sep=0pt,outer sep=0pt]
-      \draw[rulecolor,line width=0.3pt] (-18mm,0) -- (-2.6mm,0);
-      \draw[rulecolor,line width=0.3pt] (2.6mm,0) -- (18mm,0);
-      \fill[accent] (0,1mm) -- (1mm,0) -- (0,-1mm) -- (-1mm,0) -- cycle;
-    \end{tikzpicture}\par}%
+  {\centering\diamondrule{18mm}{1mm}\par}%
   \nobreak\vspace{3.5mm}%
 }
 
@@ -420,6 +420,48 @@
   \end{minipage}\par
   \addvspace{0.6mm}%
 }
+
+% A hairline broken by a small diamond: the cover's ornament and, at a
+% different size, what separates one tribute from the next. Drawn rather than
+% set from a dingbat, so it takes the booklet's own rule colour and hairline
+% weight and no font is loaded for the sake of one glyph.
+% #1 half the width of the whole figure, #2 the radius of the diamond.
+\newcommand{\diamondrule}[2]{%
+  \begin{tikzpicture}[inner sep=0pt,outer sep=0pt]
+    \draw[rulecolor,line width=0.3pt] (-#1,0) -- (-2.6mm,0);
+    \draw[rulecolor,line width=0.3pt] (2.6mm,0) -- (#1,0);
+    \fill[accent] (0,#2) -- (#2,0) -- (0,-#2) -- (-#2,0) -- cycle;
+  \end{tikzpicture}%
+}
+
+% --- The cover's typography -------------------------------------------------
+% The booklet is set in Latin Modern, which is a clear, even, unremarkable
+% face -- right for a service sheet people read in a pew, and wrong for the
+% one page that has to carry the photograph. The cover borrows two faces,
+% both already in TeX Live, and uses them nowhere else:
+%
+%   Cormorant Garamond Light  for his name and his nickname. It is a display
+%                             Garamond: very high contrast, long extenders,
+%                             narrow -- at 28pt it is air and line rather
+%                             than ink, which is what a name over a sky
+%                             wants to be.
+%
+%   EB Garamond               for everything small. Cormorant is too fine to
+%                             hold at 8pt in grey on press; EB Garamond is
+%                             the same family of shapes with enough weight to
+%                             survive the size, and it brings true small
+%                             capitals and old-style figures -- 1946 sitting
+%                             in the line rather than shouting over it, which
+%                             is most of the difference between a date that
+%                             reads as a record and one that reads as a life.
+\newcommand{\coverdisplay}{\fontfamily{CormorantGaramond-TOsF}\selectfont}
+\newcommand{\coverlight}{\coverdisplay\fontseries{l}\selectfont}
+\newcommand{\coverface}{\fontfamily{EBGaramond-TOsF}\selectfont}
+
+% A small line in letterspaced small capitals. The tracking is what makes it
+% read as quiet rather than as shouting: at this size and this colour the
+% words are barely there, which is the intention.
+\newcommand{\coverline}[2][220]{\textls[#1]{\scshape #2}}
 
 % Letterspaced caps, for the small display lines on the cover.
 \newcommand{\displaycaps}[1]{{\scshape\so{#1}}}

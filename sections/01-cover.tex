@@ -2,30 +2,43 @@
 
 \pageghost{cover-sky}
 
-% Type sits in the lower third, on the scrim rather than on the photograph.
+% Type sits in the lower third, on the ivory rather than on the photograph.
+% Set in Cormorant Garamond and EB Garamond, which the booklet uses on this
+% page alone -- see the cover typography block in main.tex.
 \vspace*{\fill}
 
 \begin{center}
-  {\small\color{accent}\displaycaps{In Loving Memory of}}
+  % A shade darker than the accent grey the other small lines take: this one
+  % line falls on the mist at the foot of his robe rather than on clean stock,
+  % and grey on grey is where a letterspaced 8pt line disappears.
+  {\coverface\fontsize{8.5}{11}\selectfont\color{primary!60}
+    \coverline{In Loving Memory of}\par}
 
   \vspace{5mm}
-  {\fontsize{22}{26}\selectfont\color{primary}Franco Nero International}
+  {\coverlight\fontsize{28}{32}\selectfont\color{primary}
+    \textls[25]{Franco Nero International}\par}
+
+  \vspace{3mm}
+  {\coverdisplay\itshape\fontsize{14}{17}\selectfont\color{accent}
+    ``De Sky Man''\par}
+
+  \vspace{5mm}
+  \diamondrule{16mm}{1.1mm}\par
+  \vspace{5.5mm}
+
+  {\coverface\fontsize{10.5}{13}\selectfont\color{accent}
+    10\textsuperscript{th} October 1946 \enspace--\enspace
+    15\textsuperscript{th} August 2026\par}
+
+  \vspace{7.5mm}
+  {\coverface\fontsize{9}{12}\selectfont\color{primary}
+    \coverline[160]{Monday, 28\textsuperscript{th} September 2026}\par}
 
   \vspace{2.5mm}
-  {\color{accent}\textit{``De Sky Man''}}
-
-  \vspace{4mm}
-  {\color{rulecolor}\rule{18mm}{0.4pt}}
-
-  \vspace{4mm}
-  {\small\color{accent}10\textsuperscript{th} October 1946 \quad--\quad 15\textsuperscript{th} August 2026}
-
-  \vspace{8mm}
-  {\footnotesize\color{primary}\displaycaps{Monday, 28\textsuperscript{th} September 2026}\par}
-  \vspace{1.5mm}
-  {\footnotesize\color{accent}Service at 4:00 PM\par}
-  {\footnotesize\color{accent}St.\ Jude Catholic Church, Iwogban, Ikpoba Hill, Benin City\par}
-  {\footnotesize\color{accent}Officiating: Reverend Thomas Davies\par}
+  {\coverface\fontsize{9}{12.5}\selectfont\color{accent}
+    Service at 4:00 PM\par
+    St.\ Jude Catholic Church, Iwogban, Ikpoba Hill, Benin City\par
+    {\itshape Officiating: Reverend Thomas Davies}\par}
 \end{center}
 
 \vspace*{2mm}
