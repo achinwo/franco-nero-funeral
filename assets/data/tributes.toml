@@ -1,7 +1,7 @@
 title = "Funeral Tributes"
 
 [[tribute]]
-order = 500
+order = 550
 imagePath = "assets/images/family_pics/Screenshot_20220101-124628_WhatsApp.jpeg"
 title = "OUR TRIBUTE TO GRANDPA"
 from = "Talia & Tyshawn"
@@ -66,3 +66,25 @@ through the mercy of God, rest in peace.
 Amen.
 Until we meet again, Dad—rest well.
 And from wherever you are, keep an eye on us all and watch Arsenal defend the league I am glad you saw us win after more than two decades before passing. Journey well Franco Nero."""
+
+[[tribute]]
+order = 501
+title = "A TRIBUTE TO MY GRANDPA BENIN"
+body = """
+Dear Grandpa,
+My God in heaven knows for a fact why he has called you to stay with him. Thank you for all the memories and laughter you gave us.
+You shall rest in peace. Amen🕊
+
+Love Always,
+Your Handsome Grandson 
+St. Michael Oshoze Atsekhameh"""
+
+[[tribute]]
+order = 500
+title = "A TRIBUTE TO MY GRANDPA"
+body = """
+Grandpa,
+God will make you rest in peace and I will remember every memory of you. I love you and God will bless you forever.
+
+Your Granddaughter,
+Uriel Oshone Atsekhameh"""

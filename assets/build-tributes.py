@@ -58,6 +58,7 @@ import shutil
 import subprocess
 import sys
 import textwrap
+import unicodedata
 
 try:
     import tomllib
@@ -107,6 +108,35 @@ MARKS = {"“": "``", "”": "''", "‘": "`", "’": "'",
          " ": "~", "­": "", "...": r"\dots{}"}
 
 
+def latin_safe(ch):
+    """Whether pdflatex, with the T1/Latin Modern setup this booklet uses,
+    can be trusted to typeset ch.
+
+    Accented Latin letters -- the accessible face of "Unicode" to someone
+    typing a name like Přemysl or Zoë on a phone -- come through fine, along
+    with the Latin-1 symbols (£, °, ½, section and paragraph marks). Emoji
+    and other pictographic symbols do not: pdflatex has no glyph for them
+    and stops the whole build cold rather than leaving a gap, which is a
+    worse outcome here than quietly dropping the one character.
+    """
+    code = ord(ch)
+    if code < 0x80 or 0xA0 <= code <= 0xFF:
+        return True
+    return unicodedata.name(ch, "").startswith(("LATIN ", "COMBINING "))
+
+
+def strip_unsafe(text):
+    kept = []
+    for ch in text:
+        if latin_safe(ch):
+            kept.append(ch)
+        else:
+            name = unicodedata.name(ch, f"U+{ord(ch):04X}")
+            print(f"build-tributes: dropping {ch!r} ({name}) -- "
+                  "pdflatex has no glyph for it", file=sys.stderr)
+    return "".join(kept)
+
+
 def tex(text):
     """Text as the family typed it, as LaTeX will want to read it."""
     out = "".join(ESCAPES.get(ch, ch) for ch in text)
@@ -115,6 +145,7 @@ def tex(text):
     # Straight quotes, alternating open and close. Word processors curl these
     # on their own; a phone keyboard does not.
     out = re.sub(r'"([^"]*)"', r"``\1''", out)
+    out = strip_unsafe(out)
     return re.sub(r"[ \t]+", " ", out).strip()
 
 
