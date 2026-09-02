@@ -42,6 +42,19 @@ paragraph, which is never wrong:
 
   everything else      a paragraph
 
+When a heuristic picks the wrong line -- a short paragraph that happens to
+end in a comma, a prayer that is not the last thing in the letter -- the
+family (or whoever is typing the tribute in) can say so directly by wrapping
+that part in <para>, <signoff> or <prayer> tags. Only those three tag names
+are recognised; anything else is left as ordinary text for the heuristics
+above to read, on the theory that a typo in a tag name should not silently
+swallow a line. Tags are stripped in the process, so nothing named after
+them ever reaches the PDF.
+
+<i>...</i> and <b>...</b> work inline, anywhere within a line, for the odd
+italicised or bold word or phrase -- Arsenal, say, or a name the writer
+wants to stand out.
+
 Tributes run on down the page, separated by a drawn divider rather than a
 page break: these are long letters, and one that ends two lines into a page
 would leave the rest of it looking like an oversight.
@@ -137,16 +150,37 @@ def strip_unsafe(text):
     return "".join(kept)
 
 
+INLINE_TAGS = {"i": "textit", "b": "textbf"}
+INLINE_RE = re.compile(r"<(%s)>(.*?)</\1>" % "|".join(INLINE_TAGS), re.DOTALL)
+
+
 def tex(text):
-    """Text as the family typed it, as LaTeX will want to read it."""
+    """Text as the family typed it, as LaTeX will want to read it.
+
+    <i> and <b> may be used inline, anywhere in a line -- including inside
+    each other, for a bold phrase with an italic word in it -- and come out
+    as \\textit / \\textbf. They are pulled out before the escaping below
+    runs, so the words inside are still escaped and typeset like everything
+    else; only the tags themselves are markup.
+    """
+    out, pos = [], 0
+    for m in INLINE_RE.finditer(text):
+        out.append(plain(text[pos:m.start()]))
+        out.append(r"\%s{%s}" % (INLINE_TAGS[m.group(1)], tex(m.group(2))))
+        pos = m.end()
+    out.append(plain(text[pos:]))
+    return re.sub(r"[ \t]+", " ", "".join(out)).strip()
+
+
+def plain(text):
+    """A run of text with no inline tags left in it, escaped for LaTeX."""
     out = "".join(ESCAPES.get(ch, ch) for ch in text)
     for mark, replacement in MARKS.items():
         out = out.replace(mark, replacement)
     # Straight quotes, alternating open and close. Word processors curl these
     # on their own; a phone keyboard does not.
     out = re.sub(r'"([^"]*)"', r"``\1''", out)
-    out = strip_unsafe(out)
-    return re.sub(r"[ \t]+", " ", out).strip()
+    return strip_unsafe(out)
 
 
 def titlecase(title):
@@ -164,8 +198,33 @@ def titlecase(title):
                     for i, w in enumerate(words))
 
 
+TAG_KINDS = ("para", "signoff", "prayer")
+TAG_RE = re.compile(r"<(%s)>(.*?)</\1>" % "|".join(TAG_KINDS), re.DOTALL)
+
+
 def blocks(body):
-    """Split a tribute's body into ('kind', lines) blocks."""
+    """Split a tribute's body into ('kind', lines) blocks.
+
+    <para>, <signoff> and <prayer> tags are pulled out first and taken at
+    their word; whatever is left, outside the tags, is read by the
+    heuristics in heuristic_blocks(), same as a tribute with no tags at all.
+    """
+    out, pos = [], 0
+    for m in TAG_RE.finditer(body):
+        out += heuristic_blocks(body[pos:m.start()])
+        kind = m.group(1)
+        lines = [ln.strip() for ln in m.group(2).strip().splitlines() if ln.strip()]
+        if lines:
+            out += [("para", [ln]) for ln in lines] if kind == "para" \
+                else [(kind, lines)]
+        pos = m.end()
+    out += heuristic_blocks(body[pos:])
+    return out
+
+
+def heuristic_blocks(body):
+    """Split untagged text into ('kind', lines) blocks by the rules in the
+    module docstring."""
     lines = [ln.strip() for ln in body.strip().splitlines()]
     lines = [ln for ln in lines if ln]
 

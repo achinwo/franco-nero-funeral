@@ -27,7 +27,7 @@ body = """
 It is with a heart filled with sadness, gratitude and faith that I pay tribute to my dear father-in-law, Francis Atsekhameh. His passing has left a space in our family that words cannot fully describe, yet we are comforted by the life he lived and by the hope we have in Christ.
 He was a devoted Catholic whose faith was not merely a title, but an important part of who he was. His devotion reminds us that our earthly journey is temporary and that the promise of eternal life belongs to those who place their trust in God.
 As a husband, father, father-in-law and grandfather, he occupied a cherished place in our family. We thank God for the years we were privileged to share with him and for the family legacy that continues through his children and grandchildren. Though we grieve because we can no longer see him, we remain grateful that he was part of our lives.
-The words of Scripture give us comfort: “I am the resurrection and the life. Whoever believes in me, though he die, yet shall he live.” (John 11:25). We therefore entrust him into the loving and merciful hands of God, believing that death is not the end but a passage into eternal rest.
+The words of Scripture give us comfort: <prayer>“I am the resurrection and the life. Whoever believes in me, though he die, yet shall he live.” (John 11:25).</prayer> We therefore entrust him into the loving and merciful hands of God, believing that death is not the end but a passage into eternal rest.
 Dear Daddy, may the Lord forgive every human failing, reward your faith and receive your soul into His heavenly kingdom. May Our Lady, whom you honoured as a Catholic, intercede for you, and may the angels lead you into paradise.
 You will be remembered with love, spoken of with gratitude and carried always in our hearts. Rest peacefully, Francis Atsekhameh. Until we meet again in the presence of God.
 Eternal rest grant unto him, O Lord,
@@ -88,3 +88,43 @@ God will make you rest in peace and I will remember every memory of you. I love 
 
 Your Granddaughter,
 Uriel Oshone Atsekhameh"""
+
+[[tribute]]
+order = 1900
+# from = "Your fellow Arsenal lover, Emma \"Boogie\" Atsekhameh"
+title = "A Tribute to My Beloved Father, Franco Nero - The Great!"
+body = """
+A Tribute to My Beloved Father, Franco Nero - The Great!
+
+A great tree has fallen, but the roots he planted run deep within us.
+
+Saying goodbye to you, dad, is the hardest thing I have ever had to do. You were not just my father; you were my personal hype man, always hailing me and calling me "my handsome son," my first teacher, my number one disciplinarian who moulded me with cain.
+
+Franco Nero was a man of quiet strength, immense integrity, and boundless love with the cain right beside him.
+
+He taught me the value of hard work, honesty, and generosity. Growing up, he would always invite us to dine with him, and he loved sharing his meat even when you didn't eat with him.
+
+Daddy had a unique way of guiding you, not through loud lectures but with discipline. He had this exceptional belief he vested in me that gave me the courage to keep going.
+
+Daddy was a great story teller, he knows how to hold you down with gists of him from the past. You have to give it to Franco Nero for having the gift of cracking you up with laughter.
+
+August 15th is a day I will always remember. It's been a few weeks, Dad, but I don't think I have accepted that I won't see you again. Though your physical presence is gone, your memories live on.
+
+I will take solace in the memories we created, the laughter we shared, and the love that will never fade.
+
+Thank you for everything... Your <i>"ALAWADA"</i> misses you greatly.
+
+<prayer>Rest in peace, Franco Nero, the great.</prayer>
+
+Your son,
+✍🏽Peter Atsekhameh"""
+
+[[tribute]]
+order = 400
+title = "Goodnight my Sweet Grandpa..."
+from = "Baby Dior"
+body = """
+I love you.
+Your Grandson,
+Oshobugie "Dior" Chinwo
+"""
