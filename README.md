@@ -3,11 +3,13 @@
 An A5 booklet, 31 pages, set in LaTeX and built with `latexmk`.
 
 ```sh
-latexmk                 # -> build/main.pdf, about two seconds
+latexmk                 # -> build/franco_nero_funeral.pdf, about two seconds
 ```
 
-`.latexmkrc` names `main.tex` as the only root and sends the PDF and every
-auxiliary file to `build/`, so `latexmk` on its own is the whole build. There
+`.latexmkrc` names `main.tex` as the only root, sends the PDF and every
+auxiliary file to `build/`, and sets `$jobname` so what comes out is named for
+the booklet rather than for the root file, so `latexmk` on its own is the whole
+build. There
 is nothing to install for this step beyond TeX Live: every generated image and
 every generated `.tex` is committed, so the booklet builds on a machine with no
 ImageMagick and no Python.

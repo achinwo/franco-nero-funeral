@@ -15,6 +15,12 @@
   "latex-workshop.latex.outDir": "%DIR%/build",
   "latex-workshop.latex.auxDir": "%OUTDIR%",
 
+  // The PDF is named for the booklet, not for the root file (see $jobname in
+  // .latexmkrc). The recipe below passes -jobname to latexmk; this setting is
+  // what tells the extension to look for build/franco_nero_funeral.pdf rather
+  // than build/main.pdf, so the viewer and SyncTeX both still find it.
+  "latex-workshop.latex.jobname": "franco_nero_funeral",
+
   // ---- Build recipe ----------------------------------------------------
   "latex-workshop.latex.tools": [
     {
@@ -25,6 +31,7 @@
         "-interaction=nonstopmode",
         "-file-line-error",
         "-pdf",
+        "-jobname=franco_nero_funeral",
         "-outdir=%OUTDIR%",
         "%DOC%"
       ],

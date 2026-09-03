@@ -53,11 +53,18 @@ them ever reaches the PDF.
 
 <i>...</i> and <b>...</b> work inline, anywhere within a line, for the odd
 italicised or bold word or phrase -- Arsenal, say, or a name the writer
-wants to stand out.
+wants to stand out. <br/> (or <br>, or <br />) breaks the line where it
+stands, for the few places a paragraph is really a list: the lines of an
+address, or a verse. One at the very start or end of a paragraph is
+dropped, having no line to break.
 
 Tributes run on down the page, separated by a drawn divider rather than a
 page break: these are long letters, and one that ends two lines into a page
-would leave the rest of it looking like an oversight.
+would leave the rest of it looking like an oversight. Where a particular
+tribute does want the turn, <pagebreak/> takes it. Written between two
+paragraphs it breaks the page there; written at the very top of a body it
+starts that tribute on a page of its own, title and all, and the divider
+that would have introduced it is dropped -- the page turn is the division.
 
 Lines are paragraphs. A tribute typed as one line per sentence would come out
 as one paragraph per sentence, which is the writer's decision to make and not
@@ -151,7 +158,10 @@ def strip_unsafe(text):
 
 
 INLINE_TAGS = {"i": "textit", "b": "textbf"}
-INLINE_RE = re.compile(r"<(%s)>(.*?)</\1>" % "|".join(INLINE_TAGS), re.DOTALL)
+# Either an <i>/<b> pair or a line break. <br>, <br/> and <br /> are all
+# taken, because all three are what people type.
+INLINE_RE = re.compile(r"<(%s)>(.*?)</\1>|<br\s*/?>" % "|".join(INLINE_TAGS),
+                       re.DOTALL)
 
 
 def tex(text):
@@ -159,17 +169,39 @@ def tex(text):
 
     <i> and <b> may be used inline, anywhere in a line -- including inside
     each other, for a bold phrase with an italic word in it -- and come out
-    as \\textit / \\textbf. They are pulled out before the escaping below
-    runs, so the words inside are still escaped and typeset like everything
-    else; only the tags themselves are markup.
+    as \\textit / \\textbf. <br/> breaks the line where it stands. They are
+    pulled out before the escaping below runs, so the words inside are still
+    escaped and typeset like everything else; only the tags are markup.
     """
     out, pos = [], 0
     for m in INLINE_RE.finditer(text):
         out.append(plain(text[pos:m.start()]))
-        out.append(r"\%s{%s}" % (INLINE_TAGS[m.group(1)], tex(m.group(2))))
+        out.append(r"\\" if m.group(1) is None
+                   else r"\%s{%s}" % (INLINE_TAGS[m.group(1)], tex(m.group(2))))
         pos = m.end()
     out.append(plain(text[pos:]))
-    return re.sub(r"[ \t]+", " ", "".join(out)).strip()
+    out = re.sub(r"[ \t]+", " ", "".join(out)).strip()
+    # A break with no line to break -- one opening or closing the text, as in
+    # a paragraph typed "...and we will never forget you.<br/>" -- is an
+    # error in LaTeX rather than the blank line it looks like, and the blank
+    # line between paragraphs is already there.
+    return re.sub(r"^(?:\s*\\\\)+|(?:\\\\\s*)+$", "", out).strip()
+
+
+def spaced(text):
+    """Two breaks with nothing between them mean a blank line, which is what
+    a <br/> alone on its own line is asking for. LaTeX will not take that as
+    a pair of \\\\ -- the second has no line to end -- so it is asked for as
+    the space it is, in the leading of whatever size the text is set at."""
+    return re.sub(r"(?:\\\\\s*){2,}", lambda m: r"\\[\baselineskip]", text)
+
+
+def oneline(text):
+    """Text for a tribute's title, which is one line whatever is typed into
+    it: \\so letterspaces a title character by character and stops at a \\\\,
+    so a break there would take the build down rather than set a title over
+    two lines."""
+    return re.sub(r"\s*\\\\\s*", " ", tex(text)).strip()
 
 
 def plain(text):
@@ -199,25 +231,34 @@ def titlecase(title):
 
 
 TAG_KINDS = ("para", "signoff", "prayer")
-TAG_RE = re.compile(r"<(%s)>(.*?)</\1>" % "|".join(TAG_KINDS), re.DOTALL)
+# A block-level tag: one of the three above wrapped round its lines, or a
+# <pagebreak/> standing on its own. <pagebreak/> is matched here rather than
+# among the inline tags because a page break is a thing that happens between
+# paragraphs; one written mid-sentence ends the paragraph where it stands.
+TAG_RE = re.compile(r"<(%s)>(.*?)</\1>|<pagebreak\s*/?>" % "|".join(TAG_KINDS),
+                    re.DOTALL)
 
 
 def blocks(body):
     """Split a tribute's body into ('kind', lines) blocks.
 
-    <para>, <signoff> and <prayer> tags are pulled out first and taken at
-    their word; whatever is left, outside the tags, is read by the
-    heuristics in heuristic_blocks(), same as a tribute with no tags at all.
+    <para>, <signoff>, <prayer> and <pagebreak/> tags are pulled out first
+    and taken at their word; whatever is left, outside the tags, is read by
+    the heuristics in heuristic_blocks(), same as a tribute with no tags at
+    all.
     """
     out, pos = [], 0
     for m in TAG_RE.finditer(body):
         out += heuristic_blocks(body[pos:m.start()])
+        pos = m.end()
         kind = m.group(1)
+        if kind is None:
+            out.append(("pagebreak", []))
+            continue
         lines = [ln.strip() for ln in m.group(2).strip().splitlines() if ln.strip()]
         if lines:
             out += [("para", [ln]) for ln in lines] if kind == "para" \
                 else [(kind, lines)]
-        pos = m.end()
     out += heuristic_blocks(body[pos:])
     return out
 
@@ -309,19 +350,31 @@ def emit(tributes):
            "% Edit assets/data/tributes.toml and re-run assets/make-plates.sh.",
            ""]
     for i, tribute in enumerate(tributes):
-        if i:
+        body = blocks(tribute["body"])
+        # A tribute opening on <pagebreak/> starts on a fresh page, head and
+        # all: the break has to be set above \tributehead, or the title is
+        # left stranded at the foot of the page before it. The divider goes
+        # with it -- what separates two tributes on one page is a rule, and
+        # what separates them across a page turn is the turn.
+        if body and body[0][0] == "pagebreak":
+            body = body[1:]
+            out += [r"\newpage", ""]
+        elif i:
             out += [r"\tributedivider", ""]
         attribution = tribute.get("from", "").strip()
         out.append(r"\tributehead{%s}{%s}"
-                   % (tex(titlecase(tribute["title"])),
-                      ("from " + tex(attribution)) if attribution else ""))
+                   % (oneline(titlecase(tribute["title"])),
+                      ("from " + oneline(attribution)) if attribution else ""))
         out.append(r"\begin{tribute}")
         if tribute.get("imagePath", "").strip():
             name, pw, ph = photograph(tribute["imagePath"].strip(), i + 1)
             out.append(r"\tributephoto{%s}{%.1fmm}{%.1fmm}" % (name, pw, ph))
-        for kind, lines in blocks(tribute["body"]):
-            joined = tex(" ".join(lines)) if kind == "para" \
-                else r"\\".join(tex(ln) for ln in lines)
+        for kind, lines in body:
+            if kind == "pagebreak":
+                out += [r"\newpage", ""]
+                continue
+            joined = spaced(tex(" ".join(lines)) if kind == "para"
+                            else r"\\".join(tex(ln) for ln in lines))
             if kind == "para":
                 out += [textwrap.fill(joined, WRAP), ""]
             elif kind == "signoff":
@@ -354,11 +407,14 @@ def main():
           f"-> {TEX.relative_to(ROOT)}")
     for tribute in tributes:
         kinds = [kind for kind, _ in blocks(tribute["body"])]
-        print(f"  {tex(titlecase(tribute['title']))}: "
+        print(f"  {oneline(titlecase(tribute['title']))}: "
               f"{kinds.count('para')} paragraphs"
               + (", a sign-off" if "signoff" in kinds else "")
               + (", a closing prayer" if "prayer" in kinds else "")
-              + (", a photograph" if tribute.get("imagePath") else ""))
+              + (", a photograph" if tribute.get("imagePath") else "")
+              + (f", {kinds.count('pagebreak')} page break"
+                 f"{'s' if kinds.count('pagebreak') > 1 else ''}"
+                 if "pagebreak" in kinds else ""))
 
 
 if __name__ == "__main__":

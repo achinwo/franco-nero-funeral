@@ -4,7 +4,6 @@ title = "Funeral Tributes"
 order = 550
 imagePath = "assets/images/family_pics/Screenshot_20220101-124628_WhatsApp.jpeg"
 title = "OUR TRIBUTE TO GRANDPA"
-from = "Talia & Tyshawn"
 body = """
 Dear Grandpa,
 It is difficult to say goodbye to you. We wish we could have more time with you, but we are thankful to God that you were our grandpa and that you will always be part of our family story.
@@ -12,17 +11,18 @@ We will remember you with love. Even though we cannot see you anymore, you will 
 Grandpa, we promise that we will do our best to grow into children you would be proud of. We will love and support one another, respect our family, work hard, remain humble and keep God at the centre of our lives. We will carry the Atsekhameh name with honour and allow the good things you stood for to continue through us.
 As you go to rest, we pray that God welcomes you into heaven and gives you eternal peace. This is not goodbye forever, because our faith teaches us that we shall meet again.
 Rest well, Grandpa. We love you, we will miss you, and we will never forget you.
-With all our love,
-Talia and Tyshawn
+
 Our promise  We will honour Grandpa by loving God, loving our family, working hard and living in a way that would make him proud.
 
 May his soul, and the souls of all the faithful departed,
-through the mercy of God, rest in peace. Amen."""
+through the mercy of God, rest in peace. Amen.
+
+With all our love,
+Talia & Tyshawn"""
 
 [[tribute]]
 order = 1001
 title = "TRIBUTE TO MY FATHER-IN-LAW, FRANCIS ATSEKHAMEH"
-from = "Katie"
 body = """
 It is with a heart filled with sadness, gratitude and faith that I pay tribute to my dear father-in-law, Francis Atsekhameh. His passing has left a space in our family that words cannot fully describe, yet we are comforted by the life he lived and by the hope we have in Christ.
 He was a devoted Catholic whose faith was not merely a title, but an important part of who he was. His devotion reminds us that our earthly journey is temporary and that the promise of eternal life belongs to those who place their trust in God.
@@ -32,11 +32,13 @@ Dear Daddy, may the Lord forgive every human failing, reward your faith and rece
 You will be remembered with love, spoken of with gratitude and carried always in our hearts. Rest peacefully, Francis Atsekhameh. Until we meet again in the presence of God.
 Eternal rest grant unto him, O Lord,
 and let perpetual light shine upon him.
-May his soul rest in perfect peace. Amen."""
+May his soul rest in perfect peace. Amen.
+<br/>
+Your daughter in-law,
+Katie Emesomiade Atsekhameh"""
 
 [[tribute]]
 order = 2000
-from = "Your fellow Arsenal lover, Emma \"Boogie\" Atsekhameh"
 imagePath = "assets/images/family_pics/franco_nero_and_emma.jpeg"
 title = "A Befitting Tribute to My Beloved Dad"
 body = """
@@ -59,13 +61,17 @@ Rest peacefully, Dad.
 You will always be loved.
 You will always be remembered.
 You will forever remain a part of us.
+<prayer>
 Eternal rest grant unto him, O Lord,
 and let perpetual light shine upon him.
 May his soul, and the souls of all the faithful departed,
 through the mercy of God, rest in peace.
-Amen.
+Amen.</prayer>
 Until we meet again, Dad—rest well.
-And from wherever you are, keep an eye on us all and watch Arsenal defend the league I am glad you saw us win after more than two decades before passing. Journey well Franco Nero."""
+And from wherever you are, keep an eye on us all and watch Arsenal defend the league I am glad you saw us win after more than two decades before passing. Journey well Franco Nero.
+
+Your fellow Arsenal lover,
+Emma \"Boogie\" Atsekhameh"""
 
 [[tribute]]
 order = 501
@@ -91,7 +97,6 @@ Uriel Oshone Atsekhameh"""
 
 [[tribute]]
 order = 1900
-# from = "Your fellow Arsenal lover, Emma \"Boogie\" Atsekhameh"
 title = "A Tribute to My Beloved Father, Franco Nero - The Great!"
 body = """
 A Tribute to My Beloved Father, Franco Nero - The Great!
@@ -116,13 +121,12 @@ Thank you for everything... Your <i>"ALAWADA"</i> misses you greatly.
 
 <prayer>Rest in peace, Franco Nero, the great.</prayer>
 
-Your son,
+Your Fine Son,
 ✍🏽Peter Atsekhameh"""
 
 [[tribute]]
 order = 400
 title = "Goodnight my Sweet Grandpa..."
-from = "Baby Dior"
 body = """
 I love you.
 Your Grandson,
