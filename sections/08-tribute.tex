@@ -10,6 +10,20 @@
 
 \vspace{2mm}
 
+% The tributes are generated: assets/build-tributes.py reads
+% assets/data/tributes.toml -- the words as the family sent them -- and
+% writes the file input below. .latexmkrc knows how to run that script, so
+% `latexmk` on its own regenerates the tributes whenever the TOML is the
+% newer of the two.
+%
+% This line is what makes an editor notice. It reads nothing and sets
+% nothing; it opens the TOML and closes it again, which is enough for
+% pdflatex -recorder to list the file as an input of the build. LaTeX
+% Workshop watches what the .fls lists, so saving the TOML triggers a build
+% the same way saving a section does -- without which the family could edit
+% a tribute, save, and watch the PDF not change.
+\IfFileExists{assets/data/tributes.toml}{}{}
+
 \input{assets/data/tributes}
 
 \vfill
