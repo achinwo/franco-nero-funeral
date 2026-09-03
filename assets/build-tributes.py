@@ -17,6 +17,8 @@ the safe way round for a document nobody will proof-read line by line.
     title = "Our Tribute to Grandpa"
     from  = "Talia & Tyshawn"  # optional; printed as "from Talia & Tyshawn"
     imagePath = "assets/..."   # optional; a photograph to set the letter around
+    dropcap = true             # optional, false by default; opens the letter
+                               # on a two-line initial
     body  = "..."              # one line per paragraph, blank lines ignored
                                # (a TOML multi-line string, in practice)
 
@@ -108,6 +110,15 @@ PHOTO_W = 40.0
 PHOTO_H = 38.0
 PHOTO_PIXELS = 1200   # long edge; ~600dpi at the size these print
 
+# A two-line initial needs two lines of its own paragraph to sit against.
+# The tribute measure holds about eighty characters of 9pt text, so a first
+# paragraph shorter than two of those is set with no initial at all: the
+# alternative is an initial with nothing beside its lower half, and the
+# paragraph *after* it starting at the margin and setting straight through
+# the letter. (A tribute with a photograph runs on a narrower measure and
+# reaches two lines sooner, so this is the safe number for both.)
+DROPCAP_CHARS = 160
+
 PRAYER_LINE = 72      # a prayer is set in short lines; prose runs longer
 PRAYER_LINES = 5      # ... and is a few of them, not a closing paragraph
 SIGNOFF_LINE = 44
@@ -194,6 +205,34 @@ def spaced(text):
     a pair of \\\\ -- the second has no line to end -- so it is asked for as
     the space it is, in the leading of whatever size the text is set at."""
     return re.sub(r"(?:\\\\\s*){2,}", lambda m: r"\\[\baselineskip]", text)
+
+
+def dropcapped(raw, joined):
+    """A paragraph rewritten to open on an initial, or None to leave it alone.
+
+    The split is made on the set text rather than on what the family typed,
+    so that the escaping, the marks and the inline tags have all already run
+    and what goes into the macro is exactly what would have been printed
+    anyway. That is safe because the raw text is checked first: a paragraph
+    opening on a letter still opens on that same letter once it has been
+    through tex(), which touches punctuation and leaves letters alone.
+
+    A paragraph opening on anything else -- a quotation mark, a numeral, the
+    date -- gets no initial, and neither does one too short to hold it.
+    Splitting an initial out of an opening quote is a job for a typesetter
+    with the page in front of them, and an ordinary paragraph is never wrong.
+    """
+    if not raw or not raw[0].isalpha() or not latin_safe(raw[0]):
+        print("build-tributes: no initial -- the first paragraph does not "
+              "open on a letter", file=sys.stderr)
+        return None
+    if len(raw) < DROPCAP_CHARS:
+        print(f"build-tributes: no initial -- the first paragraph is "
+              f"{len(raw)} characters and a two-line initial needs about "
+              f"{DROPCAP_CHARS} to sit against", file=sys.stderr)
+        return None
+    m = re.match(r"(\w)(\w*)(.*)", joined, re.DOTALL)
+    return m and r"\tributedropcap{%s}{%s}%s" % m.groups()
 
 
 def oneline(text):
@@ -361,14 +400,17 @@ def emit(tributes):
             out += [r"\newpage", ""]
         elif i:
             out += [r"\tributedivider", ""]
-        attribution = tribute.get("from", "").strip()
+        attribution = (tribute.get("from") or tribute.get("subtitle", "")).strip()
         out.append(r"\tributehead{%s}{%s}"
                    % (oneline(titlecase(tribute["title"])),
-                      ("from " + oneline(attribution)) if attribution else ""))
+                      (oneline(attribution)) if attribution else ""))
         out.append(r"\begin{tribute}")
         if tribute.get("imagePath", "").strip():
             name, pw, ph = photograph(tribute["imagePath"].strip(), i + 1)
             out.append(r"\tributephoto{%s}{%.1fmm}{%.1fmm}" % (name, pw, ph))
+        # Only the first paragraph takes the initial, and only if the tribute
+        # asked for one. A letter has one opening.
+        opening = bool(tribute.get("dropcap", False))
         for kind, lines in body:
             if kind == "pagebreak":
                 out += [r"\newpage", ""]
@@ -376,6 +418,9 @@ def emit(tributes):
             joined = spaced(tex(" ".join(lines)) if kind == "para"
                             else r"\\".join(tex(ln) for ln in lines))
             if kind == "para":
+                if opening:
+                    opening = False
+                    joined = dropcapped(" ".join(lines).lstrip(), joined) or joined
                 out += [textwrap.fill(joined, WRAP), ""]
             elif kind == "signoff":
                 out += [r"\tributesignoff{%s}" % joined, ""]
@@ -412,6 +457,7 @@ def main():
               + (", a sign-off" if "signoff" in kinds else "")
               + (", a closing prayer" if "prayer" in kinds else "")
               + (", a photograph" if tribute.get("imagePath") else "")
+              + (", an initial" if tribute.get("dropcap") else "")
               + (f", {kinds.count('pagebreak')} page break"
                  f"{'s' if kinds.count('pagebreak') > 1 else ''}"
                  if "pagebreak" in kinds else ""))

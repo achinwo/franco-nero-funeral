@@ -529,6 +529,23 @@
   \addvspace{0.6mm}%
 }
 
+% The initial a tribute opens on, for a writer who asked for one with
+% dropcap = true in the TOML. #1 is the letter, #2 the rest of its word,
+% which lettrine sets in small caps -- the old way of getting from a
+% display letter back down to text without a step in between.
+%
+% Two lines deep rather than the usual three: a tribute is set at 9pt on the
+% full 120mm measure, and a three-line initial there stops being punctuation
+% and becomes a monogram with a paragraph parked beside it.
+%
+% Set in the cover's face. Page furniture and display letters are where the
+% booklet is allowed its other voice, and an EB Garamond initial over Latin
+% Modern text is the contrast a printed letter has always used.
+\newcommand{\tributedropcap}[2]{%
+  \lettrine[lines=2, lhang=0.1, findent=0.15em, nindent=0em,
+            slope=0em]{\coverface\color{primary}#1}{#2}%
+}
+
 % A hairline broken by a small diamond: the cover's ornament and, at a
 % different size, what separates one tribute from the next. Drawn rather than
 % set from a dingbat, so it takes the booklet's own rule colour and hairline
