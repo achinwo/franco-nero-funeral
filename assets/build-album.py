@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Build the family album pages of the Photographs section.
+r"""Build the family album pages of the Photographs section.
 
 Reads every image in assets/images/family_pics/, normalises each one for
 print, solves a justified-rows layout across as many pages as it takes, and
@@ -18,6 +18,7 @@ photographs -- cropping them is not a decision a script should make.
 """
 
 import hashlib
+import itertools
 import pathlib
 import subprocess
 import sys
@@ -36,14 +37,45 @@ TEXT_W = 120.0
 TEXT_H = 180.0
 GUTTER = 3.0
 RULE = 0.106          # 0.3pt frame, which \fbox adds outside the image
+# Held back from the measure so that a row solved to span it exactly cannot
+# be tipped over it by the rounding in the two decimal places the widths are
+# written to. A row that overruns \linewidth by a thousandth of a millimetre
+# does not warn: the gutter between two photographs is a legal place to
+# break a line, so TeX quietly sets the rest of the row underneath, and the
+# page is suddenly a row taller than the arithmetic here believes.
+EPSILON = 0.1
 HEAD_RESERVE = 16.0   # the "The Family Album" head on the first album page
 
-# Rows aim for this height and close as soon as they are no taller. At 56mm
-# a row of three portraits (50mm) closes and a row of two (78mm) does not,
-# which is the rhythm the album wants: at four across, the faces on an A5
+# A page is three rows deep, so a row wants to be about a third of it. The
+# arithmetic says 55mm; 52 is set instead because of what the shapes do at
+# the margin. At 55 a portrait beside a landscape (55mm) beats three
+# portraits (54mm) almost every time, and the album comes out 21 rows, which
+# is one more than six pages of three will hold -- it ends on two half-empty
+# pages. At 52 the three-across rows win often enough to make it 20, which
+# is exactly six pages of three after the opening page, and nothing is left
+# over. Four photographs across was tried and abandoned: the faces on an A5
 # page are 27mm wide and stop being readable.
-TARGET_H = 56.0
+TARGET_H = 52.0
 MAX_H = 78.0          # a short last row is centred rather than blown up
+ROW_MIN, ROW_MAX = 2, 3
+WINDOW = 6            # how far ahead compose() may look for a shape it needs
+
+# Slack a page may put between its rows before it stops spreading them and
+# centres the block instead. Four millimetres on top of the gutter is air;
+# much more and the rows stop reading as a grid.
+MAX_EXTRA = 4.0
+# Held back from the page in the arithmetic below, to cover what LaTeX adds
+# between one row and the next (\lineskip, \parskip, the 0.3pt frame \fbox
+# draws outside each photograph) that this script does not model. Without it
+# a page computed to fill exactly would spill its last row onto the next one.
+SAFETY = 3.0
+# \topskip, the glue TeX puts above the first box on a page, as read back
+# from the document with \showthe\topskip. A row of photographs is far
+# taller than it, so a page opening on one gets none of it -- but \vspace*
+# opens with a zero-height rule, which is shorter than it, so a page opening
+# on that gets all 11pt. A page wanting a top margin asks for that much less
+# of it; a page wanting none asks for nothing at all, and gets nothing.
+TOPSKIP = 3.87
 
 MIN_PIXELS = 600      # below this the print would be visibly soft at album size
 LONG_EDGE = 1500      # normalised size; ~380dpi at the largest size used here
@@ -144,77 +176,123 @@ def normalise(kept):
     return out
 
 
-def rows(photos):
-    """Greedy justified rows: keep adding until the row is no taller than
-    TARGET_H, which for these mostly-portrait photographs lands on three."""
-    packed, row = [], []
-    for item in photos:
-        row.append(item)
-        if height_of(row) <= TARGET_H:
-            packed.append(row)
-            row = []
-    if row:
-        packed.append(row)
+def compose(photos):
+    """Build the rows.
 
-    # A single photograph stranded on the last row looks like a mistake.
-    # Move one down from the row above so the album ends on a pair.
-    if len(packed) > 1 and len(packed[-1]) == 1 and len(packed[-2]) > 2:
-        packed[-1].insert(0, packed[-2].pop())
+    A row's height is decided by the shapes in it, and only some of the
+    combinations are any use: three portraits come to 54mm and a portrait
+    beside a landscape to 55mm, but two landscapes come to 41mm and two
+    portraits to 83mm. Filling rows in the order the photographs happen to
+    arrive takes whatever those shapes give, which is how a page ends up
+    either three-fifths full or a row over.
+
+    So rows are composed rather than filled: of the two- and three-photograph
+    rows that can be made from the next few, take whichever comes closest to
+    TARGET_H. Mixing the shapes is the whole trick -- a landscape set beside
+    two portraits is what keeps the rows, and with them the pages, even. The
+    window is what keeps a photograph near the ones it arrived with: a search
+    over the whole album would sort it by shape, which is not an order
+    anybody would want to look through.
+    """
+    pool, packed = list(photos), []
+    while len(pool) > ROW_MAX:
+        window = range(min(WINDOW, len(pool)))
+        best = min((combo
+                    for k in range(ROW_MIN, ROW_MAX + 1)
+                    for combo in itertools.combinations(window, k)),
+                   key=lambda c: abs(height_of([pool[i] for i in c]) - TARGET_H))
+        packed.append([pool[i] for i in best])
+        for i in sorted(best, reverse=True):
+            pool.pop(i)
+
+    # What is left is a last row of one, two or three. One on its own reads
+    # as a photograph nobody found a place for, so it joins the row above --
+    # or, if that row is already full, takes one of its three down for company.
+    if len(pool) == 1 and packed:
+        if len(packed[-1]) < ROW_MAX:
+            packed[-1] += pool
+        else:
+            packed.append([packed[-1].pop()] + pool)
+    elif pool:
+        packed.append(pool)
     return packed
 
 
 def height_of(row):
-    span = TEXT_W - (len(row) - 1) * GUTTER - len(row) * 2 * RULE
+    span = TEXT_W - EPSILON - (len(row) - 1) * GUTTER - len(row) * 2 * RULE
     return span / sum(item[1] for item in row)
 
 
+def row_height(row):
+    return min(height_of(row), MAX_H)
+
+
 def paginate(packed):
-    """Order rows so the pages come out evenly filled.
+    """Rows into pages, in the order the rows were composed.
 
-    Left in photo order the rows here run short, short, tall, tall, which
-    packs as two thin rows on one page and two deep ones on the next -- the
-    first page then ends in 60mm of white that reads as a mistake. Dealing
-    tall and short alternately gives every page one of each. The photographs
-    have no meaningful sequence (the filenames are timestamps), so ordering
-    rows for the page costs nothing.
+    The rows now all land near one height, so filling each page in turn is
+    enough to keep the pages even -- there is nothing left for a reordering
+    to fix, and the album keeps the sequence it arrived in.
     """
-    by_height = sorted(packed, key=lambda r: -min(height_of(r), MAX_H))
-    out, lo, hi = [], 0, len(by_height) - 1
-    while lo <= hi:
-        out.append(by_height[lo])
-        lo += 1
-        if lo <= hi:
-            out.append(by_height[hi])
-            hi -= 1
-    return out
+    pages, page, used = [], [], HEAD_RESERVE
+    for row in packed:
+        h = row_height(row)
+        if page and used + GUTTER + h > TEXT_H - SAFETY:
+            pages.append(page)
+            page, used = [], 0.0
+        used += (GUTTER if page else 0.0) + h
+        page.append(row)
+    if page:
+        pages.append(page)
+
+    # One row alone on the last page is the same mistake as one photograph
+    # alone on the last row, a page further out.
+    if len(pages) > 1 and len(pages[-1]) == 1 and len(pages[-2]) > 2:
+        pages[-1].insert(0, pages[-2].pop())
+    return pages
 
 
-def emit(packed):
+def emit(pages):
     lines = ["% Generated by assets/build-album.py -- do not edit by hand.",
              "% Re-run assets/make-plates.sh after changing family_pics/.",
              "%",
              "% Provenance, so a photograph on the page can be traced back to",
              "% the file it came from:"]
-    for row in packed:
-        for name, _, origin in row:
-            lines.append(f"%   {name.rsplit('/', 1)[1]}  <-  {origin}")
+    for page in pages:
+        for row in page:
+            for name, _, origin in row:
+                lines.append(f"%   {name.rsplit('/', 1)[1]}  <-  {origin}")
     lines.append("")
-    used = HEAD_RESERVE
-    first = True
-    for row in packed:
-        h = min(height_of(row), MAX_H)
-        if not first and used + h > TEXT_H:
-            lines += ["\\newpage", ""]
-            used = 0.0
-        used += h + GUTTER
-        first = False
 
-        cells = []
-        for name, aspect, _ in row:
-            cells.append(f"  \\albumphoto{{{name}}}{{{h * aspect:.2f}mm}}{{{h:.2f}mm}}")
-        lines.append("\\albumrow{%")
-        lines.append("%\n  \\albumgap\n".join(cells) + "%")
-        lines += ["}", ""]
+    for index, page in enumerate(pages):
+        if index:
+            lines += [r"\newpage", ""]
+
+        # The rows are set to fill the page rather than to sit at the top of
+        # it with the remainder falling out of the bottom, which is what
+        # leaves an album page looking half-finished. The slack goes between
+        # the rows, up to MAX_EXTRA of it; whatever a short page cannot
+        # spend that way is split top and bottom instead, so the last page
+        # of the album reads as a centred block rather than a page that ran
+        # out. A full page has nothing left to centre and sits flush.
+        avail = TEXT_H - SAFETY - (HEAD_RESERVE if not index else 0.0)
+        heights = [row_height(row) for row in page]
+        gaps = len(page) - 1
+        slack = avail - sum(heights) - GUTTER * gaps
+        gap = GUTTER + (min(slack / gaps, MAX_EXTRA) if gaps and slack > 0 else 0.0)
+        top = max(avail - sum(heights) - gap * gaps, 0.0) / 2
+
+        if top > TOPSKIP:
+            lines.append(f"\\vspace*{{{top - TOPSKIP:.2f}mm}}")
+        for row, h in zip(page, heights):
+            if row is not page[0]:
+                lines.append(f"\\vspace{{{gap:.2f}mm}}")
+            cells = [f"  \\albumphoto{{{name}}}{{{h * aspect:.2f}mm}}{{{h:.2f}mm}}"
+                     for name, aspect, _ in row]
+            lines.append("\\albumrow{%")
+            lines.append("%\n  \\albumgap\n".join(cells) + "%")
+            lines.append("}")
+        lines.append("")
     TEX.write_text("\n".join(lines) + "\n")
 
 
@@ -224,10 +302,11 @@ def main():
         TEX.write_text("% No usable images in assets/images/family_pics/.\n")
         print("build-album: no usable images found", file=sys.stderr)
         return
-    packed = paginate(rows(normalise(kept)))
-    emit(packed)
+    pages = paginate(compose(normalise(kept)))
+    emit(pages)
     print(f"build-album: {len(kept)} photographs, "
-          f"{len(packed)} rows -> {TEX.relative_to(ROOT)}")
+          f"{sum(len(p) for p in pages)} rows, {len(pages)} pages "
+          f"-> {TEX.relative_to(ROOT)}")
     for name, why in dropped:
         print(f"  skipped {name}: {why}")
 

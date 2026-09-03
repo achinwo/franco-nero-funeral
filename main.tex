@@ -323,8 +323,15 @@
 % gutters span \linewidth exactly. The frame is drawn with \fbox rather than
 % tikz so that the 0.3pt rule sits outside the image and the arithmetic the
 % script did stays true; it allows for that rule when it computes widths.
+% \kern, not \hspace: the gutter between two photographs must not be a place
+% TeX may break the line. A row is solved to span the measure exactly, so a
+% row that comes out a thousandth of a millimetre over -- which the rounding
+% in the generated file can do -- would be broken at the gutter and its tail
+% set on a line of its own, silently making the page a row taller than the
+% script laid out. A kern cannot be broken at, so an overrun that large
+% announces itself as an Overfull \hbox instead of reflowing the page.
 \newlength{\albumgutter}\setlength{\albumgutter}{3mm}
-\newcommand{\albumgap}{\hspace{\albumgutter}}
+\newcommand{\albumgap}{\kern\albumgutter}
 
 \newcommand{\albumphoto}[3]{%
   \begingroup
@@ -337,9 +344,15 @@
 % stretched to the full measure -- sits in the middle of the page instead of
 % hanging off the left edge. A full row already spans \linewidth, where
 % centring does nothing.
+%
+% The space between one row and the next is set by the generated file rather
+% than here: the script fills each page by spreading whatever is left over
+% between its rows, so the gap is a property of the page, not of the row.
+% \nointerlineskip drops the glue TeX would otherwise put above the row,
+% which would be added to a gap the script has already measured.
 \newcommand{\albumrow}[1]{%
-  \par{\centering\leavevmode#1\par}%
-  \vspace{\albumgutter}%
+  \par\nointerlineskip
+  {\centering\leavevmode#1\par}%
 }
 
 % The head over the first album page. Quieter than a section title: these

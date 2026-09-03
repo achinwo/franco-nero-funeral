@@ -10,3 +10,4 @@ build/
 *.blg
 sample.texout/
 .DS_Store
+__pycache__/

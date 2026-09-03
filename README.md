@@ -1,6 +1,6 @@
 # Franco Nero International — order of service
 
-An A5 booklet, 31 pages, set in LaTeX and built with `latexmk`.
+An A5 booklet, 42 pages, set in LaTeX and built with `latexmk`.
 
 ```sh
 latexmk                 # -> build/franco_nero_funeral.pdf, about two seconds
