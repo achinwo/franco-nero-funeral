@@ -1,5 +1,6 @@
 title = "Funeral Tributes"
 
+#MARK: Talia & Tyshawn
 [[tribute]]
 order = 550
 imagePath = "assets/images/family_pics/Screenshot_20220101-124628_WhatsApp.jpeg"
@@ -20,6 +21,7 @@ through the mercy of God, rest in peace. Amen.
 With all our love,
 Talia & Tyshawn"""
 
+#MARK: Katie Emesomiade Atsekhameh
 [[tribute]]
 order = 1001
 title = "TRIBUTE TO MY FATHER-IN-LAW, FRANCIS ATSEKHAMEH"
@@ -37,6 +39,7 @@ May his soul rest in perfect peace. Amen.
 Your daughter in-law,
 Katie Emesomiade Atsekhameh"""
 
+#MARK: Emma "Boogie" Atsekhameh
 [[tribute]]
 order = 2000
 imagePath = "assets/images/family_pics/franco_nero_and_emma.jpeg"
@@ -73,6 +76,7 @@ And from wherever you are, keep an eye on us all and watch Arsenal defend the le
 Your fellow Arsenal lover,
 Emma \"Boogie\" Atsekhameh"""
 
+#MARK: St. Michael Oshoze Atsekhameh
 [[tribute]]
 order = 501
 title = "A TRIBUTE TO MY GRANDPA BENIN"
@@ -85,6 +89,7 @@ Love Always,
 Your Handsome Grandson 
 St. Michael Oshoze Atsekhameh"""
 
+#MARK: Uriel Oshone Atsekhameh
 [[tribute]]
 order = 500
 title = "A TRIBUTE TO MY GRANDPA"
@@ -95,6 +100,7 @@ God will make you rest in peace and I will remember every memory of you. I love 
 Your Granddaughter,
 Uriel Oshone Atsekhameh"""
 
+#MARK: Peter Atsekhameh
 [[tribute]]
 order = 1900
 title = "A Tribute to My Beloved Father, Franco Nero - The Great!"
@@ -122,8 +128,10 @@ Thank you for everything... Your <i>"ALAWADA"</i> misses you greatly.
 <prayer>Rest in peace, Franco Nero, the great.</prayer>
 
 Your Fine Son,
-✍🏽Peter Atsekhameh"""
-
+✍🏽Peter Atsekhameh
+<pagebreak/>
+"""
+#MARK: Dior
 [[tribute]]
 order = 400
 title = "Goodnight my Sweet Grandpa..."
@@ -133,6 +141,7 @@ Your Grandson,
 Oshobugie "Dior" Chinwo
 """
 
+#MARK: Emike De Emike
 [[tribute]]
 order = 1899
 imagePath = "assets/images/family_pics/franco_nero_and_emike.jpeg"
@@ -198,6 +207,7 @@ Yours Truly,
 "Your Omosi No Ni 20 I'zao"
 """
 
+#MARK: Mrs Roseline Idokogi
 [[tribute]]
 order = 300
 title = "A Tribute to my beloved uncle. Sir Francis Onoteagbor Atsekhameh"
@@ -215,6 +225,7 @@ Adieu beloved uncle with a golden heart!!!
 <signoff>Mrs Roseline Idokogi</signoff>
 """
 
+#MARK: Signed: Lady G.E.T. Umolu
 [[tribute]]
 order = 200
 dropcap = true
@@ -235,6 +246,7 @@ For: Chairman
 </signoff>
 """
 
+#MARK: Solomon Osigbemeh Atsekhameh 001.
 [[tribute]]
 order = 10000
 title = "TRIBUTE TO MY FATHER SIR FRANCIS ATSEKHAMEH <br/>(FRANCO NERO INTL)"
@@ -258,4 +270,52 @@ Thank you for life and everything daddy, probably didn't say it as much as I sho
 Your Son,
 Solomon Osigbemeh Atsekhameh 001.
 </signoff>
+"""
+
+#MARK: David Eshemokhai Atsekhameh
+[[tribute]]
+order = 9000
+title = "A TRIBUTE TO MY FATHER SIR FRANCIS ONOTEAGBOR  ATSEKHAMEH"
+body = """
+Francis  Onoteagbor Atsekhameh  a.k.a Franco Nero was a good father who lived a great and fulfilled life. He raised a great family with his wife Pauline  Charity Atsekhameh and together they had five wonderful children, raised in a very Catholic and christian way.
+He always taught us to be united, have the fear of God, and honour our mother Mary who has always interceded for the family in all ramifications. He was also a legionary who believed in praying the rosary to strengthen our faith and unite our family in Christ Jesus. We will miss Daddy and we are very grateful for all he did for the growth of the entire Atsekhameh family. We know you have gone to be with our heavenly Father, our mother Mary and our Lord Jesus Christ.
+Your beloved children will miss  you so much.
+
+<prayer>
+Adieu Daddy,
+Adieu Franco Nero, Adieu Francis Onoteagbor Atsekhameh
+</prayer>
+
+Your Son,
+David Eshemokhai Atsekhameh
+"""
+
+#MARK: Treasure
+[[tribute]]
+order = 550
+title = "Tribute to Grandpa Benin"
+body = """
+I have never met a man who loved animals as much as Grandpa did. I will always remember our first trip to the Benin house. There were chickens and two dogs named Brownie and Bingo. Grandpa loved taking care of them. He would feed the chickens and always made sure their cage was properly locked. He even let us bathe the dogs once!
+These little moments showed us how caring, patient, and loving Grandpa was. He had such a joyful heart, and being around him always made us happy.
+Whenever Grandpa called us on the phone, he was always so happy to hear our voices. He would pray for us and tell us to do great things in life and make him proud. Those prayers and words will always stay in our hearts. I pray that his prayers will continue to follow us as we grow and become the people he wanted us to be.
+Grandpa, we will miss your smile, your joyful heart, your prayers, and all the beautiful memories you gave us.
+
+<prayer>Rest peacefully, Grandpa. We love you, and we will miss you so much.</prayer>
+
+Your Grandson,
+Treasure
+"""
+
+#MARK: Oyo In-law - Janet Usuyak
+[[tribute]]
+order = 350
+title = "TRIBUTE TO MY DEAR IN-LAW, FRANCIS ATSEKHAMEH"
+body = """
+My dear in-law, it is difficult to say goodbye. I fondly called you “in-law,” and today, those simple words carry so much meaning.
+Your passing leaves an empty place in our family. We would have wished for more time together, but we thank God for your life and for the years He granted you among us.
+As we mourn you, my heart is with your children, grandchildren and all those who loved you. May God comfort us and give us strength to bear this loss.
+Rest peacefully, my dear in-law, Francis Atsekhameh. May God grant you eternal rest, and may His perpetual light shine upon you. Amen.
+
+Your Oyo In-law,
+Janet Usuyak
 """

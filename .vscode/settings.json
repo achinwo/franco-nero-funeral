@@ -1,26 +1,27 @@
 {
   // ---- Root file -------------------------------------------------------
   // main.tex is the only root; never treat a section file as its own project.
-  "latex-workshop.latex.search.rootFiles.include": ["main.tex"],
-  "latex-workshop.latex.search.rootFiles.exclude": ["sections/**", "styles/**"],
+  "latex-workshop.latex.search.rootFiles.include": [
+    "main.tex"
+  ],
+  "latex-workshop.latex.search.rootFiles.exclude": [
+    "sections/**",
+    "styles/**"
+  ],
   "latex-workshop.latex.rootFile.doNotPrompt": true,
-
   // ---- Rebuild main.tex whenever a dependency (a section) changes ------
   "latex-workshop.latex.autoBuild.run": "onFileChange",
   "latex-workshop.latex.autoBuild.cleanAndRetry.enabled": true,
-
   // ---- Output ----------------------------------------------------------
   // Must match $out_dir/$aux_dir in .latexmkrc, otherwise the extension
   // cannot find build/main.fls and stops watching the section files.
   "latex-workshop.latex.outDir": "%DIR%/build",
   "latex-workshop.latex.auxDir": "%OUTDIR%",
-
   // The PDF is named for the booklet, not for the root file (see $jobname in
   // .latexmkrc). The recipe below passes -jobname to latexmk; this setting is
   // what tells the extension to look for build/franco_nero_funeral.pdf rather
   // than build/main.pdf, so the viewer and SyncTeX both still find it.
   "latex-workshop.latex.jobname": "franco_nero_funeral",
-
   // ---- Build recipe ----------------------------------------------------
   "latex-workshop.latex.tools": [
     {
@@ -39,16 +40,49 @@
     }
   ],
   "latex-workshop.latex.recipes": [
-    { "name": "latexmk", "tools": ["latexmk"] }
+    {
+      "name": "latexmk",
+      "tools": [
+        "latexmk"
+      ]
+    }
   ],
   "latex-workshop.latex.recipe.default": "first",
   // A "%! TeX program = ..." magic comment in main.tex would otherwise
   // override the recipe with a bare `pdflatex %DOC%` (no -outdir), dumping
   // main.pdf/.aux/.log into the project root. Force the recipe above instead.
   "latex-workshop.latex.build.forceRecipeUsage": true,
-
   // ---- Viewer / cleanup -------------------------------------------------
   "latex-workshop.view.pdf.viewer": "tab",
   "latex-workshop.latex.clean.subfolder.enabled": true,
-  "latex-workshop.latex.autoClean.run": "never"
+  "latex-workshop.latex.autoClean.run": "never",
+  "commentAnchors.tags.anchors": {
+    "MARK": {
+      "scope": "file",
+      "iconColor": "blue",
+      "highlightColor": "#3ea8ff",
+      "behavior": "anchor",
+      "isBold": true
+    },
+    // Optional: region tag if you want collapsible sections in the sidebar
+    "SECTION": {
+      "scope": "file",
+      "iconColor": "purple",
+      "highlightColor": "#BA68C8",
+      "behavior": "region",
+      "isBold": true
+    }
+  },
+  // Ensure items are ordered sequentially like a document outline
+  "commentAnchors.tags.sortMethod": "line",
+  // Supported delimiters between the tag and your label (default already includes ": ")
+  "commentAnchors.tags.separators": [
+    ": ",
+    " - ",
+    " "
+  ],
+  // Hide the tag name (e.g. "MARK") in the sidebar list so only the label shows
+  "commentAnchors.tags.displayTagName": false,
+  // Show line numbers next to anchors in the sidebar
+  "commentAnchors.tags.displayLineNumber": true
 }

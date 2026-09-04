@@ -628,6 +628,21 @@
 
 \begin{document}
 
+% The colour of the text, set once for the whole booklet.
+%
+% Every macro below that sets type -- the spoken lines, the responses, the
+% heads -- asks for \color{primary} by name, but ordinary prose asks for
+% nothing and so used to come out in TeX's default black. That is most of
+% two Masses: the readings, the Gospels, the biography. On screen the
+% difference between black and a deep slate is easy to miss; on paper it is
+% not, and the pages came back from the printer with the readings visibly
+% darker and cooler than the responses beside them.
+%
+% Setting it here rather than adding \color{primary} to another twenty
+% places means prose inherits the booklet's ink by default, and the one way
+% to print something in another colour is to say so.
+\color{primary}
+
 % The cover and the contents carry no folio, but they are still pages, and
 % hyperref names its page anchors after the folio: leave these two as arabic
 % and they are page 1 and page 2, which the content pages then become again
