@@ -26,9 +26,26 @@
 % leaves protrusion and expansion off, so no page in the booklet reflows.
 \usepackage{letterspace}
 
-\definecolor{primary}{HTML}{2C3E50}   % Deep charcoal / slate
-\definecolor{accent}{HTML}{7F8C8D}    % Soft muted gray
-\definecolor{rulecolor}{HTML}{BDC3C7}  % Thin divider line
+% The booklet's ink. Three tones of one colour, and the colour is the one
+% already in the photographs: assets/make-plates.sh tones every plate to a
+% sepia running from #2e2620 to a cream, and the photo corners are cut from
+% #6B5B4B. The type is set in the same warmth, so the pages read as one
+% object rather than as cool type laid over warm pictures.
+%
+% What was here before -- #2C3E50, #7F8C8D, #BDC3C7 -- sat at hue 210, 184
+% and 204: the blue-greys a screen reaches for by default. On a screen they
+% pass. Printed, opposite a sepia photograph, they read as two different
+% jobs bound together, and the ink looks slightly cold for the occasion.
+%
+% primary is a bistre black, dark enough to hold a 9pt page (15:1 on white,
+% where the old blue managed 11:1). accent carries the rubrics and the
+% speaker labels, and is the one number here that was a fault rather than a
+% preference: at 3.5:1 the old grey dropped below what 8pt italic can carry
+% on paper, and the rubrics came back from the printer barely legible. At
+% 5:1 they are quiet without disappearing.
+\definecolor{primary}{HTML}{2B2620}    % bistre -- the text, the heads, the responses
+\definecolor{accent}{HTML}{7A6E62}     % warm grey -- rubrics, speaker labels, captions
+\definecolor{rulecolor}{HTML}{CBC3B7}  % the hairlines and dividers
 
 % Page numbering. The cover, contents and back cover carry no folio; the
 % numbered sequence starts at 1 on the first content page.
