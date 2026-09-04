@@ -1,0 +1,130 @@
+%! TeX root = booklet.tex
+%
+% Imposition, not a document. This file has no content of its own: it takes
+% the finished booklet out of build/ and rearranges its pages onto A4 sheets
+% so that printing them double-sided, folding the stack down the middle and
+% stapling through the fold gives the booklet back, in order.
+%
+%     latexmk && latexmk -r booklet.latexmkrc
+%
+% builds it, in that order, to build/franco_nero_funeral_booklet.pdf. The
+% first step is the booklet proper and the second is this file; latexmk
+% reads .latexmkrc first and booklet.latexmkrc on top of it, so out_dir,
+% pdf_mode and the tex command are shared and only the jobname and the root
+% file differ. In VS Code the recipe named "booklet (A5 2-up on A4)" runs
+% both.
+%
+% A5 at full size is the point. Two A5 pages side by side are 296mm across
+% and an A4 sheet turned landscape is 297mm, so the pages go down at 100%:
+% nothing is scaled, nothing is cropped, and the type is the size it was
+% set. `noautoscale' is what holds that -- left to itself pdfpages grows
+% each page by the last 0.3% to fill its half of the sheet, which is
+% invisible but is no longer the A5 the booklet was designed as.
+%
+% The one thing to get right at the printer is which edge the paper flips
+% on. These are landscape sheets folded down their vertical centre, so they
+% want *short-edge* binding; on long edge every second sheet comes out
+% upside down. A printer that flips the other way is what the
+% `flip-other-edge' option below is for.
+%
+% A desktop printer cannot print to the edge of A4, so the covers -- which
+% bleed -- will lose a few millimetres. That is a property of the printer,
+% not of this file: a print shop trimming from a larger sheet gets the full
+% bleed. Adding `scale=0.94' to the options would pull everything inside a
+% desktop printer's margins, at the cost of the pages no longer being A5.
+
+\documentclass[a4paper]{article}
+\usepackage{pdfpages}
+
+\makeatletter
+
+% ---- What is being imposed -------------------------------------------
+\def\bkltsource{build/franco_nero_funeral.pdf}
+
+% Pages per gathering, and 0 means one gathering for the whole booklet:
+% every sheet nested inside the next and stapled through the fold, which is
+% how an order of service this length is bound. Set 16, 12 or 8 instead if
+% the bindery wants separate sections to gather and sew; the padding below
+% follows whatever is set here.
+\def\bkltsignature{0}
+\edef\bkltmultiple{\ifnum\bkltsignature>0 \bkltsignature\else 4\fi}
+
+% ---- Two ways this can go wrong, said out loud ------------------------
+%
+% .latexmkrc sets $jobname globally, so a bare `latexmk booklet.tex' would
+% run this file under the booklet's own name and write its output over the
+% file it is reading. Stop before the first shipout: with no pages shipped
+% pdfTeX never opens the output file, and build/franco_nero_funeral.pdf
+% survives untouched.
+\ifnum\pdfstrcmp{\jobname}{franco_nero_funeral}=0
+  \GenericError{}{%
+    booklet.tex: this would overwrite \bkltsource, which is its own source.
+    Build it as `latexmk -r booklet.latexmkrc', or pass
+    -jobname=franco_nero_funeral_booklet.%
+  }{}{}%
+  \@@end
+\fi
+
+\IfFileExists{\bkltsource}{}{%
+  \GenericError{}{%
+    booklet.tex: \bkltsource\space does not exist yet.
+    Run `latexmk' to build the booklet before imposing it.%
+  }{}{}%
+  \@@end
+}
+
+% ---- How many pages, and where the blanks go --------------------------
+%
+% Asking the PDF rather than being told: \pdfximage loads the file and
+% \pdflastximagepages reports its length, which is the same way pdfpages
+% resolves `pages=-'. The count is read at build time so nothing here needs
+% editing when a tribute is added and the booklet grows.
+\newcount\bkltpages
+\newcount\bkltblanks
+\pdfximage{\bkltsource}
+\bkltpages=\pdflastximagepages\relax
+
+% A fold only works on a multiple of four pages, and the booklet is not one
+% -- so blank pages have to come from somewhere. Where matters. pdfpages
+% appends them, which puts the blanks behind the back cover and leaves the
+% outside of the last sheet blank, with the back cover buried a leaf inside
+% it. So the padding is worked out here instead and inserted *before* the
+% final page, and the back cover stays where a back cover belongs: on the
+% outside of the fold, opposite page one.
+\bkltblanks=\bkltpages
+\divide\bkltblanks by \bkltmultiple
+\multiply\bkltblanks by \bkltmultiple
+\bkltblanks=-\bkltblanks
+\advance\bkltblanks by \bkltpages          % pages modulo the gathering
+\ifnum\bkltblanks>\z@
+  \bkltblanks=\numexpr\bkltmultiple-\bkltblanks\relax
+\fi
+
+\edef\bkltblankcount{\the\bkltblanks}
+
+% pdfpages spells a blank page as an empty {} in the page list.
+\edef\bkltpagelist{1-\the\numexpr\bkltpages-1\relax}
+\@whilenum\bkltblanks>\z@ \do{%
+  \edef\bkltpagelist{\bkltpagelist,{}}%
+  \advance\bkltblanks\m@ne
+}
+\edef\bkltpagelist{\bkltpagelist,\the\bkltpages}
+
+\edef\bkltoptions{%
+  pages={\bkltpagelist},%
+  nup=2x1,%                two A5 pages across one landscape sheet
+  landscape,%              A4 turned on its side: 297 x 210
+  noautoscale=true,%       and the A5 pages left at exactly A5
+  \ifnum\bkltsignature>0 signature=\bkltsignature\else booklet=true\fi%
+  % flip-other-edge,%      uncomment if the printer flips on the long edge
+}
+
+\typeout{^^Jbooklet: \the\bkltpages\space A5 pages + \bkltblankcount\space blank,
+  imposed 2-up on A4 landscape -- print double-sided, flip on the SHORT edge^^J}
+
+\makeatother
+
+\begin{document}
+\edef\bkltimpose{\noexpand\includepdf[\bkltoptions]{\bkltsource}}%
+\bkltimpose
+\end{document}

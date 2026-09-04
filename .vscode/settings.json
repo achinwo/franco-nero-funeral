@@ -37,6 +37,21 @@
         "%DOC%"
       ],
       "env": {}
+    },
+    // The imposition pass: booklet.tex reads build/franco_nero_funeral.pdf
+    // back in and lays two native-size A5 pages on each A4 landscape sheet,
+    // ready to print double-sided, fold and staple. booklet.latexmkrc is read
+    // on top of .latexmkrc and carries the jobname and the root file, which is
+    // why no -jobname or %DOC% is passed here -- there is one place that says
+    // what this pass is called, and it is that file.
+    {
+      "name": "latexmk-booklet",
+      "command": "latexmk",
+      "args": [
+        "-r",
+        "booklet.latexmkrc"
+      ],
+      "env": {}
     }
   ],
   "latex-workshop.latex.recipes": [
@@ -45,8 +60,27 @@
       "tools": [
         "latexmk"
       ]
+    },
+    // Two tools, in this order, because booklet.tex consumes the PDF the first
+    // one produces. latexmk sees that dependency in the .fls afterwards and
+    // will re-impose when the booklet changes, but it has no rule to build the
+    // booklet itself, so the first step has to be spelled out.
+    //
+    // The viewer stays pointed at build/franco_nero_funeral.pdf:
+    // latex-workshop.latex.jobname above is one setting for the whole project,
+    // so the imposed PDF has to be opened by hand. That is the right way round
+    // -- the A5 booklet is what you proofread, and the A4 sheets are what you
+    // send to the printer.
+    {
+      "name": "booklet (A5 2-up on A4)",
+      "tools": [
+        "latexmk",
+        "latexmk-booklet"
+      ]
     }
   ],
+  // "first", not "lastUsed": the booklet recipe must never become what
+  // autoBuild.run: onFileChange fires on every save.
   "latex-workshop.latex.recipe.default": "first",
   // A "%! TeX program = ..." magic comment in main.tex would otherwise
   // override the recipe with a bare `pdflatex %DOC%` (no -outdir), dumping

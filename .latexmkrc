@@ -42,3 +42,16 @@ sub build_tributes {
 
 # Also remove these on `latexmk -c`
 $clean_ext = 'synctex.gz fdb_latexmk fls run.xml bbl';
+
+# booklet.tex is a second root -- the imposition that lays two A5 pages on an
+# A4 sheet -- and it reads build/franco_nero_funeral.pdf. Naming it here would
+# hand it the $jobname above, so pdflatex would write its output over the file
+# it is reading. booklet.tex refuses to ship a page under that name, but by
+# then pdflatex has already opened and truncated the booklet's .log, which
+# leaves latexmk remembering a failure it then will not build past. Cheaper to
+# stop before any of that happens. (booklet.latexmkrc names the file itself,
+# and does not match: it ends in .latexmkrc.)
+if (grep { m{(^|/)booklet(\.tex)?$} } @ARGV) {
+    die "latexmk: build the imposition as `latexmk -r booklet.latexmkrc',\n"
+      . "         which sets the jobname it has to be written out under.\n";
+}
