@@ -392,3 +392,56 @@ We love you, and we will never forget you.
 
 <signoff>THE NWADIALOR'S</signoff>
 """
+
+#MARK: Victoria Ikhianosime 
+[[tribute]]
+order = 270
+title = "My brother was a man of integrity"
+body = """
+Words are not enough to express how much my brother meant to me. 
+
+But if I had to say who my brother was in one sentence, I’d say my brother was a great man of love, integrity and generosity. 
+
+He was an upright man, a role model and a mentor to me, my children and many others.
+  
+I will forever miss him.
+
+May the Lord welcome him into eternal Joy, grant him rest and may his gentle soul rest in peace.
+
+Adieu my beloved brother,,,
+Adieu Onoteagbo, until the resurrection morning where we shall meet to part no more.
+
+Your Sister, 
+Victoria Ikhianosime 
+Nee Audu
+"""
+
+#MARK: Precious I. Victor
+[[tribute]]
+order = 280
+title = "In loving memory of my beloved father like no other"
+body = """
+I'll never forget the love you showed to me and my mother (Sister) as you always called her, the way you cared for us when I needed a father in my life you truly gave me fatherly love and everything I needed to be cared for, the best a father could ever be.
+
+You were a source of hope and compassion for so many, this legendary generosity and kindness will never be forgotten.
+
+Thank you for your fatherly love and inspiration. We continue to be indebted in gratitude.
+
+May your sweet soul continue to rest peacefully in the bosom of the Lord Amen!
+
+<signoff>Precious I. Victor</signoff>
+"""
+
+#MARK: Mrs Omoruyi
+[[tribute]]
+order = 290
+title = "Tribute"
+body = """
+'Erha-mwan' as I always call you, your departure seems like a dream to me.
+
+It was a shocking news for me, when my friend your wife called to tell me that Daddy has gone to rest with Lord. I am consoled because 'Erha mwan' you lived a good life in the Lord, you never compromise your faith, as a Catholic you were very dedicated.
+
+Erha-mwan I will always remember your prayers for me anytime I visit you, we will miss you daddy. Sleep on Daddy till we meet on that resurrection morning.
+
+<signoff>Mrs Omoruyi</signoff>
+"""
