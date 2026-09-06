@@ -140,6 +140,25 @@ def plain(text):
     return strip_unsafe(out)
 
 
+BR_RE = re.compile(r"<br\s*/?>", re.IGNORECASE)
+
+
+def lines(text):
+    """Text split where the writer asked for a line break.
+
+    For the places a break cannot simply become a \\\\ in the output because
+    something else has to be done to each line -- a tribute's title, where
+    every line is letterspaced separately because \\so will not cross a
+    break. Splitting here rather than after tex() means each line is still
+    the writer's own words, so anything that reads them (title case, say)
+    sees a line rather than a string with a tag in the middle of it.
+
+    Empty pieces are dropped: a break at the very start or end of the text,
+    or two in a row, asked for a line that has nothing on it.
+    """
+    return [piece.strip() for piece in BR_RE.split(text) if piece.strip()]
+
+
 def oneline(text):
     """Text for somewhere that is one line whatever is typed into it -- a
     title, a caption under a photograph. \\so letterspaces a title character

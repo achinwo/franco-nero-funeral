@@ -667,11 +667,23 @@
   \nobreak\vspace{3.5mm}%
 }
 
+% One line of a tribute's title, letterspaced.
+%
+% The letterspacing is applied a line at a time rather than to the title as a
+% whole, and that is not a stylistic choice: \so walks its argument character
+% by character inserting space, and a \\ inside it stops the build. So a
+% title written over two lines -- <br/> in assets/data/tributes.toml -- comes
+% out of build-tributes.py as one of these per line with a \\ between them,
+% where each \so has a single line to itself and none of them ever meets a
+% break. A title with no break in it is a single \so{...}, exactly what this
+% macro set before the two-line case existed.
+\newcommand{\tributetitle}[1]{\so{#1}}
+
 \newcommand{\tributehead}[2]{%
   \par\addvspace{0.5mm}%
   {\centering
     \begin{minipage}{0.66\linewidth}
-      \centering{\footnotesize\scshape\color{primary}\so{#1}}
+      \centering{\footnotesize\scshape\color{primary}#1}
     \end{minipage}\par
     \vspace{0.8mm}
     {\scriptsize\itshape\color{accent}#2}\par}%

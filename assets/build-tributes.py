@@ -65,6 +65,12 @@ stands, for the few places a paragraph is really a list: the lines of an
 address, or a verse. One at the very start or end of a paragraph is
 dropped, having no line to break.
 
+<br/> works in the title and in `from' as well as in the body, for a title
+too long to sit on one line and for a sign-off that names two people. It is
+the only tag those two fields take: they are one line of display type, not
+prose, and <i>/<b> in a letterspaced small-capital head would be setting a
+word apart from a line that is already set apart from the page.
+
 Tributes run on down the page, separated by a drawn divider rather than a
 page break: these are long letters, and one that ends two lines into a page
 would leave the rest of it looking like an oversight. Where a particular
@@ -174,15 +180,47 @@ def titlecase(title):
     if title != title.upper():
         return title
 
+    # str.capitalize() raises the first *character*, which is not always the
+    # first letter: "(FRANCO" opens on a bracket, and capitalize() lowercases
+    # the whole word and then dutifully upper-cases the bracket, leaving
+    # "(franco". Raise the first thing that is a letter instead.
     def cap(word, first):
         parts = word.lower().split("-")
         return "-".join(
-            p.capitalize() if (first and i == 0) or p not in MINOR else p
+            re.sub(r"[^\W\d_]", lambda m: m.group().upper(), p, count=1)
+            if (first and i == 0) or p not in MINOR else p
             for i, p in enumerate(parts))
 
     words = title.split()
     return " ".join(cap(w, i == 0 or i == len(words) - 1)
                     for i, w in enumerate(words))
+
+
+def titlelines(title):
+    r"""A tribute's title, as one \tributetitle per line.
+
+    Split on <br/> before anything else runs, so that title case reads each
+    line as a line: a shouted title with a break in it is not equal to its
+    own upper case (the "br" in the tag is lower), and titlecase() would have
+    left the whole thing shouting.
+
+    Every line is letterspaced on its own because \so cannot cross a \\ --
+    see \tributetitle in main.tex.
+    """
+    return r"\\".join(r"\tributetitle{%s}" % oneline(titlecase(line))
+                      for line in textkit.lines(title))
+
+
+def titleplain(title):
+    """The same title as one line, for the run report on stdout."""
+    return " ".join(oneline(titlecase(line)) for line in textkit.lines(title))
+
+
+def attributionlines(text):
+    """The line under the title -- "from So-and-so" -- which may also be
+    written over several lines. An ordinary centred paragraph, so here the
+    breaks need nothing doing to them beyond being kept."""
+    return r"\\".join(oneline(line) for line in textkit.lines(text))
 
 
 TAG_KINDS = ("para", "signoff", "prayer")
@@ -346,8 +384,8 @@ def emit(tributes, captions):
             out += [r"\tributedivider", ""]
         attribution = (tribute.get("from") or tribute.get("subtitle", "")).strip()
         out.append(r"\tributehead{%s}{%s}"
-                   % (oneline(titlecase(tribute["title"])),
-                      (oneline(attribution)) if attribution else ""))
+                   % (titlelines(tribute["title"]),
+                      attributionlines(attribution) if attribution else ""))
         out.append(r"\begin{tribute}")
         if tribute.get("imagePath", "").strip():
             source = tribute["imagePath"].strip()
@@ -419,7 +457,7 @@ def main():
           f"-> {TEX.relative_to(ROOT)}")
     for tribute in tributes:
         kinds = [kind for kind, _ in blocks(tribute["body"])]
-        print(f"  {oneline(titlecase(tribute['title']))}: "
+        print(f"  {titleplain(tribute['title'])}: "
               f"{kinds.count('para')} paragraphs"
               + (", a sign-off" if "signoff" in kinds else "")
               + (", a closing prayer" if "prayer" in kinds else "")

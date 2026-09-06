@@ -2,7 +2,8 @@ title = "Funeral Tributes"
 
 #MARK: Talia & Tyshawn
 [[tribute]]
-order = 550
+order = 900
+imagePath = "assets/images/family_pics/franco_nero_and_talia_n_tyshawn.jpeg"
 title = "OUR TRIBUTE TO GRANDPA"
 body = """
 Dear Grandpa,
@@ -22,7 +23,7 @@ Talia & Tyshawn"""
 
 #MARK: Katie Emesomiade Atsekhameh
 [[tribute]]
-order = 1001
+order = 1999
 title = "TRIBUTE TO MY FATHER-IN-LAW, FRANCIS ATSEKHAMEH"
 body = """
 It is with a heart filled with sadness, gratitude and faith that I pay tribute to my dear father-in-law, Francis Atsekhameh. His passing has left a space in our family that words cannot fully describe, yet we are comforted by the life he lived and by the hope we have in Christ.
@@ -77,7 +78,7 @@ Emma \"Boogie\" Atsekhameh"""
 
 #MARK: St. Michael Oshoze Atsekhameh
 [[tribute]]
-order = 501
+order = 890
 title = "A TRIBUTE TO MY GRANDPA BENIN"
 body = """
 Dear Grandpa,
@@ -90,7 +91,7 @@ St. Michael Oshoze Atsekhameh"""
 
 #MARK: Uriel Oshone Atsekhameh
 [[tribute]]
-order = 500
+order = 880
 title = "A TRIBUTE TO MY GRANDPA"
 body = """
 Grandpa,
@@ -128,11 +129,10 @@ Thank you for everything... Your <i>"ALAWADA"</i> misses you greatly.
 
 Your Fine Son,
 ✍🏽Peter Atsekhameh
-<pagebreak/>
 """
 #MARK: Dior
 [[tribute]]
-order = 400
+order = 870
 title = "Goodnight my Sweet Grandpa..."
 body = """
 I love you.
@@ -142,7 +142,7 @@ Oshobugie "Dior" Chinwo
 
 #MARK: Emike De Emike
 [[tribute]]
-order = 1899
+order = 1890
 imagePath = "assets/images/family_pics/franco_nero_and_emike.jpeg"
 title = "TRIBUTE TO MY POPS <br/>“FRANCO NERO INTERNATIONAL” a.k.a SKYMAN a.k.a DJANGO!!!"
 subtitle = "My Daddy... My Daddy... My Popz & My “GUYEST” Guy..."
@@ -203,12 +203,12 @@ Adieu, Pops.
 
 Yours Truly,
 "Emike De Emike"
-"Your Omosi No Ni 20 I'zao"
+"Your Omosi No Ni 20 Ezao"
 """
 
 #MARK: Mrs Roseline Idokogi
 [[tribute]]
-order = 300
+order = 780
 title = "A Tribute to my beloved uncle. Sir Francis Onoteagbor Atsekhameh"
 body = """
 With hearts filled with gratitude to God for a life faithfully lived. 
@@ -221,12 +221,14 @@ Adieu beloved uncle with a golden heart!!!
 
 <prayer>May your gentle, peaceful soul rest in the bossom of our Lord Jesus Christ, Amen!</prayer>
 
-<signoff>Mrs Roseline Idokogi</signoff>
+<signoff>
+Your Niece,
+Mrs Roseline Idokogi</signoff>
 """
 
-#MARK: Signed: Lady G.E.T. Umolu
+#MARK: Lady G.E.T. Umolu
 [[tribute]]
-order = 200
+order = 700
 dropcap = true
 title = "TRIBUTE TO OUR DEPARTED MEMBER"
 from = "by THE ASSOCIATION OF AUCHI CATHOLIC DIOCESE INDIGENES"
@@ -291,38 +293,38 @@ David Eshemokhai Atsekhameh
 
 #MARK: Treasure
 [[tribute]]
-order = 550
+order = 1000
 title = "Tribute to Grandpa Benin"
 imagePath = "assets/images/family_pics/franco_nero_and_treasure_n_princeton.jpeg"
 body = """
 I have never met a man who loved animals as much as Grandpa did. I will always remember our first trip to the Benin house. There were chickens and two dogs named Brownie and Bingo. Grandpa loved taking care of them. He would feed the chickens and always made sure their cage was properly locked. He even let us bathe the dogs once!
 These little moments showed us how caring, patient, and loving Grandpa was. He had such a joyful heart, and being around him always made us happy.
-Whenever Grandpa called us on the phone, he was always so happy to hear our voices. He would pray for us and tell us to do great things in life and make him proud. Those prayers and words will always stay in our hearts. I pray that his prayers will continue to follow us as we grow and become the people he wanted us to be.
+Whenever Grandpa called us on the phone, he was always so happy to hear our voices. He would pray for us and tell us to do great things in life and make him proud. Those prayers and words will always stay in our hearts. I pray that his prayers will continue to follow us as we grow and become the people he wanted us to be.<br/>
 Grandpa, we will miss your smile, your joyful heart, your prayers, and all the beautiful memories you gave us.
 
 <prayer>Rest peacefully, Grandpa. We love you, and we will miss you so much.</prayer>
 
-Your Grandson,
-Treasure
+Your Lovely Grandchildren,
+Treasure & Princeton
 """
 
 #MARK: Oyo In-law - Janet Usuyak
 [[tribute]]
-order = 350
+order = 720
 title = "TRIBUTE TO MY DEAR IN-LAW, FRANCIS ATSEKHAMEH"
 body = """
-My dear in-law, it is difficult to say goodbye. I fondly called you “in-law,” and today, those simple words carry so much meaning.
+My dear in-law, it is difficult to say goodbye. I fondly called you ``in-law,'' and today, those simple words carry so much meaning.
 Your passing leaves an empty place in our family. We would have wished for more time together, but we thank God for your life and for the years He granted you among us.
 As we mourn you, my heart is with your children, grandchildren and all those who loved you. May God comfort us and give us strength to bear this loss.
 Rest peacefully, my dear in-law, Francis Atsekhameh. May God grant you eternal rest, and may His perpetual light shine upon you. Amen.
 
-Your Oyo In-law,
+Your Uyo In-law,
 Janet Usuyak
 """
 
 #MARK: Sir Peter  Eboigbe-Uzzi, Ksp.
 [[tribute]]
-order = 310
+order = 690
 title = "TRIBUTE TO SIR FRANCIS ATSEKHAMEH"
 subtitle = "A FORMER FINANCIAL SECRETARY OF THE SACRED HEART ZONE, ST. JUDE CATHOLIC CHURCH, IWOGBAN, BENIN CITY."
 body = """
@@ -352,7 +354,7 @@ Chairman, Sacred Heart Zone.
 
 #MARK: Omolola Uyemhe Atsekhameh
 [[tribute]]
-order = 1050
+order = 9999
 title = "A TRIBUTE TO DADDY"
 subtitle = ""
 body = """
@@ -378,8 +380,8 @@ Omolola Uyemhe Atsekhameh
 
 #MARK: THE NWADIALOR'S
 [[tribute]]
-order = 380
-title = "A TRIBUTE TO ERAMAH (FRANCO NERO)"
+order = 750
+title = "A TRIBUTE TO ERAMAH <br/>(FRANCO NERO)"
 subtitle = ""
 body = """
 Grandpa, it is hard to believe that you are no longer with us. On that faithful day, 15th August 2026, the news of your death came with so much cold taken all over my system 
@@ -390,12 +392,14 @@ We will miss that energy, his warmth and his unwavering faith. Rest in peace Sir
 
 We love you, and we will never forget you.
 
-<signoff>THE NWADIALOR'S</signoff>
+<signoff>
+Your Extended Family,
+The Nwadailors'</signoff>
 """
 
 #MARK: Victoria Ikhianosime 
 [[tribute]]
-order = 270
+order = 790
 title = "My brother was a man of integrity"
 body = """
 Words are not enough to express how much my brother meant to me. 
@@ -418,7 +422,7 @@ Nee Audu
 
 #MARK: Precious I. Victor
 [[tribute]]
-order = 280
+order = 779
 title = "In loving memory of my beloved father like no other"
 body = """
 I'll never forget the love you showed to me and my mother (Sister) as you always called her, the way you cared for us when I needed a father in my life you truly gave me fatherly love and everything I needed to be cared for, the best a father could ever be.
@@ -434,7 +438,7 @@ May your sweet soul continue to rest peacefully in the bosom of the Lord Amen!
 
 #MARK: Mrs Omoruyi
 [[tribute]]
-order = 290
+order = 740
 title = "Tribute"
 body = """
 'Erha-mwan' as I always call you, your departure seems like a dream to me.
@@ -448,7 +452,7 @@ Erha-mwan I will always remember your prayers for me anytime I visit you, we wil
 
 #MARK: Chris Chinwo
 [[tribute]]
-order = 600
+order = 710
 title = "Tribute to Our Dearest Father-in-Law, Late Sir Francis O. Atsekhameh"
 imagePath = "assets/images/family_pics/franco_nero_with_sir_n_lady_chinwo.jpeg"
 body = """
@@ -464,7 +468,7 @@ for the Chinwos' of Rumuekini Akpor Rivers State</signoff>
 
 #MARK: Pastor Felix O. Bossey
 [[tribute]]
-order = 250
+order = 709
 title = "Tribute to My Brother in-law"
 body = """
 Today I remember My Brother in-law, Sir Francis Onoteagbor Atsekhameh, Aka Franco Nero with a heavy heart.           Your kindness, wisdom and generosity touched the lives of everyone who came across you in life. I can remember vividly how friends and relatives do come from different parts of Nigeria to spend their annual vacation with us at your house in Benin City. Those memories you created will remain in our hearts forever. 
@@ -473,4 +477,37 @@ I pray that God Almighty continue to comfort us in this moment of grief and alwa
 May your soul rest in peace.
 
 <signoff>From: Pastor Felix Ozimede Bossey.</signoff>
+"""
+
+#MARK: Anthony Chinwo
+# [[tribute]]
+# order = 1899
+# title = "A Tribute to My Father-in-law, Sir Francis Onoteagbor Atsekhameh"
+# body = """
+# TBC
+
+# <signoff>Anthony Chinwo</signoff>
+# """
+
+#MARK: Sir. Tom Iyelobu (KSJI)
+[[tribute]]
+order = 800
+title = "TRIBUTE FOR SIR. FRANCIS ATSEKHAMEH"
+body = """
+My dear Franco,
+Your death came as a great shock to me. For over 60 years, I have known you, from our childhood days in Apotse Quarters in Ivioghe Community.
+
+What started as friendship grew into a bond that made you more like a younger brother to me.
+You were quite intelligent, hardworking, dependable, and a man of strong faith.
+
+Our families grew together, and our children grew up together. Your wife became like a daughter to me and my late wife, and the bond between our families remained stronger throughout the years. We were always there for one another, in good times and in difficult moments.
+
+I will deeply miss you and always remember the good years we shared. I thank God for the privilege of knowing you for so many years.
+
+May Almighty God grant your soul eternal rest and give your wife, children, and the entire family the strength and comfort to bear this painful loss.
+<prayer>
+Rest well, my dear Franco, my friend and younger brother. You will always be remembered in Jesus' mighty name, AMEN.
+</prayer>
+
+<signoff>High Chief, Sir. Tom Iyelobu (KSJI)</signoff>
 """
