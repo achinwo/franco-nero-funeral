@@ -292,6 +292,73 @@
   \end{center}\vspace{4pt}
 }
 
+% Who is saying the Mass, under the date and the place on the opening page of
+% a service.
+%
+%   \celebrants[Benin City]{Officiating Priests}{%
+%     Fr. Augustine Eleke\\
+%     Fr. Abraham Unuagbor}
+%
+% Set as a list rather than as a sentence, because that is how it is read:
+% somebody looks down it for one name. The label is letterspaced small
+% capitals in the rubric grey -- the booklet's voice for a thing that labels
+% what follows rather than saying anything itself -- and the optional
+% parenthetical under it takes the italic the date and the venue above are
+% set in, so the three lines of circumstance read as one block.
+%
+% The names come back up to the text ink and are set upright, the only
+% upright lines in the block. Everything above them is circumstance and is
+% toned back accordingly; the names are what the block is for, and after
+% four lines of centred italic they need to arrive as something else or the
+% whole opening turns into a wash of grey.
+%
+% A tabular rather than \\ in a centred paragraph: it holds the names to one
+% column at a leading of its own, which keeps them tight where the page's
+% ordinary leading would space them like prose, and it does not depend on
+% the macro being called inside a `center' -- which it is here, but that is
+% the caller's business and not something this should rely on.
+%
+% \celebrantspair is the same block with the names in two columns, for a
+% list long enough that one column would push the liturgy down the page.
+% Names are separated by & and rows by \\, and they read *down* each column
+% rather than across the rows -- the order a list of names is read in:
+%
+%   \celebrantspair[Benin City]{Officiating Priests}{%
+%     Fr. Augustine Eleke  & Fr. Dominic Chukwudi\\
+%     Fr. Abraham Unuagbor & Very Fr. Adolphos Umechukwu}
+%
+% Both columns are centred on their own width rather than ranged left. A
+% left edge would put a spine of "Fr." down each column, which is tidy until
+% one name is a "Very Fr." and breaks it; centred, the block sits under a
+% centred heading on a centred page and nothing has to line up with anything
+% except the middle.
+\newcommand{\celebrantshead}[2]{% #1 place (may be empty), #2 label
+  \par\addvspace{3.2mm}%
+  {\footnotesize\scshape\color{accent}\so{#2}\par}%
+  \if\relax\detokenize{#1}\relax\else
+    \vspace{0.9mm}%
+    {\small\itshape\color{accent}(#1)\par}%
+  \fi
+  \vspace{2mm}%
+}
+
+\newcommand{\celebrantsnames}[2]{% #1 column spec, #2 rows
+  {\small\color{primary}%
+   \renewcommand{\arraystretch}{1.05}%
+   \begin{tabular}{#1}#2\end{tabular}\par}%
+  \addvspace{1.5mm}%
+}
+
+\newcommand{\celebrants}[3][]{%
+  \celebrantshead{#1}{#2}%
+  \celebrantsnames{@{}c@{}}{#3}%
+}
+
+\newcommand{\celebrantspair}[3][]{%
+  \celebrantshead{#1}{#2}%
+  \celebrantsnames{@{}c@{\hspace{2.4em}}c@{}}{#3}%
+}
+
 % --- Photographs -----------------------------------------------------------
 % The four surviving prints are old, damaged and unevenly toned; they are
 % cropped and toned to one warm sepia by assets/make-plates.sh, which also
@@ -864,6 +931,76 @@
 % read as quiet rather than as shouting: at this size and this colour the
 % words are barely there, which is the intention.
 \newcommand{\coverline}[2][220]{\textls[#1]{\scshape #2}}
+
+% The two dates, under the medallion. #1 born, #2 died.
+%
+% Set as a table, which is the whole point of the macro. The two lines were
+% centred independently to begin with, and because "Sunrise" and "Sunset" are
+% not the same width, neither the dashes nor the dates below them lined up --
+% the eye reads that as a mistake long before it reads the dates. Three
+% columns fix all three edges at once: the labels close on a common right,
+% the rules sit in a column of their own, and the dates open on a common
+% left. The block is centred as a block instead of line by line.
+%
+% The dash is drawn rather than typed. An em dash carries side bearings that
+% differ between the roman and the small capitals around it, and at this size
+% that is enough to leave the two rules looking a hair out of true; a rule is
+% the same rule on both lines, and it matches the hairline through the
+% medallion just above it.
+\newcommand{\coverlifespan}[2]{%
+  {\coverface\fontsize{9.5}{12}\selectfont
+   \begin{tabular}{@{}r@{\hspace{0.9em}}c@{\hspace{0.9em}}l@{}}
+     {\color{primary!60}\coverline[200]{Sunrise}} &
+       {\color{rulecolor}\rule[0.22em]{2.4mm}{0.4pt}} &
+       {\color{accent}#1} \\[0.15ex]
+     {\color{primary!60}\coverline[200]{Sunset}} &
+       {\color{rulecolor}\rule[0.22em]{2.4mm}{0.4pt}} &
+       {\color{accent}#2} \\
+   \end{tabular}\par}%
+}
+
+% One service, at the foot of the cover: what it is, when, and where.
+% #1 name, #2 date, #3 time, #4 place. Two of these are set side by side --
+% see \coverservices below, which is what a cover should call.
+%
+% A name over each is what stops the two reading as one long address. The
+% name is the quietest thing in the group and the date the loudest, which is
+% the right way round: somebody holding this already knows there is a vigil
+% and a funeral, and what they are looking for is the day and the hour.
+%
+% A column, not a run of centred lines. Stacked one above the other the two
+% services came to 38mm, and the foot of this cover has not got 38mm: the
+% type block is bottom-aligned against a fixed 2mm, so everything it cannot
+% fit is pushed up the page, and what went first was "In Loving Memory of",
+% which climbed off the mist and onto the teal of his robe where it could not
+% be read at all. Side by side the pair comes to 20mm and the line at the top
+% stays on clean stock.
+\newcommand{\coverservice}[4]{%
+  \begin{minipage}[t]{0.45\linewidth}
+    \centering
+    {\coverface\fontsize{7.5}{9}\selectfont\color{primary!55}
+      \coverline[240]{#1}\par}
+    \vspace{1mm}
+    {\coverface\fontsize{8.5}{11}\selectfont\color{primary}
+      \coverline[150]{#2}\par
+      \vspace{0.4mm}
+      \coverline[150]{#3}\par}
+    \vspace{1mm}
+    {\coverface\fontsize{8}{10.5}\selectfont\color{accent}#4\par}
+  \end{minipage}%
+}
+
+% The two services, with a hairline between them. The rule is the cover's own
+% ornament -- the same 0.4pt in the same grey as the one through the age
+% medallion above -- and it is what keeps two centred columns from reading as
+% one block of text that has lost its way.
+\newcommand{\coverservices}[2]{%
+  #1%
+  \hspace{0.02\linewidth}%
+  {\color{rulecolor}\rule[-16.5mm]{0.4pt}{19mm}}%
+  \hspace{0.02\linewidth}%
+  #2%
+}
 
 % Letterspaced caps, for the small display lines on the cover.
 \newcommand{\displaycaps}[1]{{\scshape\so{#1}}}

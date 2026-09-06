@@ -13,35 +13,36 @@
   % A shade darker than the accent grey the other small lines take: this one
   % line falls on the mist at the foot of his robe rather than on clean stock,
   % and grey on grey is where a letterspaced 8pt line disappears.
-  {\coverface\fontsize{8}{10}\selectfont\color{primary!60}
+  {\coverface\fontsize{8}{10}\selectfont\color{primary!78}
     \coverline{In Loving Memory of}\par}
 
-  \vspace{3.5mm}
+  \vspace{2.5mm}
   {\coverlight\fontsize{24}{27}\selectfont\color{primary}
     \textls[25]{Franco Nero International}\par}
 
-  \vspace{2mm}
+  \vspace{1.5mm}
   {\coverdisplay\itshape\fontsize{12.5}{15}\selectfont\color{accent}
     ``De Sky Man''\par}
 
-  \vspace{4.5mm}
+  \vspace{3mm}
   \agemedallion{80}\par
-  \vspace{4.5mm}
+  \vspace{3mm}
 
-  {\coverface\fontsize{9.5}{12}\selectfont\color{accent}
-    10\textsuperscript{th} October 1946 \enspace--\enspace
-    15\textsuperscript{th} August 2026\par}
+  \coverlifespan{10\textsuperscript{th} October 1946}%
+               {15\textsuperscript{th} August 2026}
 
-  \vspace{5mm}
-  {\coverface\fontsize{8.5}{11}\selectfont\color{primary}
-    \coverline[150]{Monday, 28\textsuperscript{th} September 2026}
-    \enspace\textperiodcentered\enspace
-    \coverline[150]{4:00 pm}\par}
-
-  \vspace{2mm}
-  {\coverface\fontsize{8.5}{12}\selectfont\color{accent}
-    St.\ Jude Catholic Church, Iwogban, Ikpoba Hill, Benin City\par
-    {\itshape Officiating: Reverend Thomas Davies}\par}
+  % The two services, side by side. The names are added here rather than left
+  % implicit: without them the foot of the cover is two dates and two churches
+  % with nothing to say which is which, and that is the one question somebody
+  % picks this up to answer.
+  \vspace{3.2mm}
+  \coverservices
+    {\coverservice{The Vigil Mass}%
+      {Monday, 28\textsuperscript{th} September 2026}{4:00 pm}%
+      {St.\ Jude Catholic Church, Iwogban,\\ Ikpoba Hill, Benin City}}
+    {\coverservice{The Funeral Mass}%
+      {Saturday, 3\textsuperscript{rd} October 2026}{8:00 am}%
+      {St.\ Thomas Aquinas Catholic Church,\\ Ivioghe, Agenebode}}
 \end{center}
 
 \vspace*{2mm}

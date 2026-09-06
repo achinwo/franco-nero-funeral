@@ -1,0 +1,16 @@
+# tex-fmt, the formatter VS Code runs on a .tex file (see
+# latex-workshop.formatting.latex in .vscode/settings.json). This file is what
+# governs it when it is run from a terminal instead, so that both agree.
+#
+# Wrapping off, which is the whole of the configuration. tex-fmt reflows a
+# paragraph to 80 columns by default, and in this project that is churn with
+# nothing to show for it: LaTeX sets its own line breaks, so rewrapping the
+# source changes no page and rewrites most of the liturgy while it does it.
+# It would also pull apart the places where a source line is a line -- the
+# verses of a hymn, the lines of a sign-off -- which are the one part of the
+# text where the shape on screen matches the shape on the page.
+#
+# Note for anyone editing this: the key is `wrap`, and the setting is a
+# length. `nowrap = true` mirrors the command-line flag but is not a key tex-fmt
+# reads, and it is ignored in silence rather than refused.
+wrap = false

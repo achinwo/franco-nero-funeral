@@ -86,6 +86,28 @@
   // override the recipe with a bare `pdflatex %DOC%` (no -outdir), dumping
   // main.pdf/.aux/.log into the project root. Force the recipe above instead.
   "latex-workshop.latex.build.forceRecipeUsage": true,
+  // ---- Formatting -------------------------------------------------------
+  // Without this, Format Document on a .tex file fails with "Please set your
+  // LaTeX formatter in `latex-workshop.formatting.latex`" -- the extension
+  // ships with it set to "none" and will not guess.
+  //
+  // tex-fmt rather than latexindent, which is the other choice the extension
+  // offers: latexindent is installed with TeX Live but cannot run on this
+  // machine, because it needs the Perl module File::HomeDir and system Perl
+  // has not got it. tex-fmt is a single binary (`brew install tex-fmt`) with
+  // nothing underneath it.
+  //
+  // No line wrapping: the extension's own default args are ["--nowrap"], and
+  // tex-fmt.toml at the project root says the same for when tex-fmt is run
+  // from a terminal.
+  //
+  // Deliberately no "editor.formatOnSave" here. tex-fmt indents to its own
+  // convention, which is not this project's: it pulls the closing line of a
+  // multi-line argument back a level, so every hymn verse and every prayer
+  // ends on a line that no longer aligns with the ones above it. That is a
+  // change worth making on purpose to one file, and not one worth making to
+  // every file on every save.
+  "latex-workshop.formatting.latex": "tex-fmt",
   // ---- Viewer / cleanup -------------------------------------------------
   "latex-workshop.view.pdf.viewer": "tab",
   "latex-workshop.latex.clean.subfolder.enabled": true,
