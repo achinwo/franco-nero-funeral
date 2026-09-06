@@ -3,7 +3,6 @@ title = "Funeral Tributes"
 #MARK: Talia & Tyshawn
 [[tribute]]
 order = 550
-imagePath = "assets/images/family_pics/Screenshot_20220101-124628_WhatsApp.jpeg"
 title = "OUR TRIBUTE TO GRANDPA"
 body = """
 Dear Grandpa,
@@ -294,6 +293,7 @@ David Eshemokhai Atsekhameh
 [[tribute]]
 order = 550
 title = "Tribute to Grandpa Benin"
+imagePath = "assets/images/family_pics/franco_nero_and_treasure_n_princeton.jpeg"
 body = """
 I have never met a man who loved animals as much as Grandpa did. I will always remember our first trip to the Benin house. There were chickens and two dogs named Brownie and Bingo. Grandpa loved taking care of them. He would feed the chickens and always made sure their cage was properly locked. He even let us bathe the dogs once!
 These little moments showed us how caring, patient, and loving Grandpa was. He had such a joyful heart, and being around him always made us happy.
@@ -444,4 +444,19 @@ It was a shocking news for me, when my friend your wife called to tell me that D
 Erha-mwan I will always remember your prayers for me anytime I visit you, we will miss you daddy. Sleep on Daddy till we meet on that resurrection morning.
 
 <signoff>Mrs Omoruyi</signoff>
+"""
+
+#MARK: Chris Chinwo
+[[tribute]]
+order = 600
+title = "Tribute to Our Dearest Father-in-Law, Late Sir Francis O. Atsekhameh"
+imagePath = "assets/images/family_pics/franco_nero_with_sir_n_lady_chinwo.jpeg"
+body = """
+We, the Chinwo family of Rumuawhoechor Rumuekini Akpor LGA, River State, received the news of your passing on with rude shock. We recall vividly in October 2024 when we came for the marriage ceremony of your daughter, Emike and our son Okechukwu. You participated actively in the rigours associated with the ceremony. Though you were not in the best of health then but not that you couldn't survive 2026. 
+
+Nevertheless, God knows why you should leave us now. We can not question him. May your soul rest in perfect peace. From the testimony of the people on the day of the marriage, you were a good man who cared for all. We shall surely miss you. We thank you for giving us your daughter, we promise that this relationship with the Atsekhamehs will grow from strength to strength by his grace. 
+
+<prayer>Adieu our father-in-law and rest in the bosom of God, <br/>till we meet to part no more.</prayer>
+
+<signoff><br/>Signed: Sir & Lady Chris N Chinwo, KSJI for the Chinwos' of Rumuekini Akpor Rivers State</signoff>
 """
