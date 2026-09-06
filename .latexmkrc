@@ -35,9 +35,18 @@ set_tex_cmds('-synctex=1 -interaction=nonstopmode -file-line-error %O %S');
 #
 # python3 rather than a specific version: the script re-execs itself into a
 # newer interpreter if the one it lands in has no tomllib.
-add_cus_dep('toml', 'tex', 0, 'build_tributes');
-sub build_tributes {
-    return system('python3', 'assets/build-tributes.py');
+# The rule is keyed on the extension, not on the file, so it catches every
+# .toml the booklet inputs a .tex beside -- assets/data/captions.toml as well
+# as the tributes. latexmk hands the sub the base name it is building, which
+# is what picks the script; a .toml this does not recognise is left alone
+# rather than run through the wrong generator.
+add_cus_dep('toml', 'tex', 0, 'build_from_toml');
+sub build_from_toml {
+    my ($base) = @_;
+    return system('python3', 'assets/build-tributes.py') if $base =~ m{tributes$};
+    return system('python3', 'assets/build-captions.py') if $base =~ m{captions$};
+    warn "latexmk: no generator knows how to build $base.tex from $base.toml\n";
+    return 0;
 }
 
 # Also remove these on `latexmk -c`

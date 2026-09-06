@@ -16,7 +16,12 @@ the safe way round for a document nobody will proof-read line by line.
     order = 20                 # descending; ties keep the order of the file
     title = "Our Tribute to Grandpa"
     from  = "Talia & Tyshawn"  # optional; printed as "from Talia & Tyshawn"
-    imagePath = "assets/..."   # optional; a photograph to set the letter around
+    imagePath = "assets/..."   # optional; a photograph to set the letter
+                               # around. Its caption, if it has one, is not
+                               # written here: it lives in
+                               # assets/data/captions.toml, filed against the
+                               # image, so the same photograph is captioned
+                               # the same wherever the booklet prints it
     dropcap = true             # optional, false by default; opens the letter
                                # on a two-line initial
     body  = "..."              # one line per paragraph, blank lines ignored
@@ -74,27 +79,25 @@ this script's to second-guess.
 """
 
 import hashlib
-import os
 import pathlib
 import re
 import shutil
 import subprocess
 import sys
 import textwrap
-import unicodedata
 
-try:
-    import tomllib
-except ModuleNotFoundError:
-    # tomllib arrived in 3.11; macOS ships 3.9 and a pyenv shim may pin one
-    # older still. Rather than hand-roll a TOML parser -- which would be one
-    # more thing that can be subtly wrong about a file the family edits --
-    # find a newer interpreter and start again in it.
-    for _exe in ("python3.13", "python3.12", "python3.11"):
-        _found = shutil.which(_exe)
-        if _found:
-            os.execv(_found, [_found, os.path.abspath(__file__), *sys.argv[1:]])
-    sys.exit("build-tributes: needs Python 3.11 or newer (for tomllib)")
+import captions as captionfile
+import textkit
+
+# The text handling -- the escaping, the typographer's marks, the inline
+# <i>/<b>/<br> tags described above -- is shared with the other generators
+# and lives in textkit.py. Bound to plain names here because that is how the
+# rest of this file reads.
+tex = textkit.tex
+plain = textkit.plain
+oneline = textkit.oneline
+latin_safe = textkit.latin_safe
+
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 TOML = ROOT / "assets/data/tributes.toml"
@@ -129,75 +132,6 @@ WRAP = 76             # source line length, for a readable diff
 # the writer used their own capitals -- they may have meant them.
 MINOR = {"a", "an", "and", "as", "at", "but", "by", "for", "from", "in", "into",
          "nor", "of", "on", "or", "over", "the", "to", "up", "with"}
-
-ESCAPES = {"\\": r"\textbackslash{}", "&": r"\&", "%": r"\%", "$": r"\$",
-           "#": r"\#", "_": r"\_", "{": r"\{", "}": r"\}",
-           "~": r"\textasciitilde{}", "^": r"\textasciicircum{}"}
-
-# Typographer's marks, once the escaping above has run.
-MARKS = {"“": "``", "”": "''", "‘": "`", "’": "'",
-         "„": ",,", "—": "---", "–": "--", "…": r"\dots{}",
-         " ": "~", "­": "", "...": r"\dots{}"}
-
-
-def latin_safe(ch):
-    """Whether pdflatex, with the T1/Latin Modern setup this booklet uses,
-    can be trusted to typeset ch.
-
-    Accented Latin letters -- the accessible face of "Unicode" to someone
-    typing a name like Přemysl or Zoë on a phone -- come through fine, along
-    with the Latin-1 symbols (£, °, ½, section and paragraph marks). Emoji
-    and other pictographic symbols do not: pdflatex has no glyph for them
-    and stops the whole build cold rather than leaving a gap, which is a
-    worse outcome here than quietly dropping the one character.
-    """
-    code = ord(ch)
-    if code < 0x80 or 0xA0 <= code <= 0xFF:
-        return True
-    return unicodedata.name(ch, "").startswith(("LATIN ", "COMBINING "))
-
-
-def strip_unsafe(text):
-    kept = []
-    for ch in text:
-        if latin_safe(ch):
-            kept.append(ch)
-        else:
-            name = unicodedata.name(ch, f"U+{ord(ch):04X}")
-            print(f"build-tributes: dropping {ch!r} ({name}) -- "
-                  "pdflatex has no glyph for it", file=sys.stderr)
-    return "".join(kept)
-
-
-INLINE_TAGS = {"i": "textit", "b": "textbf"}
-# Either an <i>/<b> pair or a line break. <br>, <br/> and <br /> are all
-# taken, because all three are what people type.
-INLINE_RE = re.compile(r"<(%s)>(.*?)</\1>|<br\s*/?>" % "|".join(INLINE_TAGS),
-                       re.DOTALL)
-
-
-def tex(text):
-    """Text as the family typed it, as LaTeX will want to read it.
-
-    <i> and <b> may be used inline, anywhere in a line -- including inside
-    each other, for a bold phrase with an italic word in it -- and come out
-    as \\textit / \\textbf. <br/> breaks the line where it stands. They are
-    pulled out before the escaping below runs, so the words inside are still
-    escaped and typeset like everything else; only the tags are markup.
-    """
-    out, pos = [], 0
-    for m in INLINE_RE.finditer(text):
-        out.append(plain(text[pos:m.start()]))
-        out.append(r"\\" if m.group(1) is None
-                   else r"\%s{%s}" % (INLINE_TAGS[m.group(1)], tex(m.group(2))))
-        pos = m.end()
-    out.append(plain(text[pos:]))
-    out = re.sub(r"[ \t]+", " ", "".join(out)).strip()
-    # A break with no line to break -- one opening or closing the text, as in
-    # a paragraph typed "...and we will never forget you.<br/>" -- is an
-    # error in LaTeX rather than the blank line it looks like, and the blank
-    # line between paragraphs is already there.
-    return re.sub(r"^(?:\s*\\\\)+|(?:\\\\\s*)+$", "", out).strip()
 
 
 def spaced(text):
@@ -234,25 +168,6 @@ def dropcapped(raw, joined):
         return None
     m = re.match(r"(\w)(\w*)(.*)", joined, re.DOTALL)
     return m and r"\tributedropcap{%s}{%s}%s" % m.groups()
-
-
-def oneline(text):
-    """Text for a tribute's title, which is one line whatever is typed into
-    it: \\so letterspaces a title character by character and stops at a \\\\,
-    so a break there would take the build down rather than set a title over
-    two lines."""
-    return re.sub(r"\s*\\\\\s*", " ", tex(text)).strip()
-
-
-def plain(text):
-    """A run of text with no inline tags left in it, escaped for LaTeX."""
-    out = "".join(ESCAPES.get(ch, ch) for ch in text)
-    for mark, replacement in MARKS.items():
-        out = out.replace(mark, replacement)
-    # Straight quotes, alternating open and close. Word processors curl these
-    # on their own; a phone keyboard does not.
-    out = re.sub(r'"([^"]*)"', r"``\1''", out)
-    return strip_unsafe(out)
 
 
 def titlecase(title):
@@ -408,7 +323,7 @@ def photograph(source, plates):
     return f"plates/tributes/{dest.stem}", int(w) * scale, int(h) * scale
 
 
-def emit(tributes):
+def emit(tributes, captions):
     # Plate name -> the source it was made from, filled in as the tributes
     # are written out. It settles what the directory should hold, which is
     # what the sweep at the end of this function compares against.
@@ -435,8 +350,17 @@ def emit(tributes):
                       (oneline(attribution)) if attribution else ""))
         out.append(r"\begin{tribute}")
         if tribute.get("imagePath", "").strip():
-            name, pw, ph = photograph(tribute["imagePath"].strip(), plates)
-            out.append(r"\tributephoto{%s}{%.1fmm}{%.1fmm}" % (name, pw, ph))
+            source = tribute["imagePath"].strip()
+            name, pw, ph = photograph(source, plates)
+            # The caption, if the family has named this photograph, comes
+            # from assets/data/captions.toml like every other -- looked up
+            # by the file the tribute points at, not by the plate made from
+            # it, so the same picture is captioned the same wherever the
+            # booklet prints it.
+            caption = captions.latex(source)
+            out.append((r"\tributephotocap{%s}{%.1fmm}{%.1fmm}{%s}"
+                        % (name, pw, ph, caption)) if caption else
+                       (r"\tributephoto{%s}{%.1fmm}{%.1fmm}" % (name, pw, ph)))
         # Only the first paragraph takes the initial, and only if the tribute
         # asked for one. A letter has one opening.
         opening = bool(tribute.get("dropcap", False))
@@ -475,7 +399,7 @@ def emit(tributes):
 def main():
     if not TOML.is_file():
         sys.exit(f"build-tributes: {TOML.relative_to(ROOT)} is missing")
-    data = tomllib.loads(TOML.read_text())
+    data = textkit.read_toml(TOML)
     tributes = sorted(data.get("tribute", []),
                       key=lambda t: t.get("order", 0), reverse=True)
 
@@ -489,7 +413,8 @@ def main():
         print("build-tributes: no tributes found", file=sys.stderr)
         return
 
-    emit(tributes)
+    captions = captionfile.load()
+    emit(tributes, captions)
     print(f"build-tributes: {len(tributes)} tributes "
           f"-> {TEX.relative_to(ROOT)}")
     for tribute in tributes:
@@ -499,6 +424,9 @@ def main():
               + (", a sign-off" if "signoff" in kinds else "")
               + (", a closing prayer" if "prayer" in kinds else "")
               + (", a photograph" if tribute.get("imagePath") else "")
+              + (", captioned"
+                 if captions.latex(tribute.get("imagePath", "").strip() or "-")
+                 else "")
               + (", an initial" if tribute.get("dropcap") else "")
               + (f", {kinds.count('pagebreak')} page break"
                  f"{'s' if kinds.count('pagebreak') > 1 else ''}"

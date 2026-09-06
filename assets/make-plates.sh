@@ -21,7 +21,9 @@ set -eu
 HERE=$(cd "$(dirname "$0")" && pwd)
 cd "$HERE/images"
 mkdir -p plates
-SRC="WhatsApp Image 2026-08-19 at 14.24.16"
+# The four old prints are one scanned sheet each, and they live with the
+# rest of his own photographs in personal/ rather than loose in images/.
+SRC="personal/WhatsApp Image 2026-08-19 at 14.24.16"
 
 # -auto-orient matters: scan (1) carries an EXIF rotation that pdflatex
 # does not honour, so the rotation has to be baked in here.
@@ -196,7 +198,7 @@ magick "plates/_c-base.png" "plates/_c-glow.png" \
     -geometry "+$((COX + 545 * CFW / 1221 - 750))+$((CTOP + 309 * CFW / 1221 - 550))" \
     -composite "plates/_c-lit.png"
 
-magick franco_sitting_green-print.png -trim +repage \
+magick personal/franco_sitting_green-print.png -trim +repage \
     -filter Lanczos -resize "${CFW}x${CFH}!" "plates/_c-man.png"
 magick "plates/_c-lit.png" "plates/_c-man.png" \
     -geometry "+${COX}+${CTOP}" -composite "plates/_c-stood.png"
@@ -229,6 +231,21 @@ magick "plates/_c-inclouds.png" "plates/_c-mist.png" -compose over -composite \
     -strip "plates/cover-sky.png"
 
 rm -f plates/_c-*.png
+
+# --- captions --------------------------------------------------------------
+# The words under the photographs. assets/data/captions.toml files a caption
+# against the image it belongs to; build-captions.py turns that into the
+# definitions main.tex looks up for the prints a person placed by hand, and
+# the two layout scripts below read the same file directly, because a
+# caption changes how much room its page has to leave for the picture.
+# Run first, so that a caption added and a page re-flowed happen together.
+python3 "$HERE/build-captions.py"
+
+# --- his own photographs ---------------------------------------------------
+# personal/ holds the photographs of him, and the artwork cut from them.
+# build-personal.py mounts the photographs two to a row and leaves the
+# artwork alone, writing plates/personal-photos.tex.
+python3 "$HERE/build-personal.py"
 
 # --- family album ----------------------------------------------------------
 # The modern colour photographs are a separate problem from the four old

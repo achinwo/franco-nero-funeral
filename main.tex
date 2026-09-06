@@ -299,17 +299,61 @@
 
 \definecolor{cornerink}{HTML}{6B5B4B}  % the dark card of an album's photo corners
 
-% A print mounted on the page: a hairline frame, four photo corners, and an
-% italic caption beneath. The corners are what make it read as an album page
+% --- Captions --------------------------------------------------------------
+% A caption belongs to a photograph rather than to a place on a page. The
+% same picture may be mounted as a plate, reflowed into the family album or
+% set beside a tribute, and it says the same thing in each -- so the words
+% are kept once, in assets/data/captions.toml, filed against the image file.
+% assets/build-captions.py turns that into the run of \photocaptiondef below,
+% one per captioned photograph, filed under the name \includegraphics is
+% given for it. Nothing in sections/ carries caption text.
+%
+% The lookup is a control sequence per photograph rather than a list to be
+% searched: \mountedphoto is handed a plate name and asks whether a caption
+% of that name has been defined, which costs nothing and cannot go wrong on
+% the odd characters a filename holds. `photocap:' rather than `photocap@'
+% so that the name can be built with \ifcsname out here, where @ is not a
+% letter, and a plate whose name has an @ in it cannot collide with it.
+\newcommand{\photocaptiondef}[2]{%
+  \expandafter\def\csname photocap:#1\endcsname{#2}%
+}
+
+% The caption face: one voice for every caption in the booklet, in two sizes
+% chosen by how big the print is. \footnotesize under a mounted plate, which
+% runs most of the measure; \scriptsize under the small prints -- the album,
+% a third of the page wide, and the photograph beside a tribute -- where a
+% caption set as large as the one under a plate three times the size would
+% shout.
+\newcommand{\photocaptionface}{\footnotesize\itshape\color{accent}}
+\newcommand{\smallphotocaptionface}{\scriptsize\itshape\color{accent}}
+
+\input{assets/data/captions}
+% Read for nothing, so that pdflatex -recorder lists the TOML as an input of
+% the build and an editor watching the .fls rebuilds when a caption is
+% edited -- the same device sections/08-tribute.tex uses for the tributes.
+\IfFileExists{assets/data/captions.toml}{}{}
+
+% A print mounted on the page: a hairline frame, four photo corners, and its
+% caption beneath. The corners are what make it read as an album page
 % rather than as a figure in a report; the frame alone is not enough, because
 % these scans have pale edges that dissolve into the paper without it.
+%
+% The caption is not an argument. It is looked up by the plate name, above,
+% so that a section says which photograph goes where and captions.toml says
+% what it is called. A plate with no caption filed for it is mounted without
+% one and says so in the log: this macro exists to caption a photograph, so
+% the silence is far more likely to be a mistyped path in the TOML than a
+% print somebody meant to leave unnamed.
 \newlength{\mountwidth}
 \newlength{\cornerlen}
-\newcommand{\mountedphoto}[3][\linewidth]{%
+
+% The mount alone -- frame and corners, no caption and no column round it.
+% Two things set a print on a page here: this one, mounted on a page a person
+% composed, and \personalphoto below, mounted in a row a script laid out.
+% They share the mount so that a print is the same object wherever it is set.
+\newcommand{\mountedprint}[2][\linewidth]{%
   \setlength{\mountwidth}{#1}%
   \setlength{\cornerlen}{0.055\mountwidth}%
-  \begin{minipage}{\mountwidth}
-    \centering
     \begin{tikzpicture}[inner sep=0pt,outer sep=0pt]
       \node (P) {\includegraphics[width=\mountwidth]{#2}};
       \draw[rulecolor,line width=0.3pt]
@@ -322,10 +366,68 @@
         (P.north east) -- ++(-\cornerlen,0) -- ++(\cornerlen,-\cornerlen) -- cycle;
       \fill[cornerink]
         (P.north west) -- ++(\cornerlen,0) -- ++(-\cornerlen,-\cornerlen) -- cycle;
-    \end{tikzpicture}\par
-    \vspace{2.2mm}
-    {\footnotesize\itshape\color{accent}#3\par}
+    \end{tikzpicture}%
+}
+
+\newcommand{\mountedphoto}[2][\linewidth]{%
+  \begin{minipage}{#1}
+    \centering
+    \mountedprint[#1]{#2}\par
+    \ifcsname photocap:#2\endcsname
+      \vspace{2.2mm}
+      {\photocaptionface\csname photocap:#2\endcsname\par}%
+    \else
+      \PackageWarning{captions}{No caption for #2 --
+        add one to assets/data/captions.toml}%
+    \fi
   \end{minipage}%
+}
+
+% --- His own photographs ---------------------------------------------------
+% assets/build-personal.py reads assets/images/personal/, sizes one or two
+% prints to a row and writes plates/personal-photos.tex as a run of the
+% macros below, which 07-photobook.tex inputs. Drop a photograph of him into
+% that directory, re-run assets/make-plates.sh, and those pages re-flow --
+% nothing here needs editing.
+%
+% The mount is the one the composed page uses, because these are the same
+% kind of picture: photographs of him, kept, rather than the family group
+% shots the album sets in a plain frame. What differs is that a script places
+% them, so the caption arrives as an argument rather than being looked up --
+% the plates are numbered by position and renumbered whenever a photograph is
+% added, so there is no stable name to file a caption under. The script looks
+% it up instead, against the file the photograph arrived in, and passes the
+% words through. (See assets/data/captions.toml.)
+%
+% Each print sits in a column of its own, aligned [t], so that two set side
+% by side hang from the same line however deep their captions run. The two in
+% a row already share a height, so their tops and their frames line up and
+% only the captions can differ.
+\newcommand{\personalphoto}[2]{% #1 plate, #2 width
+  \begin{minipage}[t]{#2}
+    \centering\mountedprint[\linewidth]{#1}%
+  \end{minipage}%
+}
+
+\newcommand{\personalphotocap}[3]{% #1 plate, #2 width, #3 caption
+  \begin{minipage}[t]{#2}
+    \centering
+    \mountedprint[\linewidth]{#1}\par
+    \vspace{2.2mm}
+    {\photocaptionface#3\par}%
+  \end{minipage}%
+}
+
+% As \albumrow and \albumgap, and for the same reasons: \kern rather than
+% \hspace so the gutter is not a place TeX may break the row, and
+% \nointerlineskip so the space between rows is only what the script asked
+% for. The gutter is wider than the album's -- these are larger prints, set
+% two to a row rather than three, and 3mm between them would read as a join.
+\newlength{\personalgutter}\setlength{\personalgutter}{5mm}
+\newcommand{\personalgap}{\kern\personalgutter}
+\newcommand{\personalrow}[1]{%
+  \par\nointerlineskip
+  {\centering\leavevmode#1\par}%
 }
 
 % --- The family album ------------------------------------------------------
@@ -350,11 +452,38 @@
 \newlength{\albumgutter}\setlength{\albumgutter}{3mm}
 \newcommand{\albumgap}{\kern\albumgutter}
 
-\newcommand{\albumphoto}[3]{%
+% A print in the album, and the same print with a caption under it. Which of
+% the two the generated file calls is settled in assets/build-album.py, from
+% whether assets/data/captions.toml names that photograph -- a caption adds
+% depth to the row it is in, and the row heights and the page breaks are
+% solved there with that depth counted in.
+%
+% Both are \vtop, and that is what keeps a row straight. A row may mix
+% captioned prints with uncaptioned ones, and the two have to hang from the
+% same line: a \vtop takes its height from its first box, which here is the
+% print, so every photograph in the row is aligned on the bottom of the
+% print whatever is underneath it. (A \vtop wrapped round the framed print
+% alone has exactly the height and depth of the print, so the uncaptioned
+% case sets precisely as it did when this was a bare \fcolorbox.)
+\newcommand{\albumprint}[3]{%
   \begingroup
   \setlength{\fboxsep}{0pt}\setlength{\fboxrule}{0.3pt}%
-  \fcolorbox{rulecolor}{white}{\includegraphics[width=#2,height=#3]{#1}}%
+  \hbox{\fcolorbox{rulecolor}{white}{\includegraphics[width=#2,height=#3]{#1}}}%
   \endgroup
+}
+
+\newcommand{\albumphoto}[3]{\vtop{\albumprint{#1}{#2}{#3}}}
+
+% The caption is set to the width of the print, not of the column: it belongs
+% to that photograph, and one running wider would read as belonging to the
+% row.
+\newlength{\albumcaptiongap}\setlength{\albumcaptiongap}{1.4mm}
+\newcommand{\albumphotocap}[4]{%
+  \vtop{%
+    \albumprint{#1}{#2}{#3}%
+    \vskip\albumcaptiongap
+    \hbox{\parbox{#2}{\centering\smallphotocaptionface#4\par}}%
+  }%
 }
 
 % Centred, so that a short final row -- one the script capped rather than
@@ -372,8 +501,11 @@
   {\centering\leavevmode#1\par}%
 }
 
-% The head over the first album page. Quieter than a section title: these
-% pages are a continuation of Photographs, not a new section.
+% The head over the first album page, and the one place in the Photographs
+% section where a head is wanted at all: it is what divides his own
+% photographs, which run on from the mounted plates without a break, from
+% the family's. Quieter than a section title -- these pages are a
+% continuation of Photographs, not a new section.
 \newcommand{\albumhead}[1]{%
   \begin{center}
     {\footnotesize\scshape\color{primary}\so{#1}}\par
@@ -495,13 +627,13 @@
 %
 % The wrapping column is the picture plus 8mm: enough for the corner the tilt
 % throws out, and for the gutter between the mount and the text.
+%
+% As in the album, whether a tribute's photograph is captioned is settled in
+% assets/build-tributes.py, from whether assets/data/captions.toml names it.
 \newlength{\tributecorner}
-\newcommand{\tributephoto}[3]{% #1 plate, #2 width, #3 height
+\newcommand{\tributemount}[3]{% #1 plate, #2 width, #3 height
   \setlength{\tributecorner}{0.06\dimexpr#2\relax}%
-  \begin{wrapfigure}{r}{\dimexpr#2+8mm\relax}
-    \vspace{-3.2mm}
-    \centering
-    \rotatebox{-1.5}{%
+  \rotatebox{-1.5}{%
       \begin{tikzpicture}[inner sep=0pt,outer sep=0pt]
         \node (P) {\includegraphics[width=#2,height=#3]{#1}};
         \draw[rulecolor,line width=0.3pt]
@@ -519,6 +651,28 @@
           (P.north west) -- ++(\tributecorner,0)
                          -- ++(-\tributecorner,-\tributecorner) -- cycle;
       \end{tikzpicture}}%
+}
+
+\newcommand{\tributephoto}[3]{% #1 plate, #2 width, #3 height
+  \begin{wrapfigure}{r}{\dimexpr#2+8mm\relax}
+    \vspace{-3.2mm}
+    \centering
+    \tributemount{#1}{#2}{#3}%
+    \vspace{-2mm}
+  \end{wrapfigure}%
+}
+
+% The same, captioned. The caption is set to the width of the print rather
+% than of the wrapping column, so it sits under the photograph and not under
+% the gutter beside it; the column is already the picture plus 8mm, and a
+% caption filling that would reach into the letter.
+\newcommand{\tributephotocap}[4]{%
+  \begin{wrapfigure}{r}{\dimexpr#2+8mm\relax}
+    \vspace{-3.2mm}
+    \centering
+    \tributemount{#1}{#2}{#3}%
+    \par\vspace{1.8mm}
+    \parbox{#2}{\centering\smallphotocaptionface#4\par}
     \vspace{-2mm}
   \end{wrapfigure}%
 }

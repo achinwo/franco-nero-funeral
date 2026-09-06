@@ -17,11 +17,12 @@ exactly. A grid of fixed cells would have to crop, and these are family
 photographs -- cropping them is not a decision a script should make.
 """
 
-import hashlib
 import itertools
 import pathlib
-import subprocess
 import sys
+
+import captions as captionfile
+import photoset
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 SRC = ROOT / "assets/images/family_pics"
@@ -29,8 +30,11 @@ OUT = ROOT / "assets/images/plates/family"
 TEX = ROOT / "assets/images/plates/family-album.tex"
 # Everything already in the booklet, so a copy of the cover photograph
 # dropped into family_pics/ is recognised and skipped rather than printed
-# twice.
-IN_USE = ROOT / "assets/images/"
+# twice. Two directories rather than one: his own photographs, and the four
+# scans the plates are cut from, were moved out of images/ into personal/,
+# and a check that only read the loose files above them would have gone
+# quietly empty -- which is the worst way for a guard like this to fail.
+IN_USE = (ROOT / "assets/images", ROOT / "assets/images/personal")
 
 # --- page geometry, in mm; must match the geometry package in main.tex -----
 TEXT_W = 120.0
@@ -77,6 +81,24 @@ SAFETY = 3.0
 # of it; a page wanting none asks for nothing at all, and gets nothing.
 TOPSKIP = 3.87
 
+# What a caption costs the row it is in. Most of the album is uncaptioned --
+# these are faces the family already knows -- but a captioned print needs the
+# depth reserving before the rows are paginated, or the page it falls on ends
+# up a caption too tall and pushes its last row over the bottom margin.
+#
+# CHARS_PER_MM is measured off the page rather than derived from the font
+# metrics, because what settles the count is not the average character width
+# but where the words happen to break: a 72-character caption under a 45mm
+# print comes out three lines, which is 0.53 characters to the millimetre at
+# \footnotesize and nothing like the 0.75 the metrics alone would suggest.
+# The album sets its captions a size smaller, so a few more fit on a line.
+# The figure errs low, so a caption is credited with one line more rather
+# than one fewer: that costs 3mm of white, where the other way costs a row
+# pushed off the bottom of the page.
+CAPTION_GAP = 1.4          # mm between a print and its caption
+CAPTION_LEAD = 3.0         # mm a line of caption occupies
+CAPTION_CHARS_PER_MM = 0.56
+
 MIN_PIXELS = 600      # below this the print would be visibly soft at album size
 LONG_EDGE = 1500      # normalised size; ~380dpi at the largest size used here
 
@@ -98,82 +120,43 @@ SKIP = {
 EXTS = {".jpg", ".jpeg", ".png", ".heic", ".tif", ".tiff", ".webp"}
 
 
-def sh(*args):
-    return subprocess.run(args, capture_output=True, text=True, check=True).stdout.strip()
-
-
-def digest(path):
-    h = hashlib.md5()
-    with open(path, "rb") as fh:
-        for block in iter(lambda: fh.read(1 << 20), b""):
-            h.update(block)
-    return h.hexdigest()
-
-
-def oriented_size(path):
-    """Pixel size after EXIF rotation is applied.
-
-    -auto-orient matters: several of these came off a phone with an EXIF
-    rotation flag, and pdflatex does not honour it -- an unrotated portrait
-    would be laid out as a landscape and come out sideways.
-    """
-    w, h = sh("magick", str(path), "-auto-orient",
-              "-format", "%w %h", "info:").split()
-    return int(w), int(h)
-
-
 def collect():
-    if not SRC.is_dir():
-        return [], []
-
-    # Hashes of the images the booklet already uses elsewhere.
-    used = {digest(p) for p in IN_USE.glob("*")
-            if p.is_file() and p.suffix.lower() in EXTS}
-
-    kept, dropped, seen = [], [], set()
-    for path in sorted(SRC.iterdir()):
-        if not path.is_file() or path.suffix.lower() not in EXTS:
-            continue
-        if path.name in SKIP:
-            dropped.append((path.name, SKIP[path.name]))
-            continue
-
-        d = digest(path)
-        if d in used:
-            dropped.append((path.name, "already used elsewhere in the booklet"))
-            continue
-        if d in seen:
-            dropped.append((path.name, "duplicate of an earlier file"))
-            continue
-        seen.add(d)
-
-        try:
-            w, h = oriented_size(path)
-        except subprocess.CalledProcessError:
-            dropped.append((path.name, "unreadable"))
-            continue
-        if min(w, h) < MIN_PIXELS:
-            dropped.append((path.name, f"too small to print ({w}x{h})"))
-            continue
-
-        kept.append((path, w, h))
-    return kept, dropped
+    return photoset.collect(SRC, IN_USE, SKIP, MIN_PIXELS, EXTS)
 
 
-def normalise(kept):
-    """Rotate, downsize and strip metadata into plates/family/."""
-    OUT.mkdir(parents=True, exist_ok=True)
-    for stale in OUT.glob("*.jpg"):
-        stale.unlink()
+def normalise(kept, captions):
+    """The plates, each with whatever caption is filed against its source.
 
-    out = []
-    for i, (path, w, h) in enumerate(kept, start=1):
-        dest = OUT / f"{i:02d}.jpg"
-        sh("magick", str(path), "-auto-orient",
-           "-resize", f"{LONG_EDGE}x{LONG_EDGE}>",
-           "-strip", "-quality", "88", str(dest))
-        out.append((f"plates/family/{dest.stem}", w / h, path.name))
-    return out
+    A caption is looked up by the file the photograph arrived in, not by the
+    plate it becomes: the plates are numbered by position and renumbered
+    whenever a photograph is added, and a caption that followed the number
+    would end up under somebody else. See assets/data/captions.toml.
+    """
+    prepared = photoset.normalise(kept, OUT, "plates/family", LONG_EDGE)
+    return [(name, aspect, origin, captions.latex(path))
+            for (name, aspect, origin), (path, _, _) in zip(prepared, kept)]
+
+
+def caption_depth(row, height):
+    """What the captions in a row add below the prints, in mm.
+
+    One depth for the whole row rather than one per photograph: the prints
+    hang from a common line, so the row is as deep as its deepest caption
+    and a page has to reserve that much.
+    """
+    lines = 0
+    for _, aspect, _, caption in row:
+        if caption:
+            per_line = max(1, int(height * aspect * CAPTION_CHARS_PER_MM))
+            lines = max(lines, -(-len(caption) // per_line))
+    return CAPTION_GAP + lines * CAPTION_LEAD if lines else 0.0
+
+
+def row_extent(row):
+    """The full depth a row takes on the page: its prints, and any caption
+    hanging under them."""
+    h = row_height(row)
+    return h + caption_depth(row, h)
 
 
 def compose(photos):
@@ -219,8 +202,8 @@ def compose(photos):
 
 
 def height_of(row):
-    span = TEXT_W - EPSILON - (len(row) - 1) * GUTTER - len(row) * 2 * RULE
-    return span / sum(item[1] for item in row)
+    return photoset.row_height([item[1] for item in row],
+                               TEXT_W - EPSILON, GUTTER, RULE)
 
 
 def row_height(row):
@@ -236,7 +219,7 @@ def paginate(packed):
     """
     pages, page, used = [], [], HEAD_RESERVE
     for row in packed:
-        h = row_height(row)
+        h = row_extent(row)
         if page and used + GUTTER + h > TEXT_H - SAFETY:
             pages.append(page)
             page, used = [], 0.0
@@ -260,7 +243,7 @@ def emit(pages):
              "% the file it came from:"]
     for page in pages:
         for row in page:
-            for name, _, origin in row:
+            for name, _, origin, _ in row:
                 lines.append(f"%   {name.rsplit('/', 1)[1]}  <-  {origin}")
     lines.append("")
 
@@ -276,19 +259,27 @@ def emit(pages):
         # of the album reads as a centred block rather than a page that ran
         # out. A full page has nothing left to centre and sits flush.
         avail = TEXT_H - SAFETY - (HEAD_RESERVE if not index else 0.0)
+        # Two sets of numbers: the extent a row takes on the page, captions
+        # and all, which is what the spreading below is solved against, and
+        # the height of the prints themselves, which is what goes into the
+        # macros.
         heights = [row_height(row) for row in page]
+        extents = [row_extent(row) for row in page]
         gaps = len(page) - 1
-        slack = avail - sum(heights) - GUTTER * gaps
+        slack = avail - sum(extents) - GUTTER * gaps
         gap = GUTTER + (min(slack / gaps, MAX_EXTRA) if gaps and slack > 0 else 0.0)
-        top = max(avail - sum(heights) - gap * gaps, 0.0) / 2
+        top = max(avail - sum(extents) - gap * gaps, 0.0) / 2
 
         if top > TOPSKIP:
             lines.append(f"\\vspace*{{{top - TOPSKIP:.2f}mm}}")
         for row, h in zip(page, heights):
             if row is not page[0]:
                 lines.append(f"\\vspace{{{gap:.2f}mm}}")
-            cells = [f"  \\albumphoto{{{name}}}{{{h * aspect:.2f}mm}}{{{h:.2f}mm}}"
-                     for name, aspect, _ in row]
+            cells = [
+                f"  \\albumphotocap{{{name}}}{{{h * aspect:.2f}mm}}"
+                f"{{{h:.2f}mm}}{{{caption}}}" if caption else
+                f"  \\albumphoto{{{name}}}{{{h * aspect:.2f}mm}}{{{h:.2f}mm}}"
+                for name, aspect, _, caption in row]
             lines.append("\\albumrow{%")
             lines.append("%\n  \\albumgap\n".join(cells) + "%")
             lines.append("}")
@@ -302,11 +293,14 @@ def main():
         TEX.write_text("% No usable images in assets/images/family_pics/.\n")
         print("build-album: no usable images found", file=sys.stderr)
         return
-    pages = paginate(compose(normalise(kept)))
+    pages = paginate(compose(normalise(kept, captionfile.load())))
     emit(pages)
+    captioned = sum(1 for page in pages for row in page
+                    for *_, caption in row if caption)
     print(f"build-album: {len(kept)} photographs, "
-          f"{sum(len(p) for p in pages)} rows, {len(pages)} pages "
-          f"-> {TEX.relative_to(ROOT)}")
+          f"{sum(len(p) for p in pages)} rows, {len(pages)} pages"
+          + (f", {captioned} captioned" if captioned else "")
+          + f" -> {TEX.relative_to(ROOT)}")
     for name, why in dropped:
         print(f"  skipped {name}: {why}")
 

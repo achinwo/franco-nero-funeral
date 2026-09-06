@@ -39,11 +39,15 @@
 % No `center` environments here. Each one adds \topsep above and below, and
 % two of them were enough (40pt) to push the lower pair onto a page of
 % their own; \centering inside a group does the same job for nothing.
+%
+% The captions are not written here. \mountedphoto looks each one up by the
+% plate it is handed, out of assets/data/captions.toml -- the file that
+% captions every photograph in the booklet, wherever it is printed. To change
+% what one of these prints says, edit its line there.
 \vspace*{2mm}
 
 {\centering
-  \mountedphoto[0.82\linewidth]{plates/plate-desk}%
-    {At the desk --- the shop books, and the telephone}\par}
+  \mountedphoto[0.82\linewidth]{plates/plate-desk}\par}
 
 \vspace{6mm}
 
@@ -54,21 +58,42 @@
 {\centering
   \begin{minipage}[t]{0.43\linewidth}
     \centering
-    \mountedphoto[\linewidth]{plates/plate-agbada}{Dressed for the occasion}
+    \mountedphoto[\linewidth]{plates/plate-agbada}
   \end{minipage}%
   \hspace{0.04\linewidth}%
   \begin{minipage}[t]{0.42\linewidth}
     \centering
-    \mountedphoto[\linewidth]{plates/plate-ledger}{Taking stock}
+    \mountedphoto[\linewidth]{plates/plate-ledger}
   \end{minipage}\par}
 
 \vfill
 
 \newpage
 
-% The modern photographs. These carry a plain hairline frame rather than the
-% photo corners used above: the corners say "old print mounted in an album",
-% which is true of the three scans and not of these.
+% The rest of his own photographs, out of assets/images/personal/, running
+% straight on from the three prints above. No head over them and no break in
+% the sequence: they are the same photographs of the same man, mounted the
+% same way and set at about the same size, and the only reason these pages
+% are generated and the one before was composed by hand is that there are
+% too many of them to place one at a time.
+%
+% assets/build-personal.py sizes the prints and breaks the pages; drop a
+% photograph of him into personal/, re-run assets/make-plates.sh, and these
+% pages re-flow. Their captions come from assets/data/captions.toml, looked
+% up by the file each photograph arrived in -- the same file the three above
+% take theirs from.
+\input{assets/images/plates/personal-photos}
+
+\vfill
+
+\newpage
+
+% The family's photographs, and the first head in the section: what it marks
+% is the turn from his own pictures to everybody's. These carry a plain
+% hairline frame rather than the photo corners used above -- the corners say
+% "old print mounted in an album", which is true of his and not of these --
+% and are set three across at half the size, because forty family group
+% shots are a crowd and read as one.
 \albumhead{The Family Album}
 
 \input{assets/images/plates/family-album}

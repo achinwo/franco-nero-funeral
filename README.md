@@ -1,6 +1,6 @@
 # Franco Nero International — order of service
 
-An A5 booklet, 53 pages, set in LaTeX and built with `latexmk`.
+An A5 booklet, 56 pages, set in LaTeX and built with `latexmk`.
 
 ```sh
 latexmk                                   # -> build/franco_nero_funeral.pdf
@@ -21,7 +21,7 @@ ImageMagick and no Python.
 |---|---|---|
 | TeX Live (full) | `pdflatex`, `latexmk` | TeX Live 2026, pdfTeX 1.40.29, latexmk 4.88 |
 | ImageMagick 7 | regenerating the plates in `assets/images/plates/`, and preparing any photograph a tribute carries | 7.1.1-28 |
-| Python 3.11+ | `assets/build-tributes.py` needs `tomllib` | 3.13.1 |
+| Python 3.11+ | the generators in `assets/` read TOML, and need `tomllib` | 3.13.1 |
 
 A full TeX Live install carries every package the booklet loads —
 `geometry`, `graphicx`, `xcolor`, `eso-pic`, `tikz`, `soul`, `letterspace`,
@@ -38,10 +38,12 @@ files, which works only if their font maps are enabled. `tlmgr` does that when
 it installs them; a font copied into the tree by hand will not print.
 
 Python 3.11 is a floor, not a preference: `tomllib` arrived in 3.11, and this
-machine's default `python3` is a pyenv 3.9. `build-tributes.py` handles that
-itself — it looks for `python3.13`, `python3.12` or `python3.11` on the `PATH`
-and re-execs into the first one it finds, and only fails if there is none.
-`build-album.py` needs only 3.7 (for `subprocess.run(capture_output=...)`).
+machine's default `python3` is a pyenv 3.9. The scripts handle that
+themselves — `assets/textkit.py` looks for `python3.13`, `python3.12` or
+`python3.11` on the `PATH` and re-execs the running script into the first one
+it finds, and only fails if there is none. Every generator goes through it,
+because every one of them reads a `.toml`: the tributes, and the captions
+that `build-album.py` and `build-personal.py` lay their pages out around.
 
 ## Regenerating the derived files
 
@@ -51,12 +53,15 @@ sh assets/make-plates.sh    # about 35 seconds
 
 One command rebuilds everything the booklet inputs but nobody edits:
 
+- `assets/data/captions.tex` — the captions, for the prints placed by hand
 - `assets/images/plates/plate-*.png` — the four old scans, cropped and toned
   to one sepia
 - `assets/images/plates/ghost-*.png` — the page-sized washes behind each
   section opening
 - `assets/images/plates/front-studio.png` — the frontispiece
 - `assets/images/plates/cover-sky.png` — the cover montage
+- `assets/images/plates/personal/*.jpg` and `plates/personal-photos.tex` — his
+  own photographs, laid out by `assets/build-personal.py`
 - `assets/images/plates/family/*.jpg` and `plates/family-album.tex` — the
   family album, laid out by `assets/build-album.py`
 - `assets/data/tributes.tex` and `assets/images/plates/tributes/*.jpg` — the
@@ -76,13 +81,70 @@ Edit these:
 | `booklet.tex` | the imposition — signature size, and the print options |
 | `sections/*.tex` | the pages themselves |
 | `assets/data/tributes.toml` | the tributes — plain text, no LaTeX; `imagePath` points at a photograph to set the letter around |
+| `assets/data/captions.toml` | the caption under each photograph, filed against the image file it belongs to |
+| `assets/images/personal/` | photographs of him; drop one in and the first Photographs pages re-flow |
 | `assets/images/family_pics/` | drop a photograph in; the album re-flows |
 | `assets/images/sky_backdrop.png` | the cover backdrop |
-| `assets/images/franco_sitting_green-print.png` | the cover cut-out |
-| `assets/images/WhatsApp Image 2026-08-19*.jpeg` | the four original scans |
+| `assets/images/personal/franco_sitting_green-print.png` | the cover cut-out |
+| `assets/images/personal/WhatsApp Image 2026-08-19*.jpeg` | the four original scans |
 
-Never edit `assets/images/plates/family-album.tex` or `assets/data/tributes.tex`
-by hand. Both say so at the top, and both are overwritten on the next run.
+Never edit `assets/images/plates/family-album.tex`,
+`assets/images/plates/personal-photos.tex`, `assets/data/tributes.tex` or
+`assets/data/captions.tex` by hand. All four say so at the top, and all four
+are overwritten on the next run.
+
+## Captions
+
+`assets/data/captions.toml` is the one place a photograph is given its words:
+
+```toml
+[caption]
+"plates/plate-desk.png" = "At the desk — the shop books, and the telephone"
+"personal/album-27.jpg" = "Outside the shop"
+```
+
+The key is the image file, relative to `assets/images/` — the same root
+`\graphicspath` gives the document. A caption follows its photograph wherever
+the booklet prints it, so there is nothing to keep in step by hand and no
+caption text anywhere in `sections/`. The value is plain text: type the
+apostrophes, quotation marks and dashes you want to see, and `<i>`/`<b>` if a
+word wants emphasis.
+
+Most photographs have no caption, which is the normal case — the album is
+faces the family already knows. A photograph with no line simply prints
+without one.
+
+Two paths appear as keys. Usually it is the original, `personal/album-27.jpg`
+or `family_pics/album-04.jpg`. The four old prints are the exception: all
+four are cut from a single scanned sheet, so the sheet cannot name one
+photograph and the caption hangs on the crop that is printed —
+`plates/plate-desk.png`.
+
+Adding a caption changes how much room its page has to leave for the picture,
+so run `sh assets/make-plates.sh` after editing this file. (Editing it and
+running `latexmk` alone updates the four mounted prints, whose captions are
+looked up rather than laid out around, but leaves the generated pages as they
+were.)
+
+## The Photographs section
+
+Three runs of pictures, in this order:
+
+1. the frontispiece — the studio portrait under a white scrim
+2. **his own photographs** — the three old prints `07-photobook.tex` places by
+   hand, running straight on into as many pages as `assets/images/personal/`
+   needs, all mounted with photo corners and laid out by `build-personal.py`
+3. **the family album** — `assets/images/family_pics/`, three across in plain
+   hairline frames, laid out by `build-album.py`
+
+Only the album carries a head, and what it marks is the turn from his
+pictures to everybody's.
+
+`personal/` holds the artwork cut from those photographs as well as the
+photographs themselves — the four scanned sheets and the cover cut-out. Those
+are already in the booklet as the plates, the frontispieces, the page ghosts
+and the cover, so `build-personal.py` skips them by name, with the reason
+given in its `SKIP` table.
 
 One thing to know before replacing the cover backdrop: `make-plates.sh` reads
 landmarks out of that file by pixel — its width, and the row where the
@@ -98,7 +160,7 @@ latexmk && latexmk -r booklet.latexmkrc   # -> build/franco_nero_funeral_booklet
 
 The second command imposes the booklet: `booklet.tex` reads the finished A5
 PDF back in and lays two pages side by side on each A4 sheet, in the order a
-folded stack needs, so 53 A5 pages come out as 28 sides — fourteen A4 sheets,
+folded stack needs, so 56 A5 pages come out as 28 sides — fourteen A4 sheets,
 printed double-sided, folded down the middle and stapled through the fold.
 
 The pages stay A5. Two of them across are 296mm and A4 turned landscape is
@@ -118,12 +180,13 @@ Two things to get right at the printer:
   `booklet.tex` pulls everything inside a desktop printer's margins, at the
   cost of the pages no longer being A5.
 
-The booklet is 53 pages and a fold needs a multiple of four, so three blank
-pages are added. `booklet.tex` counts the pages itself, out of the PDF, and
-puts those blanks *before* the last page rather than after it — otherwise the
-outside of the final sheet comes out blank with the back cover buried a leaf
-inside it. Nothing needs editing here when a tribute is added and the page
-count changes.
+A fold needs a multiple of four pages, so `booklet.tex` counts the pages
+itself, out of the PDF, and pads to the next multiple. It puts any blanks
+*before* the last page rather than after it — otherwise the outside of the
+final sheet comes out blank with the back cover buried a leaf inside it. The
+booklet is 56 pages at the moment, which is already a multiple of four, so
+none are being added; nothing needs editing here when a tribute or a
+photograph changes the count.
 
 By default the whole booklet is one signature, which is the saddle stitch an
 order of service is bound with. `\bkltsignature` at the top of `booklet.tex`

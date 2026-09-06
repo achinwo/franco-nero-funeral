@@ -1,0 +1,43 @@
+# The captions under the photographs.
+#
+# One line per photograph: the path of the image file and the words to print
+# under it. Paths are relative to assets/images/, which is where the booklet
+# looks for every picture it prints, so that part is left off. Plain text --
+# no LaTeX. Type the apostrophes, quotation marks and dashes you want to see
+# and they will come out right; <i>...</i> and <b>...</b> work for a word
+# that wants emphasis, and nothing else is markup.
+#
+# A caption belongs to the photograph, not to the page. Caption a picture
+# here and it is captioned wherever the booklet prints it -- mounted in the
+# Photographs section, reflowed into the family album, or set beside a
+# tribute. A photograph with no line here is printed with no caption, which
+# is the normal case: most of the album is faces the family already knows.
+#
+# Two kinds of path appear as keys:
+#
+#   personal/album-27.jpg, family_pics/album-04.jpg
+#       a photograph as it arrived. The usual case -- captioning one changes
+#       how much room its page has to leave for it, so re-run
+#       assets/make-plates.sh after editing this file.
+#
+#   plates/plate-desk.png
+#       one of the four old prints. All four are cut from a single scanned
+#       sheet, so the scan cannot name one photograph; the crop is the
+#       photograph, and the crop is what the page prints.
+#
+# Keying on the file is what keeps a caption under its own picture. The album
+# renumbers its plates every time a photograph is added to it, so a caption
+# filed under a number would follow the number instead, and end up under
+# somebody else.
+
+[caption]
+
+# --- the four old prints, in the Photographs section -----------------------
+"plates/plate-desk.png" = "At the desk — the shop books, and the telephone"
+"plates/plate-agbada.png" = "Dressed for the occasion"
+"plates/plate-ledger.png" = "Taking stock"
+
+# --- his own photographs, in personal/ -------------------------------------
+# Uncaptioned so far. Add a line here as the family names them, for example:
+#
+#   "personal/album-27.jpg" = "Outside the shop"
