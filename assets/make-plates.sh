@@ -95,30 +95,42 @@ done
 
 rm -f plates/_raw-*.png plates/_wash.png plates/_v.png plates/_h.png plates/_m.png
 
-# --- frontispiece ----------------------------------------------------------
-# A full-bleed A5 plate for the opening page of the Photographs section: the
-# studio portrait cover-cropped to the page, with a white field burnt into
-# the foot for the type to sit on and a gradient dissolving that field back
-# into the photograph, so there is no visible edge. The same device as the
-# cover, so the two pages rhyme.
+# --- frontispieces ---------------------------------------------------------
+# Full-bleed A5 plates for the pages that open a section on a photograph: one
+# portrait cover-cropped to the page, with a white field burnt into the foot
+# for the type to sit on and a gradient dissolving that field back into the
+# photograph, so there is no visible edge. The same device as the cover, so
+# those pages rhyme with it.
 #
 # The white field is carried in as an image with the ramp copied into its
 # alpha channel. The three-image `-composite` mask form does not apply here:
 # with -compose over it silently ignores the mask.
 FW=1748; FH=2480
-# Solid white from 74% of the page down, so the type at the foot sits on a
-# clean field rather than on his trousers -- a linear ramp all the way to
-# the trim left the caption line at 70% grey and unreadable.
-magick -size "${FW}x$((FH * 52 / 100))" xc:black \
-       -size "${FW}x$((FH * 22 / 100))" gradient:black-white \
-       -size "${FW}x$((FH * 26 / 100))" xc:white \
-       -append -resize "${FW}x${FH}!" -blur 0x8 "plates/_scrim.png"
-magick "plates/plate-studio.png" \
-    -resize "${FW}x${FH}^" -gravity north -extent "${FW}x${FH}" \
-    \( -size "${FW}x${FH}" xc:white "plates/_scrim.png" \
-       -alpha off -compose copy_opacity -composite \) \
-    -compose over -composite -strip "plates/front-studio.png"
-rm -f plates/_scrim.png
+front() { # front <plate> <name> <field-top-pct>
+  # Solid white from <field-top> down, so the type at the foot sits on a
+  # clean field rather than on his trousers -- a linear ramp all the way to
+  # the trim left the caption line at 70% grey and unreadable. The three
+  # bands are: photograph untouched, the dissolve, then the field.
+  _top=$3
+  magick -size "${FW}x$((FH * (_top - 22) / 100))" xc:black \
+         -size "${FW}x$((FH * 22 / 100))" gradient:black-white \
+         -size "${FW}x$((FH * (100 - _top) / 100))" xc:white \
+         -append -resize "${FW}x${FH}!" -blur 0x8 "plates/_scrim.png"
+  magick "plates/plate-$1.png" \
+      -resize "${FW}x${FH}^" -gravity north -extent "${FW}x${FH}" \
+      \( -size "${FW}x${FH}" xc:white "plates/_scrim.png" \
+         -alpha off -compose copy_opacity -composite \) \
+      -compose over -composite -strip "plates/front-$2.png"
+  rm -f plates/_scrim.png
+}
+# The Photographs section opens on the studio portrait.
+front studio studio 74
+# A Life Remembered opens on the agbada portrait -- a different photograph
+# from the frontispiece, because two sections opening on the same picture
+# reads as a shortage of pictures rather than as a motif. Its field starts
+# lower: the agbada crop is tighter, and burning white from 74% would have
+# taken the robe with it.
+front agbada life 79
 
 # --- the cover -------------------------------------------------------------
 # The cover is a montage, not a photograph. sky_backdrop.png is A5 stationery:

@@ -1,6 +1,6 @@
 # Franco Nero International — order of service
 
-An A5 booklet, 49 pages, set in LaTeX and built with `latexmk`.
+An A5 booklet, 53 pages, set in LaTeX and built with `latexmk`.
 
 ```sh
 latexmk                                   # -> build/franco_nero_funeral.pdf
@@ -98,7 +98,7 @@ latexmk && latexmk -r booklet.latexmkrc   # -> build/franco_nero_funeral_booklet
 
 The second command imposes the booklet: `booklet.tex` reads the finished A5
 PDF back in and lays two pages side by side on each A4 sheet, in the order a
-folded stack needs, so 49 A5 pages come out as 26 sides — thirteen A4 sheets,
+folded stack needs, so 53 A5 pages come out as 28 sides — fourteen A4 sheets,
 printed double-sided, folded down the middle and stapled through the fold.
 
 The pages stay A5. Two of them across are 296mm and A4 turned landscape is
@@ -118,7 +118,7 @@ Two things to get right at the printer:
   `booklet.tex` pulls everything inside a desktop printer's margins, at the
   cost of the pages no longer being A5.
 
-The booklet is 49 pages and a fold needs a multiple of four, so three blank
+The booklet is 53 pages and a fold needs a multiple of four, so three blank
 pages are added. `booklet.tex` counts the pages itself, out of the PDF, and
 puts those blanks *before* the last page rather than after it — otherwise the
 outside of the final sheet comes out blank with the back cover buried a leaf

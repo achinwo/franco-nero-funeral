@@ -1,21 +1,225 @@
 %! TeX root = ../main.tex
+
 \sectionanchor{toc:biography}{A Life Remembered}
+
+% ---------------------------------------------------------------------------
+% Two pages, on the pattern the Photographs section already sets: a full-bleed
+% frontispiece, then the text.
+%
+% The frontispiece is plates/front-life.png -- the agbada portrait, the
+% youngest picture of him the family has, cover-cropped to the page with a
+% white field burnt into the foot for the type. It is built by
+% assets/make-plates.sh, from plate-agbada, by the same `front' function that
+% builds the Photographs frontispiece; to change the picture, change which
+% plate that function is handed there and re-run the script.
+%
+% A different photograph from the one that opens Photographs, deliberately.
+% Two sections opening on the same portrait reads as a shortage of pictures
+% rather than as a motif -- and the young man in the agbada is the right one
+% to stand at the head of a page that begins with his birth.
+% ---------------------------------------------------------------------------
+
+\pageghost{front-life}
+
+\vspace*{\fill}
+
+\begin{center}
+  {\Large\scshape\color{primary} A Life Remembered}
+
+  \vspace{3mm}
+  {\color{rulecolor}\rule{18mm}{0.4pt}}
+
+  \vspace{4mm}
+  \begin{minipage}{0.84\linewidth}
+    \centering\small\itshape\color{accent}
+    ``Onoteagbor'' --- the one who would live long
+  \end{minipage}
+\end{center}
+
+\vspace*{6mm}
+
+\newpage
+
+% ---------------------------------------------------------------------------
+% The biography itself. The ledger ghost behind it, which is the photograph of
+% him taking stock: he was, by his family's account, an exact keeper of
+% records, and it is the one wash in the set that says so.
+%
+% Their own first line -- "BIOGRAPHY OF THE LATE SIR FRANCIS ONOTEAGBOR
+% ATSEKHAMEH (FRANCO NERO THE SKY MAN)" -- is the title of the piece rather
+% than a sentence of it, so it is set as one: the name in letterspaced caps
+% and the two names he was known by beneath it.
+% ---------------------------------------------------------------------------
 
 \pageghost{ghost-ledger-hi}
 
 \begin{center}
-  {\Large\scshape\color{primary} A Life Remembered}
+  {\coverface\fontsize{11}{14}\selectfont\color{primary}
+    \coverline[150]{Sir Francis Onoteagbor Atsekhameh}\par}
+
+  \vspace{1.5mm}
+  {\small\itshape\color{accent} ``Franco Nero'' \diamondmark\ De Sky Man}
   \thinseparator
 \end{center}
 
-\vspace{4mm}
+\vspace{2mm}
 
+% Justified, with an indent, and not the ragged setting the liturgy pages
+% take. The liturgy is a list of short spoken lines and rags cleanly; this is
+% continuous prose in a 57mm column, where ragged right breaks into stubs.
+% The indent rather than a blank line between paragraphs for the same reason
+% the tributes use one: at this length the paragraph gaps would cost a
+% centimetre of page and buy nothing an indent does not.
 \begin{multicols}{2}
-  \small\raggedright
-  \setlength{\parindent}{0pt}
+  \small
+  \setlength{\parindent}{1.2em}
+  \setlength{\parskip}{0.5pt}
   \raggedcolumns
+  \color{primary}
+  % A 57mm column at 10pt holds about seven words, and TeX's default
+  % tolerance gives up on a line and stretches the spaces before it has tried
+  % everything. Raising it, and leaving a little emergency stretch for the
+  % paragraph it still cannot set, buys back most of the loose lines. Set
+  % here rather than in the preamble: the liturgy pages are ragged right and
+  % would not notice, and nothing else in the booklet should reflow for this.
+  \tolerance=1600
+  \emergencystretch=1.2em
 
+  \lifehead{His Early Years}
+
+  \dropcap{T}{he late} Francis Onoteagbor Atsekhameh was born into the family
+  of Otse to Late Mr.\ Apuede and Mrs.\ Egieobo Atsekhameh in the year 1946.
+
+  He was the first surviving child of his parents amongst 7, hence the name
+  \textsc{Onoteagbor} which translates to --- \textit{The One Who Would Live
+  Long}.
+
+  As a very little boy, who had lost his father at a very tender age, Franco
+  Nero refused to accept that he was born by his earthly parents, so he came
+  up with a narrative that he fell off the sky, and his mother was only
+  privileged to catch him with a ``basin'' and proceeded to call himself
+  ``\textsc{Adeokwile}'' which literally translates to someone who fell off
+  the sky. He took this narrative very seriously, told everyone in his family
+  and the entire community and insisted to be addressed by that.
+
+  \lifeline{Hence the name ``\coverline[150]{Sky Man}''.}
+
+  \lifehead{His Education}
+
+  Franco Nero began his elementary education at St.\ Thomas Aquinas Catholic
+  Primary School, Ivioghe, Agenebode. After completing his primary education,
+  he went on to live with his older cousin, High Chief Thomas Audu, in Sapele,
+  Delta State. Who later relocated to Lagos, where he went on to further his
+  education through distant learning with the prestigious London Business
+  School in England, United Kingdom, and obtained a Diploma in Sales
+  Management, and pushed himself hard to further obtain an Advanced Diploma in
+  Marketing.
+
+  \lifehead{His Career}
+
+  He began his career with the Ministry of Defence and then proceeded to work
+  as a Regional Sales Manager with Omon Stores. He later got employed by the
+  then famous British Trading Company that played a massive role in West
+  African commerce, particularly in Nigeria and Ghana --- G.B Ollivant (GBO)
+  which was ultimately absorbed by the United Africa Company (UAC), and later
+  became a part of the Unilever Group --- De \textsc{Sky Man} capitalized on
+  these corporate growth opportunities, leveraging on the organizational
+  support to expand his professional skillsets, and made the sky his
+  springboard, because he excelled greatly in his Salesmanship career.
+
+  He also worked with Pilroads Nigeria Ltd before retiring and venturing into
+  several businesses. He was a serial businessman who explored so many
+  business ideas in his lifetime.
+
+  Despite losing his father at a very tender age, he didn't let his
+  circumstances hinder the man he was destined to be. His determination and
+  drive to become a person of great value, was reflected throughout his
+  lifetime.
+
+  \lifehead{His Hobbies}
+
+  Sky Man was an astute lover of sports, particularly football and wrestling,
+  and he had a deep passion for Arsenal, a club he proudly cheered on for well
+  over 3 decades.
+
+  Our Dad was a very meticulous and detailed-oriented man, who was very
+  particular about his environment. He was also an excellent keeper of
+  records, and was a champion at recounting events with dates. He penned down
+  the birthdays of all his children and grandchildren, including important
+  anniversary dates. He was a very smart and intelligent man with a stellar
+  memory.
+
+  \lifehead{His Faith}
+
+  As a Christian and a steadfast catholic, his love for Mother Mary was
+  admirable. He was a very devoted legionary who headed Praesidiums and
+  carried out his legion work in the remotest villages within and outside
+  Benin City. He would evangelise to unbelievers and idol worshipers, tell
+  them about Jesus Christ, and fearlessly destroyed several shrines in a bid
+  to convert the owners and lead them to Christ.
+
+  It was no coincidence he died on August 15\textsuperscript{th} --- the day
+  the church celebrates the feast of ascension.
+
+  \lifehead{His Personality}
+
+  Daddy had quite a large and accommodating heart. He opened the door of our
+  house to everyone including his wife's relatives and his children's friends
+  and all who needed a home at different time, and he never complained of
+  anyone's presence or how long they lived with us.
+
+  He loved action movies, loved reading and writing, dancing and everything
+  that had to do with music --- listening, singing, and dancing, and oh, he
+  had a great taste in music. Dad didn't joke with his oldies, we still recall
+  how he would write the complete lyrics of songs on papers for us to read and
+  sing along with him. He was blessed with a sweet melodious voice, that
+  charged the atmosphere in a very awesome way, whenever it rents the air.
+
+  Daddy loved fashion till his last days. He enjoyed rocking his sneakers,
+  jeans, t-shirts, and his face caps, and would always joke about being a
+  ``small boy'' when asked.
+
+  \lifehead{His Marriage and Family}
+
+  Sky Man got married to his ``beautiful wife'' and friend as he liked to call
+  her on the 22\textsuperscript{nd} day of May, 1977, and their union was
+  blessed with 5 children.
 
 \end{multicols}
 
-\vfill
+% ---------------------------------------------------------------------------
+% From here the family stop describing him and speak to him, and the setting
+% changes with the voice: out of the columns, full measure, in italic. See
+% \lifeenvoi in main.tex.
+%
+% \newpage rather than letting it fall where it falls. The columns end a few
+% lines short of the foot -- not enough for the envoi, which then broke to
+% the next page and left the \vspace*{\fill} meant to centre it behind on
+% the page before, absorbed into the gap at the bottom of the second column.
+% Asking for the page explicitly is what makes the two fills here a pair, and
+% what centres the family's last words on a page of their own.
+% ---------------------------------------------------------------------------
+
+\newpage
+
+\vspace*{\fill}
+
+\begin{lifeenvoi}
+  Today, our hearts are broken as we speak about you in past tenses, though
+  you are not physically present, but the memories we created and shared will
+  forever remain precious to our hearts.
+
+  We believe you are in a better place, with your father in heaven, we know
+  you are singing, dancing and definitely cracking up the hosts of heavens.
+  Most importantly, we know you're watching over us, and we are consoled that
+  you get to be with the one who loves you most.
+
+  Daddy, thank you for the unconditional love, the sacrifices, the priceless
+  moments, and the beautiful memories created and shared. They will live in
+  our hearts and be cherished forever.
+\end{lifeenvoi}
+
+\lifeclose{Continue to rest in the bosom of the Almighty,}%
+          {Franco Nero, De Sky Man}
+
+\vspace*{\fill}

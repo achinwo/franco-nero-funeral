@@ -558,9 +558,93 @@
 % Set in the cover's face. Page furniture and display letters are where the
 % booklet is allowed its other voice, and an EB Garamond initial over Latin
 % Modern text is the contrast a printed letter has always used.
-\newcommand{\tributedropcap}[2]{%
+\newcommand{\dropcap}[2]{%
   \lettrine[lines=2, lhang=0.1, findent=0.15em, nindent=0em,
             slope=0em]{\coverface\color{primary}#1}{#2}%
+}
+% It opens the biography as well, so it has the booklet's name above and the
+% tributes' name here -- assets/build-tributes.py emits \tributedropcap, and
+% the generated file is not the place to learn that the macro was renamed.
+\let\tributedropcap\dropcap
+
+% --- A Life Remembered ------------------------------------------------------
+% The biography is the one section that is neither liturgy nor letter: it is
+% prose, in two columns, running to a couple of pages, and it needs a subhead
+% and a way of marking the point where it stops.
+
+\makeatletter
+% The subhead. \liturgyhead's letterspaced caps with the hairline taken off
+% it: seven full-width rules inside two columns would stripe the page, and a
+% life is not a document to be ruled off into departments. The diamond takes
+% over what the rule was doing -- it marks the head as furniture rather than
+% as a sentence -- and it is the ornament the footer and the tribute dividers
+% already use, so nothing new is introduced to say something already said.
+%
+% \textls rather than \liturgyhead's \so, and the difference is the column.
+% soul wedges a fixed quarter-em between letters, which is right across a
+% 120mm measure and is what puts "His Marriage and Family" over two lines
+% with a hyphen in the middle of FAMILY at 57mm. \textls tracks through the
+% font's own kerning at a figure we can choose, and 110 is the figure that
+% gets the longest of these heads onto one line. Hyphenation is switched off
+% besides: a head that has to break should break at a space.
+\newcommand{\lifehead}[1]{%
+  \par\addvspace{4.2mm}%
+  \penalty-300
+  \noindent{\hyphenpenalty=10000 \exhyphenpenalty=10000 \hbadness=10000
+    \diamondmark\hskip 0.6em
+    \footnotesize\scshape\color{primary}\textls[110]{#1}}\par
+  \nobreak\vspace{1.6mm}%
+  \@afterheading
+}
+\makeatother
+
+% A line the prose sets off by itself -- "Hence the name Sky Man" -- centred
+% in the column and in the cover's face, because it is the sentence the whole
+% booklet is named after and it arrives in the middle of a paragraph about a
+% boy and a basin.
+\newcommand{\lifeline}[1]{%
+  \par\addvspace{2.8mm}%
+  {\centering\coverface\color{primary}#1\par}%
+  \nobreak\addvspace{2.8mm}%
+}
+
+% The last few paragraphs of the biography are not biography. The family stop
+% describing him and start speaking to him -- "Today, our hearts are broken
+% as we speak about you in past tenses" -- and that turn is the most
+% important thing in the section.
+%
+% So it leaves the columns. Set full measure and in italic, after the
+% divider the tributes use, on the page the biography runs onto anyway: two
+% columns of eight lines and a stub of a page was what it looked like set
+% with everything else, and the words deserve better than the bottom of a
+% column. The white around it is the point, not a shortfall -- this is the
+% one page in the booklet with nothing to get through.
+\newenvironment{lifeenvoi}{%
+  \par\begin{center}
+  \diamondrule{16mm}{1.1mm}\par
+  \vspace{6.5mm}
+  \begin{minipage}{0.86\linewidth}
+    \small\itshape\color{primary}
+    \setlength{\parindent}{1.2em}\setlength{\parskip}{0.5pt}%
+    \noindent\ignorespaces
+}{%
+  \end{minipage}\par
+  \end{center}%
+}
+
+% What the family close on, and the booklet with them: their last sentence,
+% cut where it turns from a wish into a name. The name takes the letterspaced
+% capitals the cover sets it in, so the section ends on the same two words the
+% booklet opens with.
+\newcommand{\lifeclose}[2]{%
+  \par\addvspace{12mm}%
+  \begin{center}
+    \begin{minipage}{0.88\linewidth}
+      \centering\coverface\fontsize{10.5}{14}\selectfont\itshape\color{primary}#1
+    \end{minipage}\par
+    \vspace{3mm}
+    {\coverface\fontsize{9.5}{12}\selectfont\color{primary}\coverline[180]{#2}}
+  \end{center}%
 }
 
 % A hairline broken by a small diamond: the cover's ornament and, at a
