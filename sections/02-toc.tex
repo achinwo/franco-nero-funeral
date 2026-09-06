@@ -26,17 +26,17 @@
 \newsavebox{\tocrow}
 \newcommand{\tocentry}[4]{%
   \sbox{\tocrow}{%
-  \begin{minipage}[t]{\tocnumwidth}\raggedright
-    \strut{\footnotesize\scshape\color{rulecolor}#1}
-  \end{minipage}%
-  \begin{minipage}[t]{\dimexpr\linewidth-\tocnumwidth-\tocpagewidth\relax}\raggedright
-    \strut{\color{primary}#2}\par
-    \vspace{1.2mm}
-    {\footnotesize\itshape\color{accent}#3}
-  \end{minipage}%
-  \begin{minipage}[t]{\tocpagewidth}\raggedleft
-    \strut{\color{accent}\pageref*{#4}}
-  \end{minipage}%
+    \begin{minipage}[t]{\tocnumwidth}\raggedright
+      \strut{\footnotesize\scshape\color{rulecolor}#1}
+    \end{minipage}%
+    \begin{minipage}[t]{\dimexpr\linewidth-\tocnumwidth-\tocpagewidth\relax}\raggedright
+      \strut{\color{primary}#2}\par
+      \vspace{1.2mm}
+      {\footnotesize\itshape\color{accent}#3}
+    \end{minipage}%
+    \begin{minipage}[t]{\tocpagewidth}\raggedleft
+      \strut{\color{accent}\pageref*{#4}}
+    \end{minipage}%
   }%
   \noindent\hyperref[#4]{\usebox{\tocrow}}\par
 }
@@ -48,7 +48,7 @@
 \vspace*{1mm}
 
 \begin{center}
-  {\footnotesize\color{accent}\displaycaps{Francis Atsekhameh}}
+  {\footnotesize\color{accent}\displaycaps{Nero De Sky Man}}
 
   \vspace{4mm}
   {\Large\scshape\color{primary} Contents}
