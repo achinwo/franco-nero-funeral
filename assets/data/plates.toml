@@ -1,0 +1,61 @@
+# Which photograph each full-page plate is built from.
+#
+# These are the three plates that take a whole A5 sheet, edge to edge: the
+# cover, and the two frontispieces that open a section on a picture. Change a
+# path here and re-run `sh assets/make-plates.sh` -- nothing in sections/
+# needs touching, because the sections ask for the plate by name and this file
+# settles what goes into it.
+#
+# Paths are relative to assets/images/, the same root the booklet gives
+# \includegraphics and the same one assets/data/captions.toml uses.
+
+# --- the cover -------------------------------------------------------------
+# `source` is used exactly as given: copied to plates/cover-sky, unchanged.
+# No crop, no tone, no scrim, no montage. That is the point of it -- a cover
+# finished in another program comes back in as itself, and what you see there
+# is what prints.
+#
+# Two things follow from "unchanged" that are worth knowing before you spend
+# an afternoon on one:
+#
+#   Shape.  The page draws this at the full width and the full height of the
+#           sheet, so an image that is not A5 in proportion is stretched to
+#           fit rather than cropped. A5 is 148x210mm, which is 1748x2480 at
+#           300dpi -- make the artwork that size and nothing moves.
+#
+#   Bleed.  It runs to the trim on all four sides. Keep anything that must
+#           survive the guillotine a few millimetres inside the edge.
+#
+# Leave `source` empty (or delete the line) and the cover is built the way it
+# always was: the cloudscape in sky_backdrop.png with the cut-out stood up in
+# it, composited by assets/make-plates.sh. Everything that montage needs is
+# still in that script, so this is a switch rather than a demolition -- you
+# can go back to it by emptying one line.
+[cover]
+source = "franco_nero_cover.jpg"
+
+# --- the frontispieces -----------------------------------------------------
+# A portrait cover-cropped to the page with a white field burnt into the foot
+# for the type to sit on, and a gradient dissolving the field back into the
+# photograph so there is no visible edge. Unlike the cover, these two *are*
+# processed -- that scrim is what makes the type at the foot readable.
+#
+# `field` is where the white field begins, as a percentage down the page. It
+# is a property of the crop rather than a house style: the lower the figure,
+# the more of the photograph is burnt away, so a tightly cropped portrait
+# wants a larger number than a loose one. Move it if a new picture comes out
+# with its subject half dissolved, or with the caption sitting on a shirt.
+
+# Opens the Photographs section.
+[front-studio]
+source = "plates/plate-studio.png"
+field = 74
+
+# Opens A Life Remembered. A different photograph from the one above,
+# deliberately: two sections opening on the same portrait reads as a shortage
+# of pictures rather than as a motif. Its field starts lower because the
+# agbada crop is tighter, and burning white from 74% would have taken the
+# robe with it.
+[front-life]
+source = "plates/plate-agbada.png"
+field = 79

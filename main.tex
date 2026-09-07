@@ -82,7 +82,7 @@
 \newcommand{\diamondmark}{%
   \tikz[baseline=-0.05em]{%
     \fill[rulecolor] (0,0.5mm) -- (0.5mm,0) -- (0,-0.5mm) -- (-0.5mm,0)
-      -- cycle;}%
+  -- cycle;}%
 }
 
 \makeatletter
@@ -107,9 +107,9 @@
 \newcommand{\@runningtitle}{%
   \edef\@tempa{\leftmark}%
   \ifx\@tempa\@empty\else
-    {\color{accent}\expandafter\textls\expandafter[130]%
-      \expandafter{\expandafter\scshape\@tempa}}%
-    \hskip 0.75em\diamondmark\hskip 0.75em
+  {\color{accent}\expandafter\textls\expandafter[130]%
+  \expandafter{\expandafter\scshape\@tempa}}%
+  \hskip 0.75em\diamondmark\hskip 0.75em
   \fi
 }
 % LaTeX sets the foot in a box of \textwidth, so \hfil between the two halves
@@ -120,7 +120,7 @@
   \renewcommand{\@oddfoot}{%
     \coverface\fontsize{7}{9}\selectfont
     \hyperref[toc:contents]{%
-      \color{rulecolor}\textls[130]{\scshape Franco Nero International}}%
+    \color{rulecolor}\textls[130]{\scshape Franco Nero International}}%
     \hfil
     \@runningtitle
     {\fontsize{8.5}{9}\selectfont\color{primary!70}\thepage}%
@@ -151,7 +151,8 @@
 \newcommand{\liturgypart}[1]{%
   \par\addvspace{5mm}%
   \penalty-300 % a column may break here in preference to below the head
-  \noindent\begin{minipage}{\linewidth}
+  \noindent
+  \begin{minipage}{\linewidth}
     {\color{rulecolor}\rule{\linewidth}{0.3pt}}\par
     \vspace{1.6mm}
     \centering{\footnotesize\scshape\color{primary}\so{#1}}\par
@@ -168,7 +169,8 @@
 \newcommand{\liturgyhead}[1]{%
   \par\addvspace{4mm}%
   \penalty-300
-  \noindent\begin{minipage}{\linewidth}
+  \noindent
+  \begin{minipage}{\linewidth}
     \raggedright
     {\footnotesize\scshape\color{primary}\so{#1}}\par
     \vspace{1mm}
@@ -275,7 +277,7 @@
   \par
   {\noindent\hangindent=1.2em\hangafter=1
     \makebox[1.2em][l]{\footnotesize\color{accent}#1}%
-    {\itshape\color{primary}#2}\hskip 0.4em\relax{\color{primary}#3}\par}%
+  {\itshape\color{primary}#2}\hskip 0.4em\relax{\color{primary}#3}\par}%
   \vspace{1.5mm}%
 }
 
@@ -336,16 +338,17 @@
   \par\addvspace{3.2mm}%
   {\footnotesize\scshape\color{accent}\so{#2}\par}%
   \if\relax\detokenize{#1}\relax\else
-    \vspace{0.9mm}%
-    {\small\itshape\color{accent}(#1)\par}%
+  \vspace{0.9mm}%
+  {\small\itshape\color{accent}(#1)\par}%
   \fi
   \vspace{2mm}%
 }
 
 \newcommand{\celebrantsnames}[2]{% #1 column spec, #2 rows
   {\small\color{primary}%
-   \renewcommand{\arraystretch}{1.05}%
-   \begin{tabular}{#1}#2\end{tabular}\par}%
+    \renewcommand{\arraystretch}{1.05}%
+    \begin{tabular}{#1}#2
+  \end{tabular}\par}%
   \addvspace{1.5mm}%
 }
 
@@ -421,19 +424,19 @@
 \newcommand{\mountedprint}[2][\linewidth]{%
   \setlength{\mountwidth}{#1}%
   \setlength{\cornerlen}{0.055\mountwidth}%
-    \begin{tikzpicture}[inner sep=0pt,outer sep=0pt]
-      \node (P) {\includegraphics[width=\mountwidth]{#2}};
-      \draw[rulecolor,line width=0.3pt]
-        (P.south west) rectangle (P.north east);
-      \fill[cornerink]
-        (P.south west) -- ++(\cornerlen,0) -- ++(-\cornerlen,\cornerlen) -- cycle;
-      \fill[cornerink]
-        (P.south east) -- ++(-\cornerlen,0) -- ++(\cornerlen,\cornerlen) -- cycle;
-      \fill[cornerink]
-        (P.north east) -- ++(-\cornerlen,0) -- ++(\cornerlen,-\cornerlen) -- cycle;
-      \fill[cornerink]
-        (P.north west) -- ++(\cornerlen,0) -- ++(-\cornerlen,-\cornerlen) -- cycle;
-    \end{tikzpicture}%
+  \begin{tikzpicture}[inner sep=0pt,outer sep=0pt]
+    \node (P) {\includegraphics[width=\mountwidth]{#2}};
+    \draw[rulecolor,line width=0.3pt]
+    (P.south west) rectangle (P.north east);
+    \fill[cornerink]
+    (P.south west) -- ++(\cornerlen,0) -- ++(-\cornerlen,\cornerlen) -- cycle;
+    \fill[cornerink]
+    (P.south east) -- ++(-\cornerlen,0) -- ++(\cornerlen,\cornerlen) -- cycle;
+    \fill[cornerink]
+    (P.north east) -- ++(-\cornerlen,0) -- ++(\cornerlen,-\cornerlen) -- cycle;
+    \fill[cornerink]
+    (P.north west) -- ++(\cornerlen,0) -- ++(-\cornerlen,-\cornerlen) -- cycle;
+  \end{tikzpicture}%
 }
 
 \newcommand{\mountedphoto}[2][\linewidth]{%
@@ -441,11 +444,11 @@
     \centering
     \mountedprint[#1]{#2}\par
     \ifcsname photocap:#2\endcsname
-      \vspace{2.2mm}
-      {\photocaptionface\csname photocap:#2\endcsname\par}%
+    \vspace{2.2mm}
+    {\photocaptionface\csname photocap:#2\endcsname\par}%
     \else
-      \PackageWarning{captions}{No caption for #2 --
-        add one to assets/data/captions.toml}%
+    \PackageWarning{captions}{No caption for #2 --
+    add one to assets/data/captions.toml}%
     \fi
   \end{minipage}%
 }
@@ -686,7 +689,7 @@
       \centering{\footnotesize\scshape\color{primary}#1}
     \end{minipage}\par
     \vspace{0.8mm}
-    {\scriptsize\itshape\color{accent}#2}\par}%
+  {\scriptsize\itshape\color{accent}#2}\par}%
   \nobreak\vspace{1.8mm}%
   \@afterheading
 }
@@ -713,23 +716,23 @@
 \newcommand{\tributemount}[3]{% #1 plate, #2 width, #3 height
   \setlength{\tributecorner}{0.06\dimexpr#2\relax}%
   \rotatebox{-1.5}{%
-      \begin{tikzpicture}[inner sep=0pt,outer sep=0pt]
-        \node (P) {\includegraphics[width=#2,height=#3]{#1}};
-        \draw[rulecolor,line width=0.3pt]
-          (P.south west) rectangle (P.north east);
-        \fill[cornerink]
-          (P.south west) -- ++(\tributecorner,0)
-                         -- ++(-\tributecorner,\tributecorner) -- cycle;
-        \fill[cornerink]
-          (P.south east) -- ++(-\tributecorner,0)
-                         -- ++(\tributecorner,\tributecorner) -- cycle;
-        \fill[cornerink]
-          (P.north east) -- ++(-\tributecorner,0)
-                         -- ++(\tributecorner,-\tributecorner) -- cycle;
-        \fill[cornerink]
-          (P.north west) -- ++(\tributecorner,0)
-                         -- ++(-\tributecorner,-\tributecorner) -- cycle;
-      \end{tikzpicture}}%
+    \begin{tikzpicture}[inner sep=0pt,outer sep=0pt]
+      \node (P) {\includegraphics[width=#2,height=#3]{#1}};
+      \draw[rulecolor,line width=0.3pt]
+      (P.south west) rectangle (P.north east);
+      \fill[cornerink]
+      (P.south west) -- ++(\tributecorner,0)
+      -- ++(-\tributecorner,\tributecorner) -- cycle;
+      \fill[cornerink]
+      (P.south east) -- ++(-\tributecorner,0)
+      -- ++(\tributecorner,\tributecorner) -- cycle;
+      \fill[cornerink]
+      (P.north east) -- ++(-\tributecorner,0)
+      -- ++(\tributecorner,-\tributecorner) -- cycle;
+      \fill[cornerink]
+      (P.north west) -- ++(\tributecorner,0)
+      -- ++(-\tributecorner,-\tributecorner) -- cycle;
+  \end{tikzpicture}}%
 }
 
 \newcommand{\tributephoto}[3]{% #1 plate, #2 width, #3 height
@@ -761,7 +764,8 @@
 % between paragraphs would read as two afterthoughts rather than a signature.
 \newcommand{\tributesignoff}[1]{%
   \par\addvspace{1.4mm}%
-  \noindent\begin{minipage}{\linewidth}
+  \noindent
+  \begin{minipage}{\linewidth}
     \raggedleft\itshape\color{accent}#1
   \end{minipage}\par
   \addvspace{1.4mm}%
@@ -773,7 +777,8 @@
 % each other read as an accident.
 \newcommand{\tributeprayer}[1]{%
   \par\addvspace{2.6mm}%
-  \noindent\begin{minipage}{\linewidth}
+  \noindent
+  \begin{minipage}{\linewidth}
     \centering\footnotesize\itshape\color{accent}#1
   \end{minipage}\par
   \addvspace{0.6mm}%
@@ -793,7 +798,7 @@
 % Modern text is the contrast a printed letter has always used.
 \newcommand{\dropcap}[2]{%
   \lettrine[lines=2, lhang=0.1, findent=0.15em, nindent=0em,
-            slope=0em]{\coverface\color{primary}#1}{#2}%
+  slope=0em]{\coverface\color{primary}#1}{#2}%
 }
 % It opens the biography as well, so it has the booklet's name above and the
 % tributes' name here -- assets/build-tributes.py emits \tributedropcap, and
@@ -825,7 +830,7 @@
   \penalty-300
   \noindent{\hyphenpenalty=10000 \exhyphenpenalty=10000 \hbadness=10000
     \diamondmark\hskip 0.6em
-    \footnotesize\scshape\color{primary}\textls[110]{#1}}\par
+  \footnotesize\scshape\color{primary}\textls[110]{#1}}\par
   \nobreak\vspace{1.6mm}%
   \@afterheading
 }
@@ -853,15 +858,16 @@
 % column. The white around it is the point, not a shortfall -- this is the
 % one page in the booklet with nothing to get through.
 \newenvironment{lifeenvoi}{%
-  \par\begin{center}
-  \diamondrule{16mm}{1.1mm}\par
-  \vspace{6.5mm}
-  \begin{minipage}{0.86\linewidth}
-    \small\itshape\color{primary}
-    \setlength{\parindent}{1.2em}\setlength{\parskip}{0.5pt}%
-    \noindent\ignorespaces
-}{%
-  \end{minipage}\par
+  \par
+  \begin{center}
+    \diamondrule{16mm}{1.1mm}\par
+    \vspace{6.5mm}
+    \begin{minipage}{0.86\linewidth}
+      \small\itshape\color{primary}
+      \setlength{\parindent}{1.2em}\setlength{\parskip}{0.5pt}%
+      \noindent\ignorespaces
+    }{%
+    \end{minipage}\par
   \end{center}%
 }
 
@@ -933,9 +939,9 @@
     % where old-style would set "80" as an ascender beside an x-height o.
     \node at (0,1.1mm) {%
       \fontfamily{CormorantGaramond-TLF}\fontseries{l}\selectfont
-      \fontsize{17}{17}\selectfont\color{primary}#1};
+    \fontsize{17}{17}\selectfont\color{primary}#1};
     \node at (0,-4.1mm) {%
-      \coverface\fontsize{6}{6}\selectfont\color{accent}\coverline[260]{years}};
+    \coverface\fontsize{6}{6}\selectfont\color{accent}\coverline[260]{years}};
   \end{tikzpicture}%
 }
 
@@ -961,14 +967,14 @@
 % medallion just above it.
 \newcommand{\coverlifespan}[2]{%
   {\coverface\fontsize{9.5}{12}\selectfont
-   \begin{tabular}{@{}r@{\hspace{0.9em}}c@{\hspace{0.9em}}l@{}}
-     {\color{primary!60}\coverline[200]{Sunrise}} &
-       {\color{rulecolor}\rule[0.22em]{2.4mm}{0.4pt}} &
-       {\color{accent}#1} \\[0.15ex]
-     {\color{primary!60}\coverline[200]{Sunset}} &
-       {\color{rulecolor}\rule[0.22em]{2.4mm}{0.4pt}} &
-       {\color{accent}#2} \\
-   \end{tabular}\par}%
+    \begin{tabular}{@{}r@{\hspace{0.9em}}c@{\hspace{0.9em}}l@{}}
+      {\color{primary!60}\coverline[200]{Sunrise}} &
+      {\color{rulecolor}\rule[0.22em]{2.4mm}{0.4pt}} &
+      {\color{accent}#1} \\[0.15ex]
+      {\color{primary!60}\coverline[200]{Sunset}} &
+      {\color{rulecolor}\rule[0.22em]{2.4mm}{0.4pt}} &
+      {\color{accent}#2} \\
+  \end{tabular}\par}%
 }
 
 % One service, at the foot of the cover: what it is, when, and where.
@@ -990,15 +996,15 @@
 \newcommand{\coverservice}[4]{%
   \begin{minipage}[t]{0.45\linewidth}
     \centering
-    {\coverface\fontsize{7.5}{9}\selectfont\color{primary!55}
-      \coverline[240]{#1}\par}
+    {\coverface\fontsize{9}{9}\selectfont\color{primary!55}
+    \coverline[240]{#1}\par}
     \vspace{1mm}
-    {\coverface\fontsize{8.5}{11}\selectfont\color{primary}
+    {\coverface\fontsize{9}{11}\selectfont\color{primary}
       \coverline[150]{#2}\par
       \vspace{0.4mm}
-      \coverline[150]{#3}\par}
+    \coverline[150]{#3}\par}
     \vspace{1mm}
-    {\coverface\fontsize{8}{10.5}\selectfont\color{accent}#4\par}
+    {\coverface\fontsize{10}{10.5}\selectfont\color{accent}#4\par}
   \end{minipage}%
 }
 
@@ -1027,8 +1033,8 @@
 % unnumbered and the first content page is 1 again, so the default page
 % anchors collide and pdfTeX warns about duplicate destinations.
 \usepackage[hidelinks,plainpages=false,pdfpagelabels,
-            pdftitle={Franco Nero International -- Order of Service},
-            pdfsubject={Funeral service booklet}]{hyperref}
+  pdftitle={Franco Nero International -- Order of Service},
+pdfsubject={Funeral service booklet}]{hyperref}
 
 \begin{document}
 

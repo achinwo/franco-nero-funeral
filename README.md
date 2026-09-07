@@ -58,8 +58,10 @@ One command rebuilds everything the booklet inputs but nobody edits:
   to one sepia
 - `assets/images/plates/ghost-*.png` — the page-sized washes behind each
   section opening
-- `assets/images/plates/front-studio.png` — the frontispiece
-- `assets/images/plates/cover-sky.png` — the cover montage
+- `assets/images/plates/front-studio.png` and `front-life.png` — the two
+  frontispieces (sources set in `assets/data/plates.toml`)
+- `assets/images/plates/cover-sky.*` — the cover: the montage, or whatever
+  image `assets/data/plates.toml` names, copied in unchanged
 - `assets/images/plates/personal/*.jpg` and `plates/personal-photos.tex` — his
   own photographs, laid out by `assets/build-personal.py`
 - `assets/images/plates/family/*.jpg` and `plates/family-album.tex` — the
@@ -82,6 +84,7 @@ Edit these:
 | `sections/*.tex` | the pages themselves |
 | `assets/data/tributes.toml` | the tributes — plain text, no LaTeX; `imagePath` points at a photograph to set the letter around |
 | `assets/data/captions.toml` | the caption under each photograph, filed against the image file it belongs to |
+| `assets/data/plates.toml` | which image each full-page plate is built from — the cover and the two frontispieces |
 | `assets/images/personal/` | photographs of him; drop one in and the first Photographs pages re-flow |
 | `assets/images/family_pics/` | drop a photograph in; the album re-flows |
 | `assets/images/sky_backdrop.png` | the cover backdrop |
@@ -125,6 +128,71 @@ so run `sh assets/make-plates.sh` after editing this file. (Editing it and
 running `latexmk` alone updates the four mounted prints, whose captions are
 looked up rather than laid out around, but leaves the generated pages as they
 were.)
+
+## The full-page plates
+
+Three plates take a whole A5 sheet, edge to edge: the cover and the two
+frontispieces that open a section on a picture. Which image goes into each is
+set in `assets/data/plates.toml`, so swapping one is a path and a re-run
+rather than an edit to `make-plates.sh`:
+
+```toml
+[cover]
+source = "personal/cover-from-canva.png"   # empty = build the montage
+
+[front-studio]
+source = "plates/plate-studio.png"
+field  = 74
+```
+
+Paths are relative to `assets/images/`, the same root as `captions.toml`.
+
+**`latexmk` on its own is enough.** `.latexmkrc` notices when `plates.toml` is
+newer than the plates it builds and runs a covers-only pass first:
+
+```sh
+sh assets/make-plates.sh covers    # ~4s: the three full-page plates, nothing else
+sh assets/make-plates.sh           # ~35s: everything
+```
+
+The covers pass skips the scans, the ghosts and the four Python generators,
+which is what makes it quick enough to sit in front of a build. It only fires
+when the config is stale, so a fresh clone still builds with no ImageMagick and
+no Python — every plate is committed.
+
+The one case it cannot see is a source image **replaced in place under the same
+name**: the config has not changed, so nothing looks stale. `touch
+assets/data/plates.toml`, or run the covers pass by hand.
+
+**The cover is used exactly as given.** No crop, no tone, no scrim, no
+montage — the file is copied to `plates/cover-sky` unchanged, which is what
+makes it usable for artwork finished in another program. Two consequences:
+
+- The page draws it at the full width *and* height of the sheet, so an image
+  that is not A5 in proportion is **stretched, not cropped**. Make it
+  1748×2480 (A5 at 300dpi) and nothing moves. The script prints the size it
+  found and warns if the shape is off by more than 1%.
+- It bleeds to the trim on all four sides. Keep anything that must survive
+  the guillotine a few millimetres inside the edge.
+
+Leave `source` empty and the cover is built the way it always was, from
+`sky_backdrop.png` and the cut-out. The montage code is untouched, so this is
+a switch rather than a demolition.
+
+The two frontispieces *are* processed: a portrait is cover-cropped to the page
+with a white field burnt into the foot for the type. `field` is where that
+field begins, as a percentage down the page — a property of the crop rather
+than a house style, so a tightly cropped portrait wants a larger number than a
+loose one. Move it if a new picture comes out half dissolved, or with the type
+sitting on a shirt.
+
+A `source` naming a file that is not there stops the run. That is deliberate:
+the alternative is a cover built silently from the wrong picture.
+
+To render the cover's type alone — for compositing over artwork edited
+elsewhere — see the recipe in `build/cover-text.tex`, which carries `main.tex`'s
+preamble, inputs `sections/01-cover.tex` unaltered and redefines `\pageghost`
+to nothing.
 
 ## The Photographs section
 

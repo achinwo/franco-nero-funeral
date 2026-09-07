@@ -49,6 +49,42 @@ sub build_from_toml {
     return 0;
 }
 
+# The three full-page plates -- the cover and the two frontispieces -- are
+# built from whatever assets/data/plates.toml names, and that file produces
+# images rather than a .tex, so the custom dependency above cannot express it:
+# add_cus_dep matches on extension, and there is no plates.tex to hang it on.
+# Without something here, changing the cover in the config and running latexmk
+# rebuilds nothing at all, because as far as latexmk is concerned the plate on
+# disk is unchanged -- which is exactly the trap this block exists to close.
+#
+# So: if the config is newer than the plates it builds, run the covers-only
+# pass before the build. That pass skips the scans, the ghosts and the four
+# Python generators, so it costs a few seconds rather than half a minute.
+#
+# Only when it is stale, which keeps the promise that a fresh clone builds the
+# booklet with no ImageMagick and no Python: every plate is committed, so on a
+# clone the config is older than what it made and nothing here runs.
+#
+# What this does NOT catch is a source image replaced in place under the same
+# name -- the config has not changed, so nothing looks stale. `touch
+# assets/data/plates.toml` says so, or run `sh assets/make-plates.sh covers`.
+if (-e 'assets/data/plates.toml') {
+    my $conf = (stat 'assets/data/plates.toml')[9];
+    my $newest = 0;
+    foreach my $plate (glob 'assets/images/plates/cover-sky.* '
+                          . 'assets/images/plates/front-*') {
+        my $mtime = (stat $plate)[9];
+        $newest = $mtime if defined $mtime && $mtime > $newest;
+    }
+    if ($conf > $newest) {
+        warn "latexmk: assets/data/plates.toml is newer than the plates it "
+           . "builds; running `make-plates.sh covers'\n";
+        system('sh', 'assets/make-plates.sh', 'covers') == 0
+            or die "latexmk: the covers pass failed; fix plates.toml and "
+                 . "run again\n";
+    }
+}
+
 # Also remove these on `latexmk -c`
 $clean_ext = 'synctex.gz fdb_latexmk fls run.xml bbl';
 
