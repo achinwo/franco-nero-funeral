@@ -511,3 +511,38 @@ Rest well, my dear Franco, my friend and younger brother. You will always be rem
 
 <signoff>High Chief, Sir. Tom Iyelobu (KSJI)</signoff>
 """
+
+
+#MARK: Esther Iredia
+[[tribute]]
+order = 1889
+title = "IN LOVING MEMORY OF A MAN WHO MADE A HOUSE A HOME TO ALL"
+body = """
+There are people who cross our paths during childhood and leave an indelible mark in our lives. For me, Sir Francis Onoteagbor Atsekhameh was exactly that person.
+
+Growing up, some of my absolute favorite memories were the holidays I spent staying over at the Atsekhameh's house. From the moment I walked through the door, he never made me feel like just a guest he treated me like one of his own. He created a home filled with warmth, laughter, and a sense of safety that I will carry with me forever.
+Whether it was his welcoming smile, the quiet wisdom he shared, or the subtle ways he looked out for us while we were busy being kids, his presence was a constant anchor. He taught us, through his actions, what it means to be generous, kind, and deeply devoted to family.
+To my Dear friend and sister Emike and the entire family, i thank you for sharing your precious Dad with me. The incredible qualities you carry every day are a living testament to the wonderful man he was. He may no longer be with us, but the shelter, joy, and love he provided during those unforgettable childhood holidays will live on in my heart forever.
+<prayer>
+Rest in peace FRANCO NERO, You are deeply missed.
+</prayer>
+Love Always,
+Your Non-Biological Last Born
+Esther Iredia
+"""
+
+
+#MARK: COMR. & Mrs Mike Omozuapo
+[[tribute]]
+order = 708
+title = "TRIBUTE FROM COMR. & MRS MIKE OMOZUAPO"
+body = """
+On behalf of the family of Comr. and Mrs. Mike Omozuapo, i condole with your family over the loss of your dear husband and father, who was once a good secretary and leader of Ivioghe to us all, a good singer unbeaten in our generation, and a very devouted christain, we all miss him.
+<prayer>
+May his soul rest in peace
+</prayer>
+
+<signoff>
+Comr. & Mrs Mike Omozuapo
+</signoff>
+"""
