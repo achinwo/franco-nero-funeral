@@ -170,6 +170,48 @@ front "${front_studio_src:-plates/plate-studio.png}" \
 front "${front_life_src:-plates/plate-agbada.png}" \
       life "${front_life_field:-79}"
 
+# --- the closing plate -----------------------------------------------------
+# A full-bleed photograph with a whole page of text set over it, which is a
+# different problem from the frontispieces: they clear a field at the foot for
+# two display lines, and this one has to carry fourteen lines of an italic
+# farewell anywhere on the page.
+#
+# So the picture is veiled rather than cropped away. White is laid over it
+# through a ramp -- a quarter strength at the top of the sheet, full strength
+# from `clear' down -- so the head and the light above stay a photograph and
+# everything below goes pale enough for the booklet's own ink to read on. The
+# veil is baked in here for the same reason the ghosts are: what the printer's
+# RIP receives is opaque artwork, with no transparency to flatten.
+#
+# Built the same way front() builds its scrim -- the ramp copied into the
+# alpha channel of a white sheet, then composited over -- because the
+# three-image `-composite' mask form silently ignores the mask under
+# -compose over.
+close_life_src=$(plate close-life source)
+close_life_veil=$(plate close-life veil)
+close_life_clear=$(plate close-life clear)
+
+close() { # close <source-image> <name> <veil-pct> <clear-pct>
+  _src=$1; _name=$2; _veil=$3; _clear=$4
+  # The ramp: a quarter of the veil at the top of the sheet, growing to the
+  # full figure by <clear> down, and holding it to the foot.
+  magick -size "${FW}x$((FH * _clear / 100))" \
+         "gradient:gray$((_veil / 4))-gray${_veil}" \
+         -size "${FW}x$((FH * (100 - _clear) / 100))" "xc:gray${_veil}" \
+         -append -resize "${FW}x${FH}!" -blur 0x12 "plates/_veil-mask.png"
+  magick -size "${FW}x${FH}" xc:white "plates/_veil-mask.png" \
+      -alpha off -compose copy_opacity -composite "plates/_veil.png"
+  magick "$_src" -resize "${FW}x${FH}^" -gravity north \
+      -extent "${FW}x${FH}" "plates/_veil.png" \
+      -compose over -composite -strip "plates/$_name.png"
+  rm -f plates/_veil-mask.png plates/_veil.png
+}
+
+if [ -n "$close_life_src" ]; then
+  close "$close_life_src" close-life \
+        "${close_life_veil:-70}" "${close_life_clear:-32}"
+fi
+
 # --- the cover -------------------------------------------------------------
 # Either the cover is a file somebody finished elsewhere, or it is the montage
 # this script builds. assets/data/plates.toml decides which, and an empty

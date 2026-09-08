@@ -32,7 +32,7 @@
 # still in that script, so this is a switch rather than a demolition -- you
 # can go back to it by emptying one line.
 [cover]
-source = "franco_nero_cover.jpg"
+source = "franco_nero_cover.png"
 
 # --- the frontispieces -----------------------------------------------------
 # A portrait cover-cropped to the page with a white field burnt into the foot
@@ -59,3 +59,32 @@ field = 74
 [front-life]
 source = "plates/plate-agbada.png"
 field = 79
+
+# --- the closing page of A Life Remembered --------------------------------
+# The photograph behind the family's last words. Unlike the frontispieces this
+# one has a whole page of text over it, so it is veiled rather than scrimmed:
+# white is laid over the picture, lightly at the top and at full strength
+# below, so that he salutes out of a clear sky and the words underneath sit on
+# pale ground.
+#
+#   veil    how much white at full strength, as a percentage. Higher is
+#           paler ground and easier reading; lower keeps more of the picture.
+#   clear   how far down the page, as a percentage, the veil reaches that
+#           strength. Everything above it is a ramp from a quarter veil, so
+#           this is in effect where the photograph stops being a photograph
+#           and starts being a background. Set it to just below his shoulders.
+#
+# 82 was arrived at by reading the page rather than by taste: at 70 the first
+# three lines cross the dark of his jacket and the yellow of the sash, and the
+# italic is legible but not comfortable -- which is the wrong side of the line
+# for a page an elderly mourner reads once, in a church, in whatever light the
+# church has.
+#
+# Unlike the cover this one has no fallback: emptying `source` builds no plate
+# at all, and sections/03-biography.tex would then ask for a picture that is
+# not there. To take the photograph off that page, remove the
+# \pageghost{close-life} line from the section as well.
+[close-life]
+source = "franco_nero_salute_with_light.png"
+veil = 82
+clear = 32

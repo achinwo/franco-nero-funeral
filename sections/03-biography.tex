@@ -200,6 +200,18 @@
 
 \newpage
 
+% The photograph behind the farewell: him saluting, in the Legion's green,
+% under the light. It runs to the trim on all four sides -- \pageghost is the
+% same macro that places the cover and the frontispieces -- and it is veiled
+% so the words can be set straight onto it rather than into a cleared field.
+%
+% The veil is baked into the plate by assets/make-plates.sh, not applied
+% here, and which photograph it uses is set in assets/data/plates.toml under
+% [close-life], with the strength of the veil and where it reaches full
+% strength. Change the picture there and re-run the script; this line does
+% not move.
+\pageghost{close-life}
+
 \vspace*{\fill}
 
 \begin{lifeenvoi}

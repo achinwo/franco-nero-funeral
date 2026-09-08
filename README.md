@@ -1,6 +1,7 @@
 # Franco Nero International — order of service
 
-An A5 booklet, 56 pages, set in LaTeX and built with `latexmk`.
+An A5 booklet — 57 pages as it stands, and growing as tributes and
+photographs are added — set in LaTeX and built with `latexmk`.
 
 ```sh
 latexmk                                   # -> build/franco_nero_funeral.pdf
@@ -131,8 +132,9 @@ were.)
 
 ## The full-page plates
 
-Three plates take a whole A5 sheet, edge to edge: the cover and the two
-frontispieces that open a section on a picture. Which image goes into each is
+Four plates take a whole A5 sheet, edge to edge: the cover, the two
+frontispieces that open a section on a picture, and the photograph behind the
+family's farewell at the end of A Life Remembered. Which image goes into each is
 set in `assets/data/plates.toml`, so swapping one is a path and a re-run
 rather than an edit to `make-plates.sh`:
 
@@ -151,7 +153,7 @@ Paths are relative to `assets/images/`, the same root as `captions.toml`.
 newer than the plates it builds and runs a covers-only pass first:
 
 ```sh
-sh assets/make-plates.sh covers    # ~4s: the three full-page plates, nothing else
+sh assets/make-plates.sh covers    # ~5s: the four full-page plates, nothing else
 sh assets/make-plates.sh           # ~35s: everything
 ```
 
@@ -178,6 +180,13 @@ makes it usable for artwork finished in another program. Two consequences:
 Leave `source` empty and the cover is built the way it always was, from
 `sky_backdrop.png` and the cut-out. The montage code is untouched, so this is
 a switch rather than a demolition.
+
+`[close-life]` is the closing page of the biography, and it is veiled rather
+than scrimmed: it carries a whole page of text, so white is laid over the
+picture through a ramp — a quarter strength at the top, full strength from
+`clear` down — leaving the head and the light above as a photograph and the
+ground below pale enough to read on. `veil` is how much white at full
+strength; `clear` is how far down the page it gets there.
 
 The two frontispieces *are* processed: a portrait is cover-cropped to the page
 with a white field burnt into the foot for the type. `field` is where that
@@ -228,7 +237,7 @@ latexmk && latexmk -r booklet.latexmkrc   # -> build/franco_nero_funeral_booklet
 
 The second command imposes the booklet: `booklet.tex` reads the finished A5
 PDF back in and lays two pages side by side on each A4 sheet, in the order a
-folded stack needs, so 56 A5 pages come out as 28 sides — fourteen A4 sheets,
+folded stack needs, so 60 A5 pages come out as 30 sides — fifteen A4 sheets,
 printed double-sided, folded down the middle and stapled through the fold.
 
 The pages stay A5. Two of them across are 296mm and A4 turned landscape is
@@ -252,9 +261,9 @@ A fold needs a multiple of four pages, so `booklet.tex` counts the pages
 itself, out of the PDF, and pads to the next multiple. It puts any blanks
 *before* the last page rather than after it — otherwise the outside of the
 final sheet comes out blank with the back cover buried a leaf inside it. The
-booklet is 56 pages at the moment, which is already a multiple of four, so
-none are being added; nothing needs editing here when a tribute or a
-photograph changes the count.
+booklet is 57 pages at the moment, so three blanks are added to reach 60.
+Nothing needs editing here when a tribute or a photograph changes the count —
+the arithmetic is done from the PDF each time.
 
 By default the whole booklet is one signature, which is the saddle stitch an
 order of service is bound with. `\bkltsignature` at the top of `booklet.tex`
