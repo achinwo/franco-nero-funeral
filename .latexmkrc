@@ -19,7 +19,50 @@ $pdf_mode = 1;      # pdflatex (4 = lualatex, 5 = xelatex)
 
 # -synctex=1 so forward/reverse search works from the editor;
 # -file-line-error so LaTeX Workshop can parse errors into the Problems panel
-set_tex_cmds('-synctex=1 -interaction=nonstopmode -file-line-error %O %S');
+# %P rather than %S for the source file: with $pre_tex_code empty the two are
+# identical, and when it is set -- which is how the draft watermark is turned
+# on, below -- %P is the only substitution latexmk expands it into. With %S
+# here the code is silently dropped and the draft flag does nothing at all.
+set_tex_cmds('-synctex=1 -interaction=nonstopmode -file-line-error %O %P');
+
+# --- Draft copies ----------------------------------------------------------
+# A review copy for the printer, watermarked DRAFT diagonally across every
+# page. The switch is here rather than in main.tex so that it cannot be
+# committed: a `\draftmode' left set in the source is how a watermark reaches
+# the press.
+#
+#   DRAFT=1 latexmk           one draft build
+#   touch DRAFT && latexmk    every build until the file is removed
+#
+# The file is the one that matters in practice. An editor that builds on save
+# -- LaTeX Workshop here -- runs latexmk with its own environment and will not
+# see a variable exported in a shell, so `touch DRAFT' is what makes the
+# editor produce drafts too. It is in .gitignore.
+#
+# DRAFT=0 (or no/off/false) is off, so the variable can be left set in a
+# profile and turned down without unsetting it.
+my $draft = ($ENV{DRAFT} && $ENV{DRAFT} !~ /^(0|no|off|false)$/i) ? 1
+          : (-e 'DRAFT')                                         ? 1 : 0;
+if ($draft) {
+    warn "latexmk: DRAFT build -- every page is watermarked\n";
+    $pre_tex_code = '\def\draftmode{}';
+}
+
+# Turning the flag on or off changes no file the booklet inputs, so latexmk
+# would find everything up to date and hand back the copy it built last time
+# -- an unwatermarked PDF from a draft build, or worse, a watermarked one
+# after the flag came off. Recording the state next to the output and forcing
+# a rebuild when it differs is what keeps the switch honest.
+{
+    my $stamp = "$out_dir/.draftmode";
+    mkdir $out_dir unless -d $out_dir;
+    my $was = (-e $stamp) ? 1 : 0;
+    if ($was != $draft) {
+        $go_mode = 1;   # same as -g: rebuild rather than trust the timestamps
+        if ($draft) { open(my $fh, '>', $stamp) && close($fh); }
+        else        { unlink $stamp; }
+    }
+}
 
 # assets/data/tributes.tex is not written by hand: assets/build-tributes.py
 # generates it from assets/data/tributes.toml, which is the file the family

@@ -279,6 +279,61 @@ two commands stay two commands because `booklet.tex` consumes a PDF latexmk
 has no rule to build: it will notice when that PDF changes and re-impose, but
 it will not build it for you.
 
+## Draft copies for the printer
+
+A review copy, watermarked `DRAFT` diagonally across every page:
+
+```sh
+DRAFT=1 latexmk                 # one draft build
+touch DRAFT && latexmk          # every build until the file is removed
+rm DRAFT && latexmk             # back to the real thing
+```
+
+Either switch does the same work — `.latexmkrc` defines `\draftmode` before
+the source is read, and `main.tex` turns the stamp on when it sees it. Nothing
+in the source records which kind of build it is, so a draft flag cannot be
+committed by accident, and `DRAFT` is in `.gitignore`.
+
+Use the file rather than the variable when the editor is doing the building.
+LaTeX Workshop runs `latexmk` with its own environment and will never see a
+variable exported in a terminal, so a build on save would quietly overwrite a
+draft PDF with an unwatermarked one. `touch DRAFT` is seen by every build,
+wherever it is started from.
+
+The stamp is laid over the page rather than under it, so it survives the
+full-bleed plates — the cover, the two frontispieces, the closing page of the
+biography — which is exactly where a printer needs to see it. It is solid ink
+at a light tint rather than a transparency, so there is nothing for their RIP
+to flatten. And it adds nothing to the text flow: a draft paginates
+identically to the final copy, so what comes back marked up on page 23 is
+page 23 in the file you send afterwards.
+
+The imposition needs nothing new — `booklet.tex` reads the finished A5 PDF, so
+the watermark comes through with the pages:
+
+```sh
+touch DRAFT && latexmk && latexmk -r booklet.latexmkrc
+```
+
+Turning the flag on or off changes no file the booklet inputs, so latexmk
+would otherwise find everything up to date and hand back the copy it built
+last time. The state is recorded in `build/.draftmode` and a change to it
+forces a rebuild.
+
+**One build at a time.** VS Code's `autoBuild.run` is `onFileChange`, so
+saving a source file starts a build in the editor; start another in a terminal
+while it is running and both write `build/franco_nero_funeral.pdf` at once.
+The shorter output lands inside the longer one, leaving a file with two
+`%%EOF` markers whose trailer points into the previous build's bytes — which
+reads as a corrupt PDF, fails the imposition with "Couldn't read page
+catalog", and is not obviously anybody's fault. To check for it:
+
+```sh
+python3 -c "print(open('build/franco_nero_funeral.pdf','rb').read().count(b'%%EOF'))"
+```
+
+More than one means the file is damaged: delete it and build again.
+
 ## Editing in VS Code
 
 `.vscode/settings.json` configures LaTeX Workshop to build with the same

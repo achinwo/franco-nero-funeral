@@ -11,3 +11,6 @@ build/
 sample.texout/
 .DS_Store
 __pycache__/
+
+# A draft build is a local decision, never a committed one (see .latexmkrc).
+DRAFT

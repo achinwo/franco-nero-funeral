@@ -1023,6 +1023,69 @@
 % Letterspaced caps, for the small display lines on the cover.
 \newcommand{\displaycaps}[1]{{\scshape\so{#1}}}
 
+% --- The draft stamp -------------------------------------------------------
+% A diagonal DRAFT across every page, for the copy that goes to the printer
+% for review. It is off unless the build turns it on, and nothing in this file
+% turns it on: .latexmkrc defines \draftmode when the DRAFT environment
+% variable is set, or when a file named DRAFT sits in the project root. The
+% switch lives outside the source on purpose -- a draft flag committed by
+% accident is how a watermark reaches the press.
+%
+%   DRAFT=1 latexmk           one draft build
+%   touch DRAFT && latexmk    every build until the file is removed
+%
+% Foreground, not background. \pageghost lays the full-bleed plates down as
+% background, which is where draftwatermark and background both put a
+% watermark by default -- and there it would be buried on exactly the pages a
+% printer looks at hardest: the cover, the two frontispieces, and the closing
+% page of the biography.
+%
+% Solid ink at a light tint rather than a transparency. A 30% tint of the
+% draft red is pale over white and pale over a dark photograph, so it reads on
+% both, and there is no transparency group for the printer's RIP to flatten.
+% This is the one mark in the booklet that has to survive whatever their
+% workflow does to the file.
+%
+% It adds nothing to the text flow -- it is shipped with the page rather than
+% set into it -- so a draft and a final copy paginate identically. What the
+% printer marks up on page 23 is page 23 in the file that follows it.
+\definecolor{draftink}{HTML}{B03A2E}
+
+\makeatletter
+% The time of the run, so two drafts sent on the same day can be told apart.
+% \time is minutes since midnight, and \numexpr divides by rounding rather
+% than truncating -- at 14:50 it would give 15:50 -- so the hours are taken
+% with \divide, which truncates, and the minutes by subtraction.
+\newcount\draft@hh \newcount\draft@mm \newcount\draft@tmp
+\draft@hh=\time \divide\draft@hh by 60
+\draft@tmp=\draft@hh \multiply\draft@tmp by 60
+\draft@mm=\time \advance\draft@mm by -\draft@tmp
+\newcommand{\draft@pad}[1]{\ifnum#1<10 0\fi\number#1}
+\newcommand{\draftstamptime}{\today\ at \draft@pad\draft@hh:\draft@pad\draft@mm}
+
+\newcommand{\draft@stamp}{%
+  \AddToShipoutPictureFG{%
+    \AtPageCenter{%
+      \makebox(0,0){%
+        % origin=c so the stamp turns about its own middle: \rotatebox
+        % otherwise pivots on the left-hand end of the baseline, which leaves
+        % the block sitting low and to the left of the page centre.
+        \rotatebox[origin=c]{45}{%
+          \begin{tabular}{@{}c@{}}
+            \fontsize{64}{64}\selectfont\sffamily\bfseries
+            \color{draftink!30}\textls[200]{DRAFT}\\[4mm]
+            \fontsize{9}{9}\selectfont\sffamily\mdseries
+            \color{draftink!55}%
+            \textls[80]{not for print \textbullet\ \draftstamptime}
+          \end{tabular}%
+        }%
+      }%
+    }%
+  }%
+}
+\ifdefined\draftmode\draft@stamp\fi
+\makeatother
+
 % Define graphic search paths so you can write \includegraphics{photo} directly
 \graphicspath{{assets/images/}}
 
