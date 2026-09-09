@@ -575,6 +575,7 @@ THE OGIE OF IVIOGHE
 #MARK: Mr. Imonokha Bossey
 [[tribute]]
 order = 600
+imagePath = "assets/images/family_pics/franco_nero_and_bro_imonokha.jpeg"
 title = "FAREWELL TO MY FATHER  AND MY INLAW"
 body = """
 Our father that passed was a very nice man to everyone, especially our family, the Bosseys. He was not just an inlaw but like a son to the family. 
@@ -595,7 +596,8 @@ Mr. Imonokha Bossey
 
 #MARK: Mrs. Helen Iyamokhe Otse (nee Bossey)
 [[tribute]]
-order = 600
+order = 798
+imagePath = "assets/images/family_pics/franco_nero_helena.jpeg"
 title = "TRIBUTE TO OLUAMHE NEKPE KPE (MY INLAW, WHO IS AS FINE AS THE TIGERS SKIN)"
 body = """
 This my inlaw that we are bidding farewell, God, please take him to a good place because when he was alive, we had such a wonderful relationship. He never frowned at me or even got angry with me for once in my 50 years of knowing him, and not for once did he ever wrong me. Every time I see him, I will call him in form of praises saying "OLUAMHE OLUAMHE", and everytime he will respond with smiles and a soft laughter saying "that's me for sure", I will then call him by his native name ONOTEAGBOR, and  he will laugh and say, "that's my name, na me be that, and "yes I will live long in this world". I pray that God receives his gentle soul, and help him rest in a good place. He was a good man and as my inlaw, we lived well together here on earth being married to my elder sister for almost 50 years. I will miss him because we made lots of good memories always telling jokes and laughing. 
@@ -619,7 +621,7 @@ Mrs. Helen Iyamokhe Otse (nee Bossey)
 
 #MARK: Bros Aren  - OKHIDEMEH A.T. R
 [[tribute]]
-order = 600
+order = 869
 title = "Dear Daddy Franco Nero"
 body = """
 Writing a eulogy about you was not part of my feasibility plans for this year. Never in my wildest imagination did I think that I would be called upon to put pen to paper to speak of your life in the past tense. I was completely taken aback on the 19th of August at about 9:31 p.m. when I received the devastating news of your passing. It was one of those moments that leaves the mind numb and the heart struggling to accept reality. Even now, it feels surreal to write these words, knowing that a man whose presence brought warmth, wisdom, and strength to so many is no longer physically with us.
@@ -652,5 +654,40 @@ Sleep on, Daddy Franco Nero, in the bosom of the Almighty. Though gone from our 
 
 May your gentle and noble soul rest in perfect peace. Amen.
 
-<signoff>OKHIDEMEH A.T. R</signoff>
+<signoff>Okhidemeh A.T. Richard</signoff>
+"""
+
+
+#MARK: Pauline Atsekhameh
+[[tribute]]
+order = 10001
+imagePath = "assets/images/family_pics/franco_nero_and_pauline.jpg"
+title = "TRIBUTE TO MY BELOVED HUSBAND, MY DARLING 'D'"
+body = """
+How do i put into words how i truly feel about losing a man i spent 50 years (49 years married) of my life with?
+My D. My Crown, My Cover and My Best Friend..
+
+Franco Nero as he fondly liked to be called was the husband of my youth. He was my pillar - A man of great strength and resilience. He was my personal comedian filled with endless humour, and my number one supporter in life who proudly supported me every step of the way. When it involved me and his children, my husband spared no one and was willing to face anyone who dared to stand against us.
+
+He was my hero, my confidant and with him by my side, i knew I could move mountains and together we achieved a lot. My husband loved sports, particularly football, he was a loyal fan of Arsenal and he used to enjoy watching live matches at the stadium. He loved good food, and he had a very sweet tooth. He was a devout Catholic and a great lover of Mother Mary. He made me a huge fan of the Holy Rosary which became a guiding light, not just for me, but for our entire family.
+
+His demise has left a big vacuum in my life, in the lives of the Atsekhameh family and all those he left behind, but I am consoled by the fact that he was called on the 15th day of August - On the feast of assumption of our Mother Mary, whom he loved and adored so dearly, and i'm even more at peace because i know she came to lead you gently into the arms of her beloved Son.
+
+The house feels so empty without you Uyemhe, and my heart breaks knowing I will never see your face or hear your sweet voice again. I know there will be moments when I will instinctively call on you just to give you random gists. I miss us singing together, and how you always backed me up whenever I randomly started a song. You really loved singing enjoyed dancing, but i'm happy you're dancing with the Angels now -I hope you tell them all your many stories, and show them your writing skills. One special talent you had was the ability to make people laugh without trying and diffuse any situation with your unique sense of humour, I hope you're making them laugh too.
+
+I truly wish life gave us more conversations, more singing and dancing, more gists, more laughter, and more TIME.
+I love you my Sweet Guy, and i miss you so much.
+Thank you for being my HUSBAND 
+Your life was truly a gift.
+Your memories are a treasure.
+And your love is a legacy that will never die.
+Rest well, my ADEOKWILE
+Rest well, FRANCO NERO INTERNATIONAL
+
+Love Always,
+Your Darling D.
+Your beautiful wife
+Your forever BEST FRIEND.
+
+Lady  Pauline Charity Atsekhameh
 """
