@@ -60,16 +60,19 @@ them ever reaches the PDF.
 
 <i>...</i> and <b>...</b> work inline, anywhere within a line, for the odd
 italicised or bold word or phrase -- Arsenal, say, or a name the writer
-wants to stand out. <br/> (or <br>, or <br />) breaks the line where it
-stands, for the few places a paragraph is really a list: the lines of an
-address, or a verse. One at the very start or end of a paragraph is
-dropped, having no line to break.
+wants to stand out. <s>...</s> crosses a word or a passage through, for the
+places a tribute corrects itself in front of the reader rather than behind
+it; <del>, <strike> and <strikethrough> mean the same thing. <br/> (or <br>,
+or <br />) breaks the line where it stands, for the few places a paragraph
+is really a list: the lines of an address, or a verse. One at the very start
+or end of a paragraph is dropped, having no line to break.
 
-<br/> works in the title and in `from' as well as in the body, for a title
-too long to sit on one line and for a sign-off that names two people. It is
-the only tag those two fields take: they are one line of display type, not
-prose, and <i>/<b> in a letterspaced small-capital head would be setting a
-word apart from a line that is already set apart from the page.
+<br/> and <s> work in the title as well as in the body -- a title too long
+to sit on one line, a title that crosses something out. They are the only
+tags it takes, and `from' takes only <br/>, for a sign-off that names two
+people: those are lines of display type rather than prose, and <i>/<b> in a
+letterspaced small-capital head would be setting a word apart from a line
+that is already set apart from the page.
 
 Tributes run on down the page, separated by a drawn divider rather than a
 page break: these are long letters, and one that ends two lines into a page
@@ -202,18 +205,55 @@ def titlelines(title):
     Split on <br/> before anything else runs, so that title case reads each
     line as a line: a shouted title with a break in it is not equal to its
     own upper case (the "br" in the tag is lower), and titlecase() would have
-    left the whole thing shouting.
+    left the whole thing shouting. A strike splits the same way and for the
+    same reason -- see titleruns() below.
 
     Every line is letterspaced on its own because \so cannot cross a \\ --
     see \tributetitle in main.tex.
     """
-    return r"\\".join(r"\tributetitle{%s}" % oneline(titlecase(line))
-                      for line in textkit.lines(title))
+    return r"\\".join(titleruns(line) for line in textkit.lines(title))
+
+
+def titleruns(line):
+    r"""One line of a title, as \tributetitle and \tributestrike runs.
+
+    A struck run in a title cannot be set inside the letterspacing: \so and
+    \sout do not survive each other in either order (see \tributestrike in
+    main.tex). So the line is broken at the strikes and each run set as its
+    own macro, side by side, which come out looking like one letterspaced
+    line because \tributestrike tracks its argument to match.
+
+    The space that separated one run from the next goes to the letterspaced
+    side of the join, where it is spaced like every other space in the head.
+    Given to the strike instead it would be struck through as well, and a
+    rule reaching past the last letter into the gap is how a crossing-out
+    made with a ruler looks, not one made with a pen.
+    """
+    runs = textkit.runs(line)
+    out = []
+    for i, (struck, piece) in enumerate(runs):
+        text = oneline(titlecase(piece))
+        if not text:
+            continue
+        if not struck:
+            if i and piece[:1].isspace():
+                text = " " + text
+            if i < len(runs) - 1 and piece[-1:].isspace():
+                text += " "
+        out.append((r"\tributestrike{%s}" if struck
+                    else r"\tributetitle{%s}") % text)
+    return "".join(out)
 
 
 def titleplain(title):
-    """The same title as one line, for the run report on stdout."""
-    return " ".join(oneline(titlecase(line)) for line in textkit.lines(title))
+    """The same title as one line, for the run report on stdout. The strikes
+    are marked the way a plain-text reader would mark them, with hyphens: a
+    report that dropped them would show two tributes with the same title."""
+    return " ".join(
+        " ".join("-%s-" % oneline(titlecase(piece)) if struck
+                 else oneline(titlecase(piece))
+                 for struck, piece in textkit.runs(line))
+        for line in textkit.lines(title))
 
 
 def attributionlines(text):

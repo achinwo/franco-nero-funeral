@@ -92,7 +92,8 @@ sub build_from_toml {
     return 0;
 }
 
-# The three full-page plates -- the cover and the two frontispieces -- are
+# The full-page plates -- the cover, the two frontispieces, the veiled photo-
+# graph that closes the biography and the portrait on the back cover -- are
 # built from whatever assets/data/plates.toml names, and that file produces
 # images rather than a .tex, so the custom dependency above cannot express it:
 # add_cus_dep matches on extension, and there is no plates.tex to hang it on.
@@ -115,7 +116,9 @@ if (-e 'assets/data/plates.toml') {
     my $conf = (stat 'assets/data/plates.toml')[9];
     my $newest = 0;
     foreach my $plate (glob 'assets/images/plates/cover-sky.* '
-                          . 'assets/images/plates/front-*') {
+                          . 'assets/images/plates/front-* '
+                          . 'assets/images/plates/close-life.png '
+                          . 'assets/images/plates/back-portrait.png') {
         my $mtime = (stat $plate)[9];
         $newest = $mtime if defined $mtime && $mtime > $newest;
     }

@@ -128,7 +128,7 @@ Thank you for everything... Your <i>"ALAWADA"</i> misses you greatly.
 <prayer>Rest in peace, Franco Nero, the great.</prayer>
 
 Your Fine Son,
-✍🏽Peter Atsekhameh
+✍🏽Peter Egiegba Atsekhameh
 """
 #MARK: Dior
 [[tribute]]
@@ -447,8 +447,9 @@ It was a shocking news for me, when my friend your wife called to tell me that D
 
 Erha-mwan I will always remember your prayers for me anytime I visit you, we will miss you daddy. Sleep on Daddy till we meet on that resurrection morning.
 
-<signoff>Mrs Omoruyi</signoff>
-"""
+<signoff>
+Your Family Friend,
+Mrs Omoruyi</signoff>"""
 
 #MARK: Chris Chinwo
 [[tribute]]
@@ -480,14 +481,24 @@ May your soul rest in peace.
 """
 
 #MARK: Anthony Chinwo
-# [[tribute]]
-# order = 1899
-# title = "A Tribute to My Father-in-law, Sir Francis Onoteagbor Atsekhameh"
-# body = """
-# TBC
+[[tribute]]
+order = 1899
+dropcap = true
+title = "To my unconventional father-in-law, <strikethrough>Mr.</strikethrough> Franco Nero International (...not local)"
+body = """
+If Franco Nero was here today, the first thing he'd do is ask me to drop the "Mr." from his name. That's the type of person he was. Sadly I did not get to meet my father-in-law but I did get the chance to speak with him. He was a remarkable man; even as his memory was failing him, his personality was still very much intact. 
 
-# <signoff>Anthony Chinwo</signoff>
-# """
+My father in-law was one in a million. The more I heard of his stories from his children and also reading several tributes as I collated them, the more I miss the man.
+
+I wish I had met you Franco Nero, I wish we had more time, I wish Dior got to hang out with his special grandpa. God knows best why he called you. I am glad that you're not hurting anymore.
+
+Rest in power, my father-in-law. You will always be missed.
+
+<signoff>
+Your (Only) Son-in-law,
+Anthony Chinwo
+</signoff>
+"""
 
 #MARK: Sir. Tom Iyelobu (KSJI)
 [[tribute]]
@@ -574,7 +585,7 @@ THE OGIE OF IVIOGHE
 
 #MARK: Mr. Imonokha Bossey
 [[tribute]]
-order = 600
+order = 751
 imagePath = "assets/images/family_pics/franco_nero_and_bro_imonokha.jpeg"
 title = "FAREWELL TO MY FATHER  AND MY INLAW"
 body = """
@@ -661,7 +672,7 @@ May your gentle and noble soul rest in perfect peace. Amen.
 #MARK: Pauline Atsekhameh
 [[tribute]]
 order = 10001
-imagePath = "assets/images/family_pics/franco_nero_and_pauline.jpg"
+imagePath = "assets/images/franco_nero_and_pauline.jpg"
 title = "TRIBUTE TO MY BELOVED HUSBAND, MY DARLING 'D'"
 body = """
 How do i put into words how i truly feel about losing a man i spent 50 years (49 years married) of my life with?
@@ -690,4 +701,22 @@ Your beautiful wife
 Your forever BEST FRIEND.
 
 Lady  Pauline Charity Atsekhameh
+"""
+
+#MARK: St Jude Parish
+[[tribute]]
+order = 601
+title = "TRIBUTE TO A WELL DEDICATED AND HARDWORKING LEGIONARY - LATE BROTHER FRANCIS ATSEKHAMEH"
+body = """
+On self volition, you came to the Legion of Mary, got registered and performed very well. With much interest displayed, dedication and hard-work, you became the president of Our Lady Queen of Nigeria praesidium, St. Jude Parish, Iwogban Benin city.
+
+Our praesidium members today mourn your so soon demise. Nobody can question God. We believe that he called you and you have answered. May he grant you eternal rest in peace. Amen.
+
+<signoff>
+Brother James Abhieghonmhen
+
+On behalf of O/L Queen of Nigeria
+
+St Jude Parish, Benin City.
+</signoff>
 """

@@ -8,9 +8,10 @@ character, curly quote and dash is translated here, and anything that looks
 like LaTeX in the source is printed literally, which is the safe way round
 for a document nobody will proof-read line by line.
 
-Two inline tags are understood, anywhere within a line:
+A few inline tags are understood, anywhere within a line:
 
     <i>...</i>   italic          <b>...</b>   bold
+    <s>...</s>   struck through  (<del>, <strike> and <strikethrough> too)
     <br/>        break the line  (<br> and <br /> are taken too)
 
 They are pulled out before the escaping runs, so the words inside them are
@@ -100,11 +101,21 @@ def strip_unsafe(text):
     return "".join(kept)
 
 
-INLINE_TAGS = {"i": "textit", "b": "textbf"}
-# Either an <i>/<b> pair or a line break. <br>, <br/> and <br /> are all
-# taken, because all three are what people type.
-INLINE_RE = re.compile(r"<(%s)>(.*?)</\1>|<br\s*/?>" % "|".join(INLINE_TAGS),
-                       re.DOTALL)
+# Four spellings of the strike, because there is no obvious one: <s> is what
+# HTML settled on, <del> what it means, and <strike>/<strikethrough> what
+# somebody who has not written HTML since 1999 will type. All four are the
+# same tag; a writer should not have to guess which one this file knows.
+STRIKE_TAGS = ("s", "del", "strike", "strikethrough")
+
+INLINE_TAGS = {"i": "textit", "b": "textbf",
+               **{tag: "struck" for tag in STRIKE_TAGS}}
+# Either a tag pair or a line break. <br>, <br/> and <br /> are all taken,
+# because all three are what people type. Longest name first: the alternation
+# is tried in order, so an unsorted list would match the <s> in <strike> and
+# then fail on the tag it had half-eaten.
+INLINE_RE = re.compile(
+    r"<(%s)>(.*?)</\1>|<br\s*/?>"
+    % "|".join(sorted(INLINE_TAGS, key=len, reverse=True)), re.DOTALL)
 
 
 def tex(text):
@@ -157,6 +168,34 @@ def lines(text):
     or two in a row, asked for a line that has nothing on it.
     """
     return [piece.strip() for piece in BR_RE.split(text) if piece.strip()]
+
+
+STRIKE_RE = re.compile(
+    r"<(%s)>(.*?)</\1>"
+    % "|".join(sorted(STRIKE_TAGS, key=len, reverse=True)), re.DOTALL)
+
+
+def runs(text):
+    """Text split into (struck, piece) runs on the strike tags.
+
+    The companion to lines(): for the places a strike cannot simply become a
+    \\struck{...} in the output because something else has to be done to each
+    run. A tribute's title is letterspaced with \\so, and no soul command
+    survives a \\sout inside it, so there the struck run has to be set beside
+    the letterspaced ones rather than within them -- which means knowing where
+    it starts and stops before anything else runs.
+
+    Pieces come back as the writer typed them, spaces and all: whoever is
+    assembling the runs has to decide which side of a join a space belongs
+    on, and that cannot be decided here. Empty pieces are dropped.
+    """
+    out, pos = [], 0
+    for m in STRIKE_RE.finditer(text):
+        out.append((False, text[pos:m.start()]))
+        out.append((True, m.group(2)))
+        pos = m.end()
+    out.append((False, text[pos:]))
+    return [(struck, piece) for struck, piece in out if piece.strip()]
 
 
 def oneline(text):

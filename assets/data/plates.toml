@@ -88,3 +88,40 @@ field = 79
 source = "franco_nero_salute_with_light.png"
 veil = 82
 clear = 32
+
+# --- the back cover --------------------------------------------------------
+# The portrait behind the family's words of thanks. Neither a ghost nor a
+# frontispiece: the ghosts clear the *top* of the page so a section heading
+# can sit above the figure, which on a page of solid text meant fading his
+# head away to nothing, and a frontispiece burns a white field at the foot,
+# which is exactly where this one wants him. So he is placed instead --
+# scaled, centred on his face and stood at the foot of the sheet, fading up
+# into clean paper before the last line of type reaches him.
+#
+#   head      where the top of his head sits, as a percentage down the page.
+#             Move this and everything follows: the fade is measured from it,
+#             so the words above always clear him.
+#   headsize  the height of his head, as a percentage of the page. This is
+#             the one number to reach for if he reads too big or too small --
+#             it scales the whole figure about his face.
+#   ink       the darkest tone in the wash. Higher contrast than the ghosts
+#             carry, because nothing is printed over him: this is the one
+#             place in the booklet where the picture is meant to be looked at
+#             rather than sensed. Paler here is safer on a light press.
+#
+# The last three say where his head is in the source photograph, as
+# percentages of that image: how the placement knows what to centre on and
+# how much to scale it by. They are properties of the picture, not of the
+# page, so they only need touching when `source` does.
+#
+#   facex     the centre of his face, across the source
+#   facetop   the top of his head, down the source
+#   facefoot  his chin, down the source
+[back-portrait]
+source = "plates/plate-studio.png"
+head = 72
+headsize = 12.5
+ink = "#A08767"
+facex = 41
+facetop = 3.7
+facefoot = 25.1

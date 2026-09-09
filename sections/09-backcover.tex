@@ -3,35 +3,59 @@
 \thispagestyle{empty} % back cover carries no folio
 \sectionanchor*{toc:appreciation}{Words of Appreciation}
 
-\pageghost{ghost-studio-hi}
+% The portrait rises out of the foot of the sheet rather than lying behind the
+% whole of it: the words have the top two-thirds to themselves, on clean paper,
+% and he closes the book underneath them with his face showing. The plate is
+% built that way -- see [back-portrait] in assets/data/plates.toml -- so
+% nothing here has to hold text off him.
+\pageghost{back-portrait}
 
 \begin{center}
-  \vspace*{6mm}
+  \vspace*{2mm}
 
   % The two faces of the same sheet: this page is set in the cover's faces,
   % not the booklet's, so that the back reads as the front's other side.
-  {\coverface\fontsize{12}{15}\selectfont\color{primary}
-  \coverline[180]{Words of Appreciation}\par}
+  {\coverface\fontsize{11.5}{14}\selectfont\color{primary}
+  \coverline[180]{OUR HEARTFELT APPRECIATION}\par}
 
-  \vspace{5mm}
-  \begin{minipage}{0.86\linewidth}
-    \centering\coverface\fontsize{12}{14}\selectfont\itshape\color{primary}
-    ``We the family of Francis Atsekhameh hereby express
-    our profound gratitude to all those who
-    have contributed immensely to the success
-    of the Burial Ceremony of our Father
-    and Grandfather. We pray that the good Lord
-    will honour, bless and grant you
-    journey mercies back to your
-    various destinations, Amen.''
+  \vspace{3mm}
+  \diamondrule{16mm}{1.1mm}
+  \vspace{4.5mm}
+
+  % Five paragraphs where the page used to carry four lines. Set a size down
+  % from the old block and given air between the paragraphs instead of the
+  % single unbroken column they would otherwise make: at this measure a
+  % centred italic needs the breaks to be seen, or the whole page reads as one
+  % grey shape. \parskip rather than blank-line indents -- centred text cannot
+  % show an indent.
+  \begin{minipage}{0.9\linewidth}
+    \centering\coverface\fontsize{9.6}{13}\selectfont\itshape\color{primary}
+    \setlength{\parskip}{2.4mm}\setlength{\parindent}{0pt}
+    ``As we bid our beloved Husband, Father, Grandfather, Brother, Uncle,
+    Cousin and Friend, Sir Francis Onoteagbor Atsekhameh --- our very own
+    Franco Nero International --- a final farewell, our hearts are deeply
+    filled with gratitude.
+
+    Our profound appreciation goes to everyone who stood by us during this
+    difficult time and contributed in one way or another to make the ceremony
+    a huge success.
+
+    Your presence, kind gestures, generosity, prayers, words of encouragement
+    and all round thoughtfulness has been a great source of strength to us,
+    and has reminded us that we are not alone. So we will forever cherish them
+    in our hearts.
+
+    We pray that the good Lord will bless and reward you abundantly, grant you
+    peace, ease and joy, and repay every kindness shown to our family. May He
+    grant you journey mercies back to your various destinations and continue
+    to keep you and your families under His loving care.
+
+    Thank you for helping us honour the life and memory of our beloved Father.
+    We pray that God will bless you all abundantly, in Jesus' name, Amen.''
   \end{minipage}
 
-  \vspace{9mm}
-  \diamondrule{16mm}{1.1mm}
-
-  \vfill
+  \vspace{6mm}
 
   {\coverdisplay\itshape\fontsize{12.5}{16}\selectfont\color{accent}
   ``Forever in our thoughts, always in our hearts.''\par}
-  \vspace*{4mm}
 \end{center}

@@ -63,6 +63,8 @@ One command rebuilds everything the booklet inputs but nobody edits:
   frontispieces (sources set in `assets/data/plates.toml`)
 - `assets/images/plates/cover-sky.*` — the cover: the montage, or whatever
   image `assets/data/plates.toml` names, copied in unchanged
+- `assets/images/plates/back-portrait.png` — the portrait at the foot of the
+  back cover (source and placement set in `assets/data/plates.toml`)
 - `assets/images/plates/personal/*.jpg` and `plates/personal-photos.tex` — his
   own photographs, laid out by `assets/build-personal.py`
 - `assets/images/plates/family/*.jpg` and `plates/family-album.tex` — the
@@ -85,7 +87,7 @@ Edit these:
 | `sections/*.tex` | the pages themselves |
 | `assets/data/tributes.toml` | the tributes — plain text, no LaTeX; `imagePath` points at a photograph to set the letter around |
 | `assets/data/captions.toml` | the caption under each photograph, filed against the image file it belongs to |
-| `assets/data/plates.toml` | which image each full-page plate is built from — the cover and the two frontispieces |
+| `assets/data/plates.toml` | which image each full-page plate is built from — the cover, the two frontispieces, the closing photograph and the back-cover portrait |
 | `assets/images/personal/` | photographs of him; drop one in and the first Photographs pages re-flow |
 | `assets/images/family_pics/` | drop a photograph in; the album re-flows |
 | `assets/images/sky_backdrop.png` | the cover backdrop |
@@ -112,7 +114,7 @@ The key is the image file, relative to `assets/images/` — the same root
 the booklet prints it, so there is nothing to keep in step by hand and no
 caption text anywhere in `sections/`. The value is plain text: type the
 apostrophes, quotation marks and dashes you want to see, and `<i>`/`<b>` if a
-word wants emphasis.
+word wants emphasis, or `<s>` if one wants crossing out.
 
 Most photographs have no caption, which is the normal case — the album is
 faces the family already knows. A photograph with no line simply prints
@@ -132,9 +134,10 @@ were.)
 
 ## The full-page plates
 
-Four plates take a whole A5 sheet, edge to edge: the cover, the two
-frontispieces that open a section on a picture, and the photograph behind the
-family's farewell at the end of A Life Remembered. Which image goes into each is
+Five plates take a whole A5 sheet, edge to edge: the cover, the two
+frontispieces that open a section on a picture, the photograph behind the
+family's farewell at the end of A Life Remembered, and the portrait standing at
+the foot of the back cover. Which image goes into each is
 set in `assets/data/plates.toml`, so swapping one is a path and a re-run
 rather than an edit to `make-plates.sh`:
 
@@ -153,7 +156,7 @@ Paths are relative to `assets/images/`, the same root as `captions.toml`.
 newer than the plates it builds and runs a covers-only pass first:
 
 ```sh
-sh assets/make-plates.sh covers    # ~5s: the four full-page plates, nothing else
+sh assets/make-plates.sh covers    # ~5s: the full-page plates, nothing else
 sh assets/make-plates.sh           # ~35s: everything
 ```
 
@@ -194,6 +197,24 @@ field begins, as a percentage down the page — a property of the crop rather
 than a house style, so a tightly cropped portrait wants a larger number than a
 loose one. Move it if a new picture comes out half dissolved, or with the type
 sitting on a shirt.
+
+`[back-portrait]` is the back cover, and it is placed rather than cropped or
+veiled: that page is text from its first line, so a ghost — which clears the
+top of the sheet for a heading — would have faded his head away, and a
+frontispiece burns its white field into the foot, which is where this one
+wants him. Instead the figure is scaled about his head, stood at the bottom of
+the sheet and faded up into clean paper above him, so the words never reach
+him and no edge of the photograph is ever seen.
+
+- `head` is where the top of his head sits, as a percentage down the page, and
+  `headsize` how tall his head is as a percentage of it. The fade is measured
+  off both, so moving him moves the clean paper the type sits on with him.
+- `ink` is the darkest tone in the wash. It is stronger than any ghost carries
+  because nothing prints over him: this is the one place in the booklet where
+  the picture is meant to be looked at.
+- `facex`, `facetop` and `facefoot` say where his head is in the *source*, as
+  percentages of that image. They are properties of the photograph, so they
+  only need touching when `source` does.
 
 A `source` naming a file that is not there stops the run. That is deliberate:
 the alternative is a cover built silently from the wrong picture.

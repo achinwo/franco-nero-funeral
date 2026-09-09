@@ -26,6 +26,28 @@
 % leaves protrusion and expansion off, so no page in the booklet reflows.
 \usepackage{letterspace}
 
+% Struck-out text -- <s> in assets/data/tributes.toml, where a writer has
+% crossed something through. normalem matters: ulem's default is to redefine
+% \emph as underlining, which would quietly turn every italic in the booklet
+% into a rule.
+%
+% ulem rather than soul's own \st because a strike has to survive the places
+% these fall: \st cannot break over a line, and a struck clause in the middle
+% of a tribute is set in a 57mm column that will certainly break it.
+\usepackage[normalem]{ulem}
+
+% What a strike looks like in prose, and what it looks like in a title. They
+% are two macros because the titles are letterspaced with \so, and no soul
+% command survives being nested inside another or inside \sout -- \so{a
+% \sout{b} c} sets `b' with letters missing, and \sout{\so{...}} collapses the
+% whole line to its first letters. So a struck run in a title is set beside
+% the \so runs rather than inside one, and takes its tracking from
+% \textls instead: 225/1000 em, which is what \so measures out to at these
+% sizes (81.4pt against 81.5pt over a twelve-character head), so the crossed
+% word tracks with the words either side of it.
+\newcommand{\struck}[1]{\sout{#1}}
+\newcommand{\tributestrike}[1]{\sout{\textls[225]{#1}}}
+
 % The booklet's ink. Three tones of one colour, and the colour is the one
 % already in the photographs: assets/make-plates.sh tones every plate to a
 % sepia running from #2e2620 to a cream, and the photo corners are cut from
@@ -665,7 +687,7 @@
 % column never breaks between a tribute's title and its first line.
 \makeatletter
 \newcommand{\tributedivider}{%
-  \par\addvspace{5mm}%
+  \par\addvspace{4mm}%
   {\centering\diamondrule{18mm}{1mm}\par}%
   \nobreak\vspace{3.5mm}%
 }

@@ -212,6 +212,94 @@ if [ -n "$close_life_src" ]; then
         "${close_life_veil:-70}" "${close_life_clear:-32}"
 fi
 
+# --- the back cover --------------------------------------------------------
+# The portrait behind the words of thanks, and a third kind of full-page plate:
+# not a ghost, which clears the top of the sheet for a heading and so fades his
+# head away on a page that is text from the first line, and not a frontispiece,
+# which burns a white field into the foot -- which is where this one wants him.
+#
+# So he is placed rather than cover-cropped. The figure is scaled about his
+# head to the size assets/data/plates.toml asks for, stood at the foot of the
+# sheet with his face where that file puts it, and faded up into clean paper
+# above him and in from both sides, so the type on the page never has to reach
+# him and no edge of the photograph is ever seen.
+#
+# Everywhere outside the figure the canvas is edge-replicated rather than
+# filled: the mask is nil out there, so what it holds does not matter, but a
+# replicated edge cannot leave a seam anywhere the mask is only nearly nil.
+back_src=$(plate back-portrait source)
+
+back() { # back <source-image> <name>
+  _src=$1; _name=$2
+  # A5 at 300dpi, as the cover and the frontispieces rather than as the
+  # ghosts: those are washes nobody looks at directly and 200 is plenty for
+  # them, while this one is a face, and the eye that is on it will find the
+  # steps in a fade laid down at 200.
+  BW=1748; BH=2480
+  # Every measurement the placement needs, worked out in one pass because they
+  # are fractions of each other and shell arithmetic is integers.
+  eval "$(awk -v w="$BW" -v h="$BH" \
+              -v head="$(plate back-portrait head)" \
+              -v hsize="$(plate back-portrait headsize)" \
+              -v fx="$(plate back-portrait facex)" \
+              -v ftop="$(plate back-portrait facetop)" \
+              -v ffoot="$(plate back-portrait facefoot)" 'BEGIN {
+    # Scale: his head is (ffoot-ftop)% of the source and wants to be hsize% of
+    # the page, so the source is drawn this many pixels wide.
+    pw = h * hsize / (ffoot - ftop)
+    ox = w / 2 - pw * fx / 100          # his face on the centre line
+    top = h * head / 100 - pw * ftop / 100
+    # The fade closes a third of a head-height above him, so the last line of
+    # type on the page still has clear paper under its descenders, and opens a
+    # head-height above that.
+    hold = h * head / 100 - h * hsize / 300
+    fade = hold - h * hsize / 100
+    printf "PW=%d OX=%d TOP=%d FEA=%d FADE=%d HOLD=%d\n",
+           pw, ox, top, pw * 0.26, fade, hold
+  }')"
+  # The wash. Sigmoidal contrast before the tone map, because squeezing the
+  # range into a narrow warm band flattens a face: the print is a 1960s studio
+  # portrait and the modelling around his eyes is most of what is left of it.
+  magick "$_src" -resize "${PW}x" \
+      -colorspace Gray -auto-level -sigmoidal-contrast 2x50% \
+      +level-colors "$(plate back-portrait ink)",'#FCFAF6' "plates/_b-fig.png"
+  # The photograph is stood on a field of its own backdrop -- the mean of its
+  # top edge -- rather than on white or on a replication of that edge. Flat is
+  # the whole point: there is barely a head's clearance above him in the print,
+  # so the fade has to open over ground that is not the photograph, and any
+  # ground with detail in it (a replicated edge smears the top row down the
+  # page) arrives as streaks exactly where the eye is looking for his face.
+  _ground=$(magick "plates/_b-fig.png" -crop "${PW}x8+0+0" +repage \
+      -resize '1x1!' -format '%[pixel:p{0,0}]' info:)
+  magick -size "${BW}x${BH}" xc:"$_ground" \
+      "plates/_b-fig.png" -geometry "+${OX}+${TOP}" \
+      -compose over -composite "plates/_b-page.png"
+  # Two masks multiplied: up the page, and in from the sides. The side feather
+  # is measured off the figure rather than off the sheet -- it has to reach nil
+  # by the edges of the photograph, which is what keeps the replicated ground
+  # out of sight.
+  magick -size "${BW}x${FADE}" xc:black \
+         -size "${BW}x$((HOLD - FADE))" gradient:black-white \
+         -size "${BW}x$((BH - HOLD))" xc:white -append "plates/_b-v.png"
+  magick -size "${BH}x${OX}" xc:black \
+         -size "${BH}x${FEA}" gradient:black-white \
+         -size "${BH}x$((PW - 2 * FEA))" xc:white \
+         -size "${BH}x${FEA}" gradient:white-black \
+         -size "${BH}x$((BW - OX - PW))" xc:black \
+         -append -rotate -90 "plates/_b-h.png"
+  magick "plates/_b-v.png" "plates/_b-h.png" -compose multiply -composite \
+      -blur 0x27 "plates/_b-m.png"
+  magick "plates/_b-page.png" "plates/_b-m.png" \
+      -alpha off -compose copy_opacity -composite \
+      -background white -alpha remove -alpha off \
+      -strip "plates/$_name.png"
+  rm -f plates/_b-*.png
+}
+
+if [ -n "$back_src" ]; then
+  back "$back_src" back-portrait
+fi
+
 # --- the cover -------------------------------------------------------------
 # Either the cover is a file somebody finished elsewhere, or it is the montage
 # this script builds. assets/data/plates.toml decides which, and an empty
