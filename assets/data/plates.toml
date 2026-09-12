@@ -99,17 +99,27 @@ clear = 32
 # into clean paper before the last line of type reaches him.
 #
 #   head      where the top of his head sits, as a percentage down the page.
-#             Move this and everything follows: the fade is measured from it,
-#             so the words above always clear him.
+#             He stands at the head of the sheet now and is the first thing on
+#             it, so this is a small number and the photograph bleeds off the
+#             top, the sides, or both.
 #   headsize  the height of his head, as a percentage of the page. This is
 #             the one number to reach for if he reads too big or too small --
-#             it scales the whole figure about his face.
+#             it scales the whole figure about his face. Past about 12.8 the
+#             figure is wider than the sheet and bleeds off both sides, which
+#             is how he is printed this large and is meant rather than
+#             tolerated.
+#   holdto    how far down the page he prints at full strength.
+#   fade      the length of the ramp below that, as a percentage of the page.
+#             Below holdto+fade there is nothing but paper, and that is what
+#             the divider and the panel at the foot of the page stand on --
+#             which is why these two are set outright rather than measured off
+#             his head, as they were when he sat at the foot of the sheet.
 #   ink       the darkest tone in the wash. Higher contrast than the ghosts
 #             carry, because nothing is printed over him: this is the one
 #             place in the booklet where the picture is meant to be looked at
 #             rather than sensed. Paler here is safer on a light press.
 #
-# The last three say where his head is in the source photograph, as
+# The next three say where his head is in the source photograph, as
 # percentages of that image: how the placement knows what to centre on and
 # how much to scale it by. They are properties of the picture, not of the
 # page, so they only need touching when `source` does.
@@ -117,11 +127,40 @@ clear = 32
 #   facex     the centre of his face, across the source
 #   facetop   the top of his head, down the source
 #   facefoot  his chin, down the source
+#
+# The last six are the shim the appreciation is read off -- a panel of cream
+# laid over him behind the words, where they cross his chest. They are the one
+# place in this file that knows anything about the type on the page: the block
+# is set by sections/09-backcover.tex, and these put cream under exactly it,
+# so the two move together or not at all.
+#
+#   shimleft   its edges, across the page. Both run to the bleed: his jacket
+#   shimright  fills the sheet at this size, and a shim that stops short of
+#              the trim leaves a vertical seam down the darkest part of it.
+#   shimtop    its edges, down the page. shimtop is the number to reach for
+#   shimfoot   when he wants to be more visible: every millimetre it is set
+#              lower is a millimetre more of his chest printed at full
+#              strength, and it only has to be far enough above the first line
+#              of the appreciation for the blur below to have got there. Past
+#              shimfoot there is nothing left of him to read anything off.
+#   shimveil   how much cream is laid over him there, 0-100. Not 100: he is
+#              meant to be seen through it.
+#   shimsoft   the blur sigma, as a percentage of the page width. Generous --
+#              a shim with an edge anywhere reads as a box on the page.
+
 [back-portrait]
 source = "plates/plate-studio.png"
-head = 72
-headsize = 12.5
+head = 6
+headsize = 17
+holdto = 38
+fade = 26
 ink = "#A08767"
 facex = 41
 facetop = 3.7
 facefoot = 25.1
+shimleft = 0
+shimright = 100
+shimtop = 30
+shimfoot = 70
+shimveil = 80
+shimsoft = 2.4

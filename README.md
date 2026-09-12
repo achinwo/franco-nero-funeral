@@ -23,6 +23,7 @@ ImageMagick and no Python.
 | TeX Live (full) | `pdflatex`, `latexmk` | TeX Live 2026, pdfTeX 1.40.29, latexmk 4.88 |
 | ImageMagick 7 | regenerating the plates in `assets/images/plates/`, and preparing any photograph a tribute carries | 7.1.1-28 |
 | Python 3.11+ | the generators in `assets/` read TOML, and need `tomllib` | 3.13.1 |
+| librsvg (`rsvg-convert`) | the back cover's two marks are supplied as SVG, which `pdflatex` cannot read | 2.62.1 |
 
 A full TeX Live install carries every package the booklet loads —
 `geometry`, `graphicx`, `xcolor`, `eso-pic`, `tikz`, `soul`, `letterspace`,
@@ -63,14 +64,31 @@ One command rebuilds everything the booklet inputs but nobody edits:
   frontispieces (sources set in `assets/data/plates.toml`)
 - `assets/images/plates/cover-sky.*` — the cover: the montage, or whatever
   image `assets/data/plates.toml` names, copied in unchanged
-- `assets/images/plates/back-portrait.png` — the portrait at the foot of the
-  back cover (source and placement set in `assets/data/plates.toml`)
+- `assets/images/plates/back-portrait.png` — the portrait on the back cover
+  (source, placement and the shim behind the words all set in
+  `assets/data/plates.toml`). He stands at the head of the sheet, bleeding off
+  the top and both sides, and fades out about two-thirds of the way down; the
+  appreciation is set below his collar on a shim of cream laid over his chest,
+  and the divider and the code below that stand on clean stock. The shim is
+  baked in here rather than drawn in TeX — a gradient in the PDF is a
+  transparency group for the printer to flatten — so `[back-portrait]` and
+  `sections/09-backcover.tex` have to be moved together.
 - `assets/images/plates/personal/*.jpg` and `plates/personal-photos.tex` — his
   own photographs, laid out by `assets/build-personal.py`
 - `assets/images/plates/family/*.jpg` and `plates/family-album.tex` — the
   family album, laid out by `assets/build-album.py`
 - `assets/data/tributes.tex` and `assets/images/plates/tributes/*.jpg` — the
   tributes and their photographs, set by `assets/build-tributes.py`
+- `assets/images/franco-nero-international-code.pdf` — the back cover's QR
+  code, converted from the SVG beside it and recoloured into the booklet's
+  ink. It stays vector because it is the one picture here that has to work
+  rather than only look right: at 22mm a module is half a millimetre, and a
+  raster resampled by the printer's RIP has nothing to spare. (`.gitignore`
+  excludes `*.pdf` and makes an exception for this one — it is artwork, not
+  output.)
+- `assets/images/logo_maqr.png` — the wordmark in the same credit, lifted out
+  of the JPEG inside `logo_maqr.svg` and given the alpha channel it needs to
+  sit on cream paper over a wash
 
 Run it after changing anything under `assets/images/` or `assets/data/`, then
 `latexmk`. `build-tributes.py` is quick enough to run on its own while a

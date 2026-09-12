@@ -6,6 +6,12 @@ build/
 *.fls
 *.fdb_latexmk
 *.pdf
+# ...except the one PDF that is artwork rather than output. The back cover's QR
+# code is converted from SVG and committed like every other generated image, so
+# that a fresh clone builds the booklet with no rsvg-convert installed. Ignored
+# by the line above, it would go missing from the clone and take the back cover
+# with it.
+!assets/images/*.pdf
 *.bbl
 *.blg
 sample.texout/

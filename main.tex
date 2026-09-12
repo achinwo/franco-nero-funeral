@@ -1045,6 +1045,79 @@
 % Letterspaced caps, for the small display lines on the cover.
 \newcommand{\displaycaps}[1]{{\scshape\so{#1}}}
 
+% --- The back cover's invitation -------------------------------------------
+% The book closes on a page somebody can walk out of. The code opens the
+% memorial the family keep online -- the service, the photographs, and the
+% tributes in these pages -- which goes on being added to after the day itself,
+% so the last thing the booklet says is that it is not finished.
+%
+% It is anchored into the bottom right corner of the text block, and the
+% portrait is printed up over the rest of the sheet rather than kept below it.
+% That is the whole arrangement: he takes the page, and the practical business
+% takes one corner of it. \backdigital is called after a \vfill, which is what
+% puts it on the last 15mm of the measure; the veil it is read off is baked
+% into the plate behind it, from the four panel keys in [back-portrait] in
+% assets/data/plates.toml. Move this and those move with it.
+%
+% The code is drawn at 26mm because of what it has to do, not how it looks.
+% Thirty-three modules across 26mm is a 0.63mm module, and a phone camera
+% reading uncoated stock wants about half a millimetre. The four-module quiet
+% zone is carried inside the artwork, and inside that 26mm, which is why the
+% hairline can sit on the edge of the tile without crowding the code.
+%
+% The two lines that a person actually has to read off paper -- the telephone
+% number and the handle -- are set in the booklet's text ink at 8.6pt, not in
+% the accent grey the credit takes. They were 7.2pt grey over the top of the
+% rising portrait, and grey type that small over a photograph is the one thing
+% on this page that came back from the proof unreadable.
+\newcommand{\digitalurl}{https://maqr.co/ewed/franconero}
+
+% A contact, set as a label and a value on a common left edge, so the number
+% and the handle line up under each other rather than starting wherever the
+% word in front of them happens to end.
+\newcommand{\digitalcontact}[2]{%
+  \makebox[19mm][l]{\color{accent}\coverline[60]{#1}}{\color{primary}#2}%
+}
+
+\newcommand{\backdigital}{%
+  \par\noindent\hfill
+  \begin{minipage}[b]{22mm}
+    \setlength{\fboxsep}{0pt}\setlength{\fboxrule}{0.4pt}%
+    \href{\digitalurl}{%
+      {\color{rulecolor}\fbox{%
+    \includegraphics[width=22mm]{franco-nero-international-code.pdf}}}}%
+  \end{minipage}%
+  \hspace{5mm}%
+  \begin{minipage}[b]{72mm}
+    \raggedright
+    % Gaps between these blocks are set against the interline glue TeX puts in
+    % for the line that follows, which is measured in the page's 11pt body
+    % rather than in the 8pt this column is set in: left alone it opens the
+    % column by about 3mm a time, and the column has 22mm to live in.
+    {\coverface\fontsize{8}{8}\selectfont\color{primary}
+    \coverline[200]{Scan to keep him with you}\par}
+    \vspace{0.2mm}
+    {\coverface\fontsize{8.3}{10.4}\selectfont\color{primary}
+      Open his digital memorial --- every photograph and tribute gathered
+    here --- and go on posting your own.\par}
+    \vspace{-0.6mm}
+    {\coverface\fontsize{8.6}{10.8}\selectfont
+      \digitalcontact{WhatsApp}{%
+      \href{https://wa.me/2347070281103}{+234 707 028 1103}}\par
+      \digitalcontact{Instagram}{%
+    \href{https://instagram.com/maqr.co}{@maqr.co}}\par}
+    \vspace{-0.4mm}
+    % The wordmark sits on the baseline of the words beside it rather than on
+    % its own: \raisebox drops it by what its round shapes need to look level
+    % with "Powered by", which a box aligned on its foot does not.
+    {\coverface\fontsize{7.4}{7.4}\selectfont\color{accent}
+      Powered by
+      \raisebox{-1.1mm}{\href{https://maqr.co}{%
+    \includegraphics[height=3.6mm]{logo_maqr.png}}}\par}
+  \end{minipage}%
+  \par
+}
+
 % --- The draft stamp -------------------------------------------------------
 % A diagonal DRAFT across every page, for the copy that goes to the printer
 % for review. It is off unless the build turns it on, and nothing in this file

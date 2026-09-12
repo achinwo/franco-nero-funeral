@@ -241,21 +241,43 @@ back() { # back <source-image> <name>
   eval "$(awk -v w="$BW" -v h="$BH" \
               -v head="$(plate back-portrait head)" \
               -v hsize="$(plate back-portrait headsize)" \
+              -v holdto="$(plate back-portrait holdto)" \
+              -v ramp="$(plate back-portrait fade)" \
               -v fx="$(plate back-portrait facex)" \
               -v ftop="$(plate back-portrait facetop)" \
-              -v ffoot="$(plate back-portrait facefoot)" 'BEGIN {
+              -v ffoot="$(plate back-portrait facefoot)" \
+              -v sl="$(plate back-portrait shimleft)" \
+              -v sr="$(plate back-portrait shimright)" \
+              -v st="$(plate back-portrait shimtop)" \
+              -v sb="$(plate back-portrait shimfoot)" \
+              -v sv="$(plate back-portrait shimveil)" \
+              -v ss="$(plate back-portrait shimsoft)" 'BEGIN {
     # Scale: his head is (ffoot-ftop)% of the source and wants to be hsize% of
     # the page, so the source is drawn this many pixels wide.
     pw = h * hsize / (ffoot - ftop)
     ox = w / 2 - pw * fx / 100          # his face on the centre line
     top = h * head / 100 - pw * ftop / 100
-    # The fade closes a third of a head-height above him, so the last line of
-    # type on the page still has clear paper under its descenders, and opens a
-    # head-height above that.
-    hold = h * head / 100 - h * hsize / 300
-    fade = hold - h * hsize / 100
-    printf "PW=%d OX=%d TOP=%d FEA=%d FADE=%d HOLD=%d\n",
-           pw, ox, top, pw * 0.26, fade, hold
+    # He now stands at the head of the page rather than at its foot, so the
+    # wash runs the other way: full strength from the top edge down to holdto,
+    # then out over the next `fade` of the sheet, and nothing below that. The
+    # two are set outright rather than derived from where his head is -- when
+    # the fade was measured off the head, moving him moved the foot of the
+    # wash with him, and the foot of the wash is what the divider and the
+    # panel underneath it need to stand on.
+    hold = h * holdto / 100
+    fade = hold + h * ramp / 100
+    # Signed geometries. The figure is wider than the sheet -- that is what
+    # lets him be printed this large -- so both it and its side feather start
+    # left of the page edge and run off the right, and ImageMagick is handed
+    # the offsets to clip rather than shell arithmetic that would go negative
+    # and stop the run.
+    printf "PW=%d FEA=%d FADE=%d HOLD=%d FIGPOS=%+d%+d MASKPOS=%+d+0",
+           pw, pw * 0.26, fade, hold, ox, top, ox
+    # The shim the appreciation is read off: a cream panel behind the words
+    # where they cross his chest. Nil unless the config asks for one.
+    printf " SV=%d SL=%d SR=%d ST=%d SB=%d SS=%d\n",
+           sv, w * sl / 100, w * sr / 100, h * st / 100, h * sb / 100,
+           w * ss / 100
   }')"
   # The wash. Sigmoidal contrast before the tone map, because squeezing the
   # range into a narrow warm band flattens a face: the print is a 1960s studio
@@ -265,34 +287,62 @@ back() { # back <source-image> <name>
       +level-colors "$(plate back-portrait ink)",'#FCFAF6' "plates/_b-fig.png"
   # The photograph is stood on a field of its own backdrop -- the mean of its
   # top edge -- rather than on white or on a replication of that edge. Flat is
-  # the whole point: there is barely a head's clearance above him in the print,
-  # so the fade has to open over ground that is not the photograph, and any
-  # ground with detail in it (a replicated edge smears the top row down the
-  # page) arrives as streaks exactly where the eye is looking for his face.
+  # the whole point: any ground with detail in it (a replicated edge smears
+  # the top row down the page) arrives as streaks exactly where the eye is
+  # looking for his face.
   _ground=$(magick "plates/_b-fig.png" -crop "${PW}x8+0+0" +repage \
       -resize '1x1!' -format '%[pixel:p{0,0}]' info:)
   magick -size "${BW}x${BH}" xc:"$_ground" \
-      "plates/_b-fig.png" -geometry "+${OX}+${TOP}" \
+      "plates/_b-fig.png" -geometry "${FIGPOS}" \
       -compose over -composite "plates/_b-page.png"
-  # Two masks multiplied: up the page, and in from the sides. The side feather
-  # is measured off the figure rather than off the sheet -- it has to reach nil
-  # by the edges of the photograph, which is what keeps the replicated ground
-  # out of sight.
-  magick -size "${BW}x${FADE}" xc:black \
-         -size "${BW}x$((HOLD - FADE))" gradient:black-white \
-         -size "${BW}x$((BH - HOLD))" xc:white -append "plates/_b-v.png"
-  magick -size "${BH}x${OX}" xc:black \
-         -size "${BH}x${FEA}" gradient:black-white \
+  # Two masks multiplied: down the page, and in from the sides. The side
+  # feather is measured off the figure rather than off the sheet -- it has to
+  # reach nil by the edges of the photograph, which is what keeps the
+  # replicated ground out of sight. It is built at the figure's own width and
+  # then laid on the sheet at the figure's offset, so that a figure wider than
+  # the page keeps its feather where the photograph ends rather than where the
+  # paper does: off the edge, the feather goes with it and he bleeds.
+  magick -size "${BW}x${HOLD}" xc:white \
+         -size "${BW}x$((FADE - HOLD))" gradient:white-black \
+         -size "${BW}x$((BH - FADE))" xc:black -append "plates/_b-v.png"
+  magick -size "${BH}x${FEA}" gradient:black-white \
          -size "${BH}x$((PW - 2 * FEA))" xc:white \
          -size "${BH}x${FEA}" gradient:white-black \
-         -size "${BH}x$((BW - OX - PW))" xc:black \
-         -append -rotate -90 "plates/_b-h.png"
+         -append -rotate -90 "plates/_b-hfig.png"
+  magick -size "${BW}x${BH}" xc:black "plates/_b-hfig.png" \
+      -geometry "${MASKPOS}" -compose over -composite "plates/_b-h.png"
   magick "plates/_b-v.png" "plates/_b-h.png" -compose multiply -composite \
       -blur 0x27 "plates/_b-m.png"
   magick "plates/_b-page.png" "plates/_b-m.png" \
       -alpha off -compose copy_opacity -composite \
       -background white -alpha remove -alpha off \
-      -strip "plates/$_name.png"
+      -strip "plates/_b-done.png"
+
+  # The shim. Cream at the tint the config asks for, blurred until it has no
+  # edge anywhere, laid over him behind the appreciation -- so the words are
+  # read off paper rather than off his jacket, and he is still there under
+  # them. It is cut to the words and not to the sheet: it closes above the
+  # divider, which is what leaves the divider and the panel below it standing
+  # on clean stock.
+  #
+  # Baked into the plate rather than drawn in TeX, for the same reason the
+  # fades are: it is a gradient, and a gradient drawn in the PDF is a
+  # transparency group for the printer's RIP to flatten. Here it is ordinary
+  # opaque artwork, and the price is that the plate knows where the words go
+  # -- so [back-portrait] in assets/data/plates.toml is the one place the two
+  # are kept in step, and re-setting that page means measuring it again.
+  if [ "$SV" -gt 0 ]; then
+    magick -size "${BW}x${BH}" xc:black \
+        -fill "gray(${SV}%)" -draw "rectangle ${SL},${ST} ${SR},${SB}" \
+        -virtual-pixel edge -blur "0x${SS}" "plates/_b-sm.png"
+    magick -size "${BW}x${BH}" xc:'#FCFAF6' "plates/_b-sm.png" \
+        -alpha off -compose copy_opacity -composite "plates/_b-shim.png"
+    magick "plates/_b-done.png" "plates/_b-shim.png" -compose over -composite \
+        -background white -alpha remove -alpha off \
+        -strip "plates/$_name.png"
+  else
+    cp "plates/_b-done.png" "plates/$_name.png"
+  fi
   rm -f plates/_b-*.png
 }
 
@@ -441,6 +491,71 @@ fi
 if [ "$MODE" = covers ]; then
   exit 0   # the full-page plates are done, and they are all `covers' rebuilds
 fi
+
+# --- the two marks on the back cover ---------------------------------------
+# The QR code that opens the digital memorial, and the wordmark of the
+# application behind it. Both arrive as SVG, which pdflatex cannot read, so
+# both are prepared here and committed like every other derived image.
+#
+# The QR is the one picture in the booklet that has to *work* rather than only
+# look right, so it is converted to PDF and stays vector: a raster QR resampled
+# by the printer's RIP loses module edges, and a 33-module code at 20mm has
+# 0.6mm modules with nothing to spare. rsvg-convert is the only thing in the
+# build that reads SVG, and it is needed for these two files alone.
+#
+# Two changes on the way through. The modules come down from #1b1b1f to the
+# booklet's own bistre, so the code is in the same ink as every other mark in
+# the book rather than reading as a black sticker; bistre on the page is
+# 15:1 where a scanner wants 3:1, and the code was re-read at 14mm to be sure.
+#
+# And the white ground it is supplied on is dropped altogether, so the quiet
+# zone is unprinted paper rather than a panel of near-white ink. That is worth
+# a line of explanation, because it is the one thing here that depends on the
+# layout: the code stands on clean stock -- the portrait above it has faded out
+# by about two-thirds down the sheet -- so there is nothing behind it to hide,
+# and paper is both cheaper and lighter than anything that could be laid over
+# it. Move the panel back up onto the picture and the ground has to come back.
+# The disc punched behind the roundel at the centre is left white, which is no
+# ink at all on press, and the roundel itself is the application's own mark and
+# keeps its own blue.
+command -v rsvg-convert >/dev/null 2>&1 || {
+  echo "make-plates: rsvg-convert is needed for the back cover's two marks" >&2
+  echo "make-plates:   brew install librsvg" >&2
+  exit 1
+}
+sed -e 's|<rect width="41" height="41" fill="#ffffff"/>||' \
+    -e 's/fill="#1b1b1f"/fill="#2B2620"/g' \
+    franco-nero-international-code.svg > _code.svg
+rsvg-convert -f pdf -w 512 -h 512 _code.svg -o franco-nero-international-code.pdf
+rm -f _code.svg
+
+# The wordmark is not vector at all: logo_maqr.svg is a JPEG in an SVG wrapper,
+# so there is nothing to preserve by going through rsvg and a PNG is the honest
+# form of it. What it does need is an alpha channel. The JPEG is drawn on white,
+# and white on this page is a rectangle you can see -- the sheet is cream and
+# there is a wash of his portrait coming up underneath it.
+#
+# Alpha is recovered by undoing the composite rather than by keying the white
+# out. A key leaves every partly-covered pixel -- which at this size is most of
+# the mark's edge -- still carrying the white it was drawn over, and a 13mm
+# wordmark is very nearly all edge. min(r,g,b) is the coverage the mark has at
+# each pixel, so its complement is the alpha; dividing the colour back out by
+# that alpha recovers what was composited, exactly, including the counter inside
+# the `m'.
+python3 - <<'PY'
+import base64, pathlib, re
+svg = pathlib.Path("logo_maqr.svg").read_text()
+m = re.search(r'href="data:image/jpeg;base64,([^"]+)"', svg)
+if not m:
+    raise SystemExit("make-plates: no embedded JPEG found in logo_maqr.svg")
+pathlib.Path("_logo.jpg").write_bytes(base64.b64decode(m.group(1)))
+PY
+magick _logo.jpg -colorspace sRGB \
+    \( +clone -separate -evaluate-sequence min -negate \) \
+    -alpha off -compose CopyOpacity -composite \
+    -channel RGB -fx '(u-(1-u.a))/max(u.a,1/65535)' +channel \
+    -trim +repage -strip logo_maqr.png
+rm -f _logo.jpg
 
 # --- captions --------------------------------------------------------------
 # The words under the photographs. assets/data/captions.toml files a caption

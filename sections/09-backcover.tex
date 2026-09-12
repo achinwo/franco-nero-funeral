@@ -3,24 +3,35 @@
 \thispagestyle{empty} % back cover carries no folio
 \sectionanchor*{toc:appreciation}{Words of Appreciation}
 
-% The portrait rises out of the foot of the sheet rather than lying behind the
-% whole of it: the words have the top two-thirds to themselves, on clean paper,
-% and he closes the book underneath them with his face showing. The plate is
-% built that way -- see [back-portrait] in assets/data/plates.toml -- so
-% nothing here has to hold text off him.
+% He is the first thing on this page. The portrait stands at the head of the
+% sheet at something near the size it would be printed at, bleeding off the top
+% and both sides, and fades out around two-thirds of the way down; the words
+% begin below his collar and are read off a shim of cream laid over his chest;
+% and under all of it, on clean stock, a divider and the code. The plate is
+% built that way -- see [back-portrait] in assets/data/plates.toml, where the
+% shim's edges are set to the block below and have to be moved with it.
 \pageghost{back-portrait}
 
+% Down to his chest. His hair opens at about 11mm and his collar closes at
+% about 57mm, and the heading now falls at about 73 -- a clear head-and-collar
+% of him above the first word, which is the whole point of setting the block
+% this far down. What paid for it was the leading above and the shim's own top
+% edge, which had been laid on 13mm higher than the first line of type needed
+% it and was covering his chest for nothing. \vspace* rather than \vspace: the
+% starred form is not discarded at the top of a page, and this is the top of a
+% page.
+\vspace*{50mm}
+
 \begin{center}
-  \vspace*{2mm}
 
   % The two faces of the same sheet: this page is set in the cover's faces,
   % not the booklet's, so that the back reads as the front's other side.
   {\coverface\fontsize{11.5}{14}\selectfont\color{primary}
   \coverline[180]{OUR HEARTFELT APPRECIATION}\par}
 
-  \vspace{3mm}
+  \vspace{2.5mm}
   \diamondrule{16mm}{1.1mm}
-  \vspace{4.5mm}
+  \vspace{3.5mm}
 
   % Five paragraphs where the page used to carry four lines. Set a size down
   % from the old block and given air between the paragraphs instead of the
@@ -29,8 +40,8 @@
   % grey shape. \parskip rather than blank-line indents -- centred text cannot
   % show an indent.
   \begin{minipage}{0.9\linewidth}
-    \centering\coverface\fontsize{9.6}{13}\selectfont\itshape\color{primary}
-    \setlength{\parskip}{2.4mm}\setlength{\parindent}{0pt}
+    \centering\coverface\fontsize{9.6}{11}\selectfont\itshape\color{primary}
+    \setlength{\parskip}{2.0mm}\setlength{\parindent}{0pt}
     ``As we bid our beloved Husband, Father, Grandfather, Brother, Uncle,
     Cousin and Friend, Sir Francis Onoteagbor Atsekhameh --- our very own
     Franco Nero International --- a final farewell, our hearts are deeply
@@ -54,8 +65,19 @@
     We pray that God will bless you all abundantly, in Jesus' name, Amen.''
   \end{minipage}
 
-  \vspace{6mm}
+  \vspace{4.5mm}
 
   {\coverdisplay\itshape\fontsize{12.5}{16}\selectfont\color{accent}
   ``Forever in our thoughts, always in our hearts.''\par}
 \end{center}
+
+% Below the words, the practical business, on paper the portrait has already
+% let go of. \vfill drops it onto the last of the measure; the divider is what
+% separates it from the appreciation, and is set a size up from the one under
+% the heading so that it reads as the end of the page rather than as another
+% ornament inside it.
+\vfill
+
+{\centering\diamondrule{20mm}{1.2mm}\par}
+\vspace{3.5mm}
+\backdigital
