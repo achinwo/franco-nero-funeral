@@ -30,6 +30,37 @@ the safe way round for a document nobody will proof-read line by line.
 (The top-level `title` key is not used. The section head is set in
 sections/08-tribute.tex, so that it and the contents page cannot drift apart.)
 
+A tribute that is only a picture
+-------------------------------
+Some tributes arrive already made: a card laid out and sent as an image, a
+letter written by hand and photographed, a memorial graphic somebody had
+designed. There is nothing in one of those left to typeset -- it was set by
+whoever made it -- so the booklet gets out of the way and gives it the page:
+
+    [[tribute]]
+    order = 500
+    fullspread = true
+    imagePath = "assets/images/family_pics/from-the-ekpomas.jpg"
+    title = "From the Ekpomas"   # optional, and never printed; it is what
+                                 # this tribute is called in the run report
+
+That prints the image on a page of its own, to the trim on all four sides,
+with no title, no divider and no folio over it. It is the image as it was
+sent -- not toned towards the booklet's sepia like the photograph a letter
+is set around, not mounted on corners, not captioned, not resampled. The
+file is copied across byte for byte and the only thing settled here is where
+it goes: scaled until it *covers* A5 and centred, so its proportions hold
+and, if it is not the shape of the page, a little comes off two of its edges
+rather than the whole of it being squashed into a shape it was never in. How
+much comes off is printed on the run, so an image that would lose something
+it cannot spare can be recropped before the booklet goes anywhere.
+
+It has to arrive as a .jpg or a .png -- what pdflatex can place. A full
+spread takes no body, and one written with both is stopped rather than half
+printed: a tribute is either words this script sets or a picture it does
+not touch. Words that want a picture beside them are an ordinary tribute
+with an imagePath, which is the other thing on this list.
+
 How a tribute is set
 --------------------
 A tribute is a letter, and it is laid out like one: a single measure rather
@@ -85,6 +116,10 @@ that would have introduced it is dropped -- the page turn is the division.
 Lines are paragraphs. A tribute typed as one line per sentence would come out
 as one paragraph per sentence, which is the writer's decision to make and not
 this script's to second-guess.
+
+A full spread turns the page on both sides of itself -- see above -- so a
+tribute after one opens a clean page and takes no divider, the same way a
+tribute that opened on <pagebreak/> does.
 """
 
 import hashlib
@@ -122,6 +157,26 @@ PHOTOS = ROOT / "assets/images/plates/tributes"
 PHOTO_W = 40.0
 PHOTO_H = 38.0
 PHOTO_PIXELS = 1200   # long edge; ~600dpi at the size these print
+
+# The page a full-spread tribute is laid onto, in millimetres: A5, which is
+# what the geometry in main.tex sets. The margins do not come into it -- one
+# of these runs to the trim on all four sides -- so the paper is the only
+# measurement it needs. Change the paper there and these change with it.
+PAGE_W = 148.0
+PAGE_H = 210.0
+
+# Below this, a photograph is being asked to cover A5 out of fewer pixels
+# than the press can use, and it will print soft. Said rather than fixed:
+# the alternative is refusing to print a tribute because the phone that took
+# it was old, and a soft photograph on the page beats a hole in the booklet.
+SPREAD_DPI = 150
+
+# What \includegraphics can be handed, and what ImageMagick will measure
+# without Ghostscript behind it. A tribute that arrives as anything else --
+# a HEIC straight off a phone, a PDF from a design program -- is turned away
+# with the list rather than converted, because converting it is the one thing
+# a full spread is not supposed to do.
+SPREAD_SUFFIXES = {".jpg": ".jpg", ".jpeg": ".jpg", ".png": ".png"}
 
 # A two-line initial needs two lines of its own paragraph to sit against.
 # The tribute measure holds about eighty characters of 9pt text, so a first
@@ -394,11 +449,81 @@ def photograph(source, plates):
          "-strip", "-quality", "88", str(dest)],
         check=True, capture_output=True)
 
-    w, h = subprocess.run(["magick", str(dest), "-format", "%w %h", "info:"],
+    w, h = measured(dest)
+    scale = min(PHOTO_W / w, PHOTO_H / h)
+    return f"plates/tributes/{dest.stem}", w * scale, h * scale
+
+
+def measured(path):
+    """(width, height) of an image in pixels, by way of ImageMagick."""
+    w, h = subprocess.run(["magick", str(path), "-format", "%w %h", "info:"],
                           check=True, capture_output=True,
                           text=True).stdout.split()
-    scale = min(PHOTO_W / int(w), PHOTO_H / int(h))
-    return f"plates/tributes/{dest.stem}", int(w) * scale, int(h) * scale
+    return int(w), int(h)
+
+
+def spread(source, plates):
+    r"""Take a full-spread photograph across and say where it goes on the page.
+
+    Unlike the photograph a letter is set around, this one is not prepared at
+    all. It is not toned towards the booklet's sepia, not resampled, not
+    mounted and not captioned: the file is *copied* -- byte for byte, so an
+    unchanged tribute leaves git nothing to record -- and the only reason it
+    is copied rather than pointed at where it lies is that \includegraphics
+    cannot be handed a name with a space or a dot in it, which is what comes
+    off a phone. The name it gets is the one platename() gives every plate.
+
+    What is worked out here is only the placement. The image is scaled until
+    it covers the page -- the larger of the two ratios, not the smaller --
+    and centred, so that whichever way round it is it reaches all four
+    trimmed edges with its proportions intact and whatever will not fit runs
+    off the page. That is the one thing this does that the tribute did not
+    ask for, so it is said out loud below; the alternative is squashing
+    somebody's photograph into a shape it was never in, which is worse and
+    cannot be undone by eye.
+
+    Returns (name, width, height, x, y) in millimetres, where x and y are
+    zero or negative -- the corner the image starts from, relative to the
+    bottom-left of the page.
+    """
+    src = ROOT / source
+    if not src.is_file():
+        sys.exit(f"build-tributes: no such image: {source}")
+    suffix = SPREAD_SUFFIXES.get(src.suffix.lower())
+    if not suffix:
+        sys.exit(f"build-tributes: {source} is a {src.suffix} -- a full "
+                 f"spread is printed as it was sent, so it has to arrive as "
+                 f"one of {', '.join(sorted(SPREAD_SUFFIXES))}")
+    if not shutil.which("magick"):
+        sys.exit("build-tributes: a tribute is a full spread, which needs "
+                 "ImageMagick 7 to measure")
+
+    PHOTOS.mkdir(parents=True, exist_ok=True)
+    dest = PHOTOS / (platename(source, plates) + suffix)
+    # Copied rather than converted, and copied every run: the bytes are the
+    # bytes, so this is idempotent, and a tribute whose photograph has been
+    # replaced under the same name still picks up the new one.
+    shutil.copyfile(src, dest)
+
+    px, py = measured(dest)
+    scale = max(PAGE_W / px, PAGE_H / py)
+    w, h = px * scale, py * scale
+
+    trimmed = max(w - PAGE_W, h - PAGE_H)
+    if trimmed > 0.5:
+        a, b = ("left", "right") if w - PAGE_W > h - PAGE_H else ("top",
+                                                                  "bottom")
+        print(f"build-tributes: {source} is not the shape of the page -- "
+              f"{trimmed / 2:.1f}mm comes off the {a} and as much off the {b} "
+              f"to cover it", file=sys.stderr)
+
+    dpi = 25.4 * px / w
+    if dpi < SPREAD_DPI:
+        print(f"build-tributes: {source} covers the page at about {dpi:.0f}dpi,"
+              f" where print wants {SPREAD_DPI} or better", file=sys.stderr)
+
+    return (f"plates/tributes/{dest.stem}{suffix}", w, h,
+            (PAGE_W - w) / 2, (PAGE_H - h) / 2)
 
 
 def emit(tributes, captions):
@@ -410,7 +535,22 @@ def emit(tributes, captions):
     out = ["% Generated by assets/build-tributes.py -- do not edit by hand.",
            "% Edit assets/data/tributes.toml and re-run assets/make-plates.sh.",
            ""]
-    for i, tribute in enumerate(tributes):
+    # Whether the page the next tribute lands on is still empty. It starts
+    # that way, and a full spread leaves it that way again -- which is what
+    # settles the divider below, since a rule under nothing is not a
+    # division.
+    fresh = True
+    for tribute in tributes:
+        # A tribute that is only a photograph takes the whole page and sets
+        # nothing else: no title, no divider, no folio. See \tributefullspread
+        # in main.tex, and the docstring at the top of this file.
+        if tribute.get("fullspread"):
+            name, w, h, x, y = spread(tribute["imagePath"].strip(), plates)
+            out += [r"\tributefullspread{%s}{%.2fmm}{%.2fmm}{%.2fmm}{%.2fmm}"
+                    % (name, w, h, x, y), ""]
+            fresh = True
+            continue
+
         body = blocks(tribute["body"])
         # A tribute opening on <pagebreak/> starts on a fresh page, head and
         # all: the break has to be set above \tributehead, or the title is
@@ -420,8 +560,9 @@ def emit(tributes, captions):
         if body and body[0][0] == "pagebreak":
             body = body[1:]
             out += [r"\newpage", ""]
-        elif i:
+        elif not fresh:
             out += [r"\tributedivider", ""]
+        fresh = False
         attribution = (tribute.get("from") or tribute.get("subtitle", "")).strip()
         out.append(r"\tributehead{%s}{%s}"
                    % (titlelines(tribute["title"]),
@@ -465,7 +606,9 @@ def emit(tributes, captions):
     # photograph was taken out, a source that was renamed, and the numbered
     # plates this script used to write.
     if PHOTOS.is_dir():
-        for stale in sorted(PHOTOS.glob("*.jpg")):
+        for stale in sorted(PHOTOS.iterdir()):
+            if not stale.is_file() or stale.name.startswith("."):
+                continue
             if stale.stem not in plates:
                 stale.unlink()
                 print(f"build-tributes: removed {stale.name}, "
@@ -481,8 +624,27 @@ def main():
     tributes = sorted(data.get("tribute", []),
                       key=lambda t: t.get("order", 0), reverse=True)
 
-    missing = [t for t in tributes
-               if not all(str(t.get(k, "")).strip() for k in ("title", "body"))]
+    # A full spread is held to a different bargain: an image and nothing
+    # else. Checked before anything is written, and stopped rather than
+    # patched up, because each of these means somebody meant one thing and
+    # typed another -- and quietly dropping a letter that was written is the
+    # one failure this script must never have.
+    for t in tributes:
+        if not t.get("fullspread"):
+            continue
+        if not str(t.get("imagePath", "")).strip():
+            sys.exit("build-tributes: a fullspread tribute has no imagePath, "
+                     "and a full spread is the image")
+        if str(t.get("body", "")).strip():
+            sys.exit("build-tributes: a fullspread tribute also has a body. "
+                     "A full spread prints the image and nothing else, so "
+                     "the words would go missing -- take one or the other "
+                     "out, or set the words as an ordinary tribute with an "
+                     "imagePath")
+
+    missing = [t for t in tributes if not t.get("fullspread")
+               and not all(str(t.get(k, "")).strip()
+                           for k in ("title", "body"))]
     if missing:
         sys.exit("build-tributes: a tribute is missing its title or its body")
 
@@ -496,6 +658,10 @@ def main():
     print(f"build-tributes: {len(tributes)} tributes "
           f"-> {TEX.relative_to(ROOT)}")
     for tribute in tributes:
+        if tribute.get("fullspread"):
+            print(f"  {titleplain(tribute.get('title', '')) or '(untitled)'}: "
+                  f"a full spread")
+            continue
         kinds = [kind for kind, _ in blocks(tribute["body"])]
         print(f"  {titleplain(tribute['title'])}: "
               f"{kinds.count('para')} paragraphs"

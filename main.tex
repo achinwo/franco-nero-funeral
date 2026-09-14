@@ -781,6 +781,43 @@
   \end{wrapfigure}%
 }
 
+% A tribute that is nothing but a photograph, set to the whole page.
+%
+% Some tributes arrive already made: a card laid out and sent as a picture, a
+% letter written by hand and photographed, a memorial graphic somebody had
+% designed. There is nothing in one of those for this file to set -- the
+% typesetting was done by whoever made it -- so the booklet gets out of the
+% way and gives it the page, to the trim on all four sides.
+%
+% The image goes down as it was sent. It is not toned towards the booklet's
+% sepia, not mounted on corners, not captioned and not resampled:
+% assets/build-tributes.py copies the file across byte for byte and settles
+% only where it goes. It is scaled until it covers A5 and centred, so its
+% proportions hold and whatever will not fit runs off the page rather than
+% being squashed onto it -- #2 and #3 are that size, #4 and #5 the corner it
+% starts from, and both of those are zero or negative. The overflow is not
+% clipped here because it does not have to be: nothing outside the page box
+% is drawn, on screen or on press, which is what a full bleed is.
+%
+% No folio. A page number would print over the photograph, and a page that
+% runs to the trim has no margin to set one in -- the back cover is set the
+% same way, and for the same reason.
+%
+% \clearpage on both sides: the page before is finished, this page carries
+% the photograph and nothing else, and whatever follows starts on a clean
+% one. Two of these in a row therefore come out as two pages, and neither
+% takes a divider -- what separates them is the turn.
+\newcommand{\tributefullspread}[5]{% #1 plate, #2 width, #3 height, #4 x, #5 y
+  \clearpage
+  \thispagestyle{empty}%
+  \AddToShipoutPictureBG*{%
+    \put(0,0){\hspace*{#4}\raisebox{#5}{%
+    \includegraphics[width=#2,height=#3]{#1}}}%
+  }%
+  \null
+  \clearpage
+}
+
 % The sign-off, set to the right as it is on paper. \\ separates its lines,
 % and they are kept tight to each other -- the space the environment puts
 % between paragraphs would read as two afterthoughts rather than a signature.

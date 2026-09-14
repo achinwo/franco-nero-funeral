@@ -77,8 +77,10 @@ One command rebuilds everything the booklet inputs but nobody edits:
   own photographs, laid out by `assets/build-personal.py`
 - `assets/images/plates/family/*.jpg` and `plates/family-album.tex` — the
   family album, laid out by `assets/build-album.py`
-- `assets/data/tributes.tex` and `assets/images/plates/tributes/*.jpg` — the
-  tributes and their photographs, set by `assets/build-tributes.py`
+- `assets/data/tributes.tex` and `assets/images/plates/tributes/*` — the
+  tributes and their photographs, set by `assets/build-tributes.py`. Most are
+  toned and cut to about 40mm for the letter to run around; a tribute marked
+  `fullspread` is copied across untouched and given the whole page
 - `assets/images/franco-nero-international-code.pdf` — the back cover's QR
   code, converted from the SVG beside it and recoloured into the booklet's
   ink. It stays vector because it is the one picture here that has to work
@@ -103,7 +105,7 @@ Edit these:
 | `main.tex` | preamble, every shared macro, the section order |
 | `booklet.tex` | the imposition — signature size, and the print options |
 | `sections/*.tex` | the pages themselves |
-| `assets/data/tributes.toml` | the tributes — plain text, no LaTeX; `imagePath` points at a photograph to set the letter around |
+| `assets/data/tributes.toml` | the tributes — plain text, no LaTeX; `imagePath` points at a photograph to set the letter around, and `fullspread = true` beside it prints that image alone, to the trim, on a page of its own |
 | `assets/data/captions.toml` | the caption under each photograph, filed against the image file it belongs to |
 | `assets/data/plates.toml` | which image each full-page plate is built from — the cover, the two frontispieces, the closing photograph and the back-cover portrait |
 | `assets/images/personal/` | photographs of him; drop one in and the first Photographs pages re-flow |

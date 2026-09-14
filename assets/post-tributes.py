@@ -34,6 +34,14 @@ optional signature and an optional photograph. The mapping is:
                     a letter into the same pieces
     imagePath       uploaded to the album the page already has, and attached
 
+A tribute marked `fullspread` is left off the guest book altogether. It has
+no body -- it is a card or a graphic that arrived already made, and the
+booklet gives it a page of its own; see build-tributes.py. There is nothing
+in one to post but the picture, and an entry with no words is also an entry
+the next run cannot recognise, so it would go up again every time this
+script was run. Each one is named on the run so that the omission reads as
+a decision rather than as a tribute that went missing.
+
 Inline, <i> becomes *italic*, <b> becomes **bold**, the four spellings of the
 strike become ~~struck~~ and <br/> becomes a line break -- the message keeps
 single newlines, so a break survives the round trip. <pagebreak/> is dropped:
@@ -616,7 +624,7 @@ def main():
 
     rows = ledger_read()
     posted = skipped = 0
-    faults = []
+    faults, spreads = [], []
 
     for tribute in tributes:
         if args.limit is not None and posted >= args.limit:
@@ -626,6 +634,18 @@ def main():
         # rather than in the title.
         if args.only and args.only.lower() not in (
                 tribute.get("title", "") + tribute.get("body", "")).lower():
+            continue
+
+        # A full spread is a tribute with no words in it -- see the
+        # module docstring, and build-tributes.py, which gives one the
+        # whole page. It is left off the guest book rather than posted as
+        # a bare photograph: an entry with no message is one the page has
+        # nothing to show but the picture, and, worse, nothing for the
+        # next run to recognise it by, so re-running this script would
+        # post it a second time. Named below so that it is plainly a
+        # decision and not an oversight.
+        if tribute.get("fullspread"):
+            spreads.append(tribute)
             continue
 
         entry = entry_of(tribute, build)
@@ -659,6 +679,12 @@ def main():
         time.sleep(PAUSE)
 
     print()
+    if spreads:
+        print("post-tributes: not posted, because a full spread has no "
+              "words to post -- the booklet gives each of these a page:")
+        for tribute in spreads:
+            print(f"  {oneline(tribute.get('title', '')) or '(untitled)'}"
+                  f"  {tribute.get('imagePath', '')}")
     if faults:
         print("post-tributes: not posted, because something would be lost:")
         for title, wrong in faults:
@@ -667,7 +693,9 @@ def main():
                 print(f"    - {line}")
     print(f"post-tributes: {posted} "
           f"{'posted' if args.post else 'to post'}, "
-          f"{skipped} already there, {len(faults)} to fix")
+          f"{skipped} already there, {len(faults)} to fix"
+          + (f", {len(spreads)} full "
+             f"spread{'s' if len(spreads) > 1 else ''}" if spreads else ""))
     if not args.post and posted:
         print("post-tributes: nothing was sent -- add --post")
 
